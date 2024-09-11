@@ -58,7 +58,7 @@ const DropdownField = ({
       } input-wrapper ${wrapperClassName}`}
     >
       {label && labelStyle == 'style1' && (
-        <label htmlFor={id} className='input-label'>
+        <label htmlFor={id} className='input-label bg-gray-300'>
           {label}
           {required && <span className='required-field'>*</span>}
         </label>
@@ -81,7 +81,7 @@ const DropdownField = ({
         multiple={isMultiselect}
         className={` ${className} ${
           required && error ? 'border-red-500' : 'border-gray-300'
-        } placeholder:text-left placeholder-gray-400 placeholder:text-sm placeholder:font-medium  px-1`}
+        } placeholder:text-left placeholder-gray-400 placeholder:text-sm placeholder:font-medium  px-1 bg-gray-300 border-b-2 border-gray-400 rounded-none text-gray-600 outline-none`}
         placeholder=' '
         onChange={onChange}
         onBlur={onBlur}

@@ -29,7 +29,7 @@ interface Props {
 
 const TextField = ({
   label,
-  className = ' p-2 border w-full border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500',
+  className = ' p-2 border w-full border-gray-300  focus:outline-none focus:ring-1 focus:ring-blue-500',
   wrapperClassName,
   name,
   required,
@@ -56,7 +56,7 @@ const TextField = ({
   return (
     <div className={`m-2 input-wrapper ${wrapperClassName}`}>
       {label && labelStyle === 'style1' && (
-        <label htmlFor={id} className='input-label'>
+        <label htmlFor={id} className='input-label bg-gray-300'>
           {label}
           {required && <span className='required-field'>*</span>}
         </label>
@@ -65,7 +65,7 @@ const TextField = ({
         <div>
           <label
             htmlFor={id}
-            className='ml-1 text-center text-sm font-montserrat-regular text-[#7747ff]'
+            className='ml-1  text-sm font-montserrat-regular text-[#7747ff] bg-gray-200'
           >
             {label}
             {required && <span className='required-field'>*</span>}
@@ -80,7 +80,7 @@ const TextField = ({
           id={id || name}
           className={` ${className} ${
             error ? 'border-red-500' : 'border-gray-300'
-          }  placeholder:text-left placeholder-gray-400 placeholder:text-sm placeholder:font-medium  px-1`}
+          }  placeholder:text-left placeholder-gray-400 placeholder:text-sm placeholder:font-medium  px-1  outline-none `}
           placeholder={placeholder ? `Enter ${placeholder}` : `Enter ${name}`}
           onChange={onChange}
           style={{

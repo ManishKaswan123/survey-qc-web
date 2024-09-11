@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import SectionCard from './components/SectionCard'
 import SectionSkeleton from './components/SectionSkeleton'
-import {AiOutlinePlus, AiOutlineFilter} from 'react-icons/ai'
+import {AiOutlinePlus, AiOutlineFilter, AiOutlineUp, AiOutlineDown} from 'react-icons/ai'
 import {Section, SectionFilters} from './sectionInterfaces'
 import {fetchSections} from './api'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
@@ -13,6 +13,9 @@ import {FaArrowLeft} from 'react-icons/fa'
 import {useLocation, useNavigate} from 'react-router-dom'
 import SectionTable from './components/SectionTable'
 import {set} from 'react-hook-form'
+import {IoSearchSharp} from 'react-icons/io5'
+import {RiArrowDownSLine} from 'react-icons/ri'
+import {RiArrowUpSLine} from 'react-icons/ri'
 
 let program = [
   {
@@ -172,6 +175,11 @@ const SectionList: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const {programId} = location.state || {}
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded)
+  }
 
   useEffect(() => {
     if (programId) {
@@ -315,8 +323,29 @@ const SectionList: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <div className='flex justify-between items-center flex-wrap mb-4'>
-          <div className='flex flex-row items-center'>
+        {/* <div className='w-full bg-white'> */}
+        <div
+          onClick={toggleExpand}
+          className='flex justify-between items-center bg-white hover:cursor-pointer'
+        >
+          <div className='flex items-center bg-blue-400 rounded-br-full px-6 py-3'>
+            <IoSearchSharp className='text-white mr-2 bg-transparent' size={20} />
+            <h3 className='text-white bg-transparent font-medium'>Filter</h3>
+          </div>
+
+          {!isExpanded && (
+            <p className='text-md  leading-tight mb-2 sm:mb-0 sm:mr-4 p-3'>Click to Search</p>
+          )}
+          <div className='focus:outline-none p-3'>
+            {isExpanded ? (
+              <RiArrowUpSLine className='text-2xl' />
+            ) : (
+              <RiArrowDownSLine className='text-2xl' />
+            )}
+          </div>
+        </div>
+
+        {/* <div className='flex flex-row items-center'>
             <button
               onClick={() => navigate('/program')} // Navigate to home page
               className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-2 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
@@ -338,9 +367,9 @@ const SectionList: React.FC = () => {
               onClick={() => setIsFilterVisible(!isFilterVisible)}
               className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center'
             ></Button>
-          </div>
-        </div>
-        {isFilterVisible && (
+          </div> */}
+        {/* </div> */}
+        {isExpanded && (
           <div className='relative'>
             <Filter
               onApplyFilter={handleApplyFilter}
