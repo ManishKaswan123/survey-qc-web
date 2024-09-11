@@ -1,6 +1,6 @@
 // src/actions/userActions.ts
 import {createAsyncThunk} from '@reduxjs/toolkit'
-import {fetchUser} from 'sr/utils/api/fetchUser'
+import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
 export const fetchUserData = createAsyncThunk('user/fetchUserData', async (payload: any) => {
   const {totalResults} = await fetchUser({})
   const response = await fetchUser({limit: totalResults})
