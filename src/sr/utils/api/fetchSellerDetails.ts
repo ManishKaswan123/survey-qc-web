@@ -1,6 +1,6 @@
 import {get, patch} from 'sr/utils/axios/index'
 import {toast} from 'react-toastify'
-import {SellerDetailsApiResponse} from 'app/pages/module/user/SellerDetailsCard'
+import {SellerDetailsApiResponse} from 'app/pages/module/user/user.interfaces'
 
 export const fetchSellerDetails = async (payload: string): Promise<SellerDetailsApiResponse> => {
   if (payload === '') return {} as SellerDetailsApiResponse

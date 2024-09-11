@@ -12,55 +12,11 @@ import SellerDetailsSkeleton from './SellerDetailsSkeleton'
 import {toast} from 'react-toastify'
 import {set} from 'react-hook-form'
 import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
-
-export interface SellerDetailsApiResponse {
-  accountNumber?: string
-  routingNumber?: string
-  storeName?: string
-  street?: string
-  city?: string
-  state: string
-  zip?: string
-  country?: string
-  storeHours?: string
-  legalBusinessName?: string
-  ein?: string
-  businessOwnerName?: string
-  businessStreet?: string
-  businessCity?: string
-  businessState: string
-  businessZip?: string
-  businessCountry?: string
-  businessOwnerDOB?: string
-  eSignatureConsent?: string
-  smsAuthorization?: string
-  feeConsent?: string
-  attachment1?: string
-  attachment2?: string
-  attachment3?: string
-  userId: string
-  createdAt: string
-  updatedAt: string
-  id: string // `id` is required
-}
-interface paymentPlanApiResponse {
-  settlementDays?: number
-  convenienceFee?: number
-  planName?: string
-  planDetails?: string
-  createdBy?: UserInterface
-  isActive?: boolean
-  createdAt: string
-  updatedAt: string
-  id: string
-}
-
-interface sellerDetailsCardProps {
-  onGoBack: () => void
-  selectedUser: UserInterface | undefined
-  setSelectedUser: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
-  setReRender: () => Promise<QueryObserverResult<any, Error>>
-}
+import {
+  paymentPlanApiResponse,
+  SellerDetailsApiResponse,
+  sellerDetailsCardProps,
+} from '../user.interfaces'
 
 const SellerDetailsCard: React.FC<sellerDetailsCardProps> = ({
   onGoBack,

@@ -12,7 +12,7 @@ const BusinessCategory = lazy(async () => import('app/pages/module/masterData/bu
 const SubCategory = lazy(
   async () => import('app/pages/module/masterData/subCategory/SubCategories')
 )
-const User = lazy(async () => import('app/pages/module/user/User'))
+const User = lazy(async () => import('app/pages/module/user/user.page'))
 const ProgramList = lazy(async () => import('app/pages/module/program/Program'))
 const SectionList = lazy(async () => import('app/pages/module/section/Section'))
 const Products = lazy(async () => import('app/pages/module/masterData/product/Product'))
@@ -26,7 +26,7 @@ const InvitationCoupon = lazy(
   async () => import('app/pages/module/invitationCoupon/InvitationCoupon')
 )
 const SellerPaymentPlan = lazy(async () => import('app/pages/module/seller/SellerPaymentPlan'))
-const UserDetailCard = lazy(async () => import('app/pages/module/user/UserDetail'))
+const UserDetailCard = lazy(async () => import('app/pages/module/user/user.component/UserDetail'))
 const AppVersionHistory = lazy(
   async () => import('app/pages/module/appVersionHistory/AppVersionHistory')
 )
