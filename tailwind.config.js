@@ -43,6 +43,7 @@ module.exports = {
         gray: {
           400: '#DEDFE4', // light
         },
+        'primary': '#1b4f80',
       },
       transitionDuration: {
         1500: '1500ms',
@@ -64,7 +65,6 @@ module.exports = {
           '0%, 100%': {transform: 'rotate(-3deg)'},
           '50%': {transform: 'rotate(3deg)'},
         },
-        
       },
       backgroundImage: (theme) => ({
         // sx: "url('/src/assets/img/sx.jpg')",

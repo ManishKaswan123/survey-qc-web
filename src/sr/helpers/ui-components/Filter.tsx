@@ -3,6 +3,8 @@ import {AiOutlineClose, AiOutlineFilter} from 'react-icons/ai'
 import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
 import {Button} from './Button'
 import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
+import {IoSearchSharp} from 'react-icons/io5'
+import {RxCross2} from 'react-icons/rx'
 
 const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) => {
   const [filters, setFilters] = useState(preFilters)
@@ -41,7 +43,7 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
   // })
 
   return (
-    <div className='w-full p-4 rounded-lg mt-4'>
+    <div className='w-full p-4 bg-slate-200 shadow-md'>
       <div className='grid grid-cols-4 gap-4'>
         {fields.map((field: any, index: number) => {
           if (field.type === 'dropdown') {
@@ -86,9 +88,10 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
                 type={field.type}
                 labelStyle='style1'
                 label={field.label}
-                className={`custom-input form-input p-2 border rounded ${
-                  isFilterActive(filters[field.email]) ? 'bg-gray-200' : 'bg-white'
-                } placeholder:text-[15px]`}
+                className={`text-black custom-input font-bold rounded-none form-input p-2 border  bg-gray-300 placeholder:text-[15px]  border-b-2 border-gray-400`}
+                // className={`custom-input form-input p-2 border rounded ${
+                //   isFilterActive(filters[field.email]) ? 'bg-gray-200' : 'bg-white'
+                // } placeholder:text-[15px]`}
                 name={field.name}
                 value={filters[field.name]}
                 onChange={handleChange}
@@ -98,21 +101,27 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
           }
         })}
       </div>
-      <div className='flex justify-start items-center mt-4'>
-        <Button
+      <div className='flex justify-start items-center mt-4 gap-3'>
+        <div onClick={handleApplyFilter} className='bg-purple-500 rounded-full p-3'>
+          <IoSearchSharp className='text-white' size={24} />
+        </div>
+        {/* <Button
           disabled={Object.keys(filters).length === 0}
           onClick={handleApplyFilter}
           className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
           Icon={AiOutlineFilter}
           label='Apply Filter'
-        ></Button>
-        <Button
+        ></Button> */}
+        <div onClick={handleClearFilter} className='bg-red-500 rounded-full p-3'>
+          <RxCross2 onClick={handleClearFilter} className='text-white' size={24} />
+        </div>
+        {/* <Button
           disabled={Object.keys(filters).length === 0}
           onClick={handleClearFilter}
           className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
           Icon={AiOutlineClose}
           label='Clear Filters'
-        ></Button>
+        ></Button> */}
       </div>
     </div>
   )
