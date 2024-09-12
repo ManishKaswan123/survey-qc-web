@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
-import {FaEdit, FaTrash, FaEye} from 'react-icons/fa'
+import {FaEdit, FaTrash, FaEye, FaGlobe, FaSquare, FaInfoCircle, FaTh} from 'react-icons/fa'
 import {Section} from '../sectionInterfaces'
+import {HiMiniSquares2X2} from 'react-icons/hi2'
 
 interface SectionTableProps {
   sectionData: Section[]
@@ -11,6 +12,20 @@ interface SectionTableProps {
 
 const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelete, onView}) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+
+  const data = [
+    {
+      ulbId: '801324',
+      ulbName: 'MUZAFFARPUR',
+      state: 'BIHAR',
+      target: '5000',
+      doScheduledDate: '12-Aug-2024 17:09:49',
+      lastSyncedTime: '14-Aug-2024 14:03:50',
+      status: 'COMPLETED',
+      id: '1',
+    },
+    // Add more records as needed
+  ]
 
   const toggleDescription = (id: string) => {
     setExpandedSections((prev) => {
@@ -25,74 +40,87 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
   }
 
   return (
-    <div className='overflow-x-auto my-5'>
-      <div className='shadow rounded-lg overflow-hidden'>
+    <div className='overflow-x-auto my-5 bg-white'>
+      <div className='shadow overflow-hidden'>
+        <div className='flex justify-end pt-2 pb-4 gap-4 mr-3'>
+          <div className='text-[#3690ea] text-sm font-semibold'>ULB list Download</div>
+          <div className='text-[#3690ea] text-sm font-semibold'>Ward list Download</div>
+        </div>
         <table className='min-w-full leading-normal'>
           <thead>
             <tr>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Section Name
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                ULB ID
               </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Language
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                ULB Name
               </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Description
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                State
               </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Question
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                Target
               </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Actions
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                DO Scheduled Date
+              </th>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                Last Synced Time
+              </th>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                Status
+              </th>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'></th>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                DO
+              </th>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider'>
+                SP
               </th>
             </tr>
           </thead>
           <tbody>
-            {sectionData.map((section) => (
-              <tr key={section.id} className='odd:bg-white even:bg-gray-50'>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <p className='text-gray-900 whitespace-no-wrap'>{section.sectionName}</p>
-                </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <p>{section.sectionLanguage}</p>
-                </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <p>
-                    {expandedSections.has(section.id)
-                      ? section.description
-                      : `${section.description.substring(0, 50)}...`}
-                    <button
-                      className='text-blue-500 hover:text-blue-700 ml-2'
-                      onClick={() => toggleDescription(section.id)}
-                    >
-                      {expandedSections.has(section.id) ? 'less' : 'more'}
-                    </button>
-                  </p>
-                </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <div className='flex ml-[20%]'>
-                    <button
-                      className='text-green-500 hover:text-green-700 text-center'
-                      onClick={() => onView(section?.id)}
-                    >
-                      <FaEye size={16} />
-                    </button>
+            {data.map((item) => (
+              <tr key={item.ulbId} className='odd:bg-white even:bg-gray-50'>
+                <td className='px-5 py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-center items-center'>
+                    <span>{item.ulbId}</span>
+                    <FaInfoCircle className='ml-2 text-blue-600' />
                   </div>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <div className='flex space-x-4'>
-                    <button
-                      className='text-blue-500 hover:text-blue-700'
-                      onClick={() => onEdit(section)}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className='text-red-500 hover:text-red-700'
-                      onClick={() => onDelete(section)}
-                    >
-                      <FaTrash />
-                    </button>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <p>{item.ulbName}</p>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <p>{item.state}</p>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-center items-center'>
+                    <FaEye className='text-blue-800' size={18} />
+                  </div>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <p>{item.doScheduledDate}</p>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <p>{item.lastSyncedTime}</p>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <span className='bg-green-500 text-white rounded px-2 py-1'>{item.status}</span>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-center items-center'>
+                    <FaGlobe className='text-green-600' size={18} />
+                  </div>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-center items-center'>
+                    <HiMiniSquares2X2 className='text-blue-800' size={20} />
+                  </div>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-center items-center'>
+                    <HiMiniSquares2X2 className='text-blue-800' size={20} />
                   </div>
                 </td>
               </tr>
