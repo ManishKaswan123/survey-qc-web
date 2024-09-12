@@ -323,6 +323,9 @@ const SectionList: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
+        <div className='mb-6 mt-3'>
+          <p className='text-xl font-semibold leading-tight text-gray-600'>SECTION</p>
+        </div>
         {/* <div className='w-full bg-white'> */}
         <div
           onClick={toggleExpand}

@@ -16,28 +16,28 @@ const UserTable: React.FC<UserTableProps> = (props) => {
   }
 
   return (
-    <div className='overflow-x-auto'>
-      <div className='shadow rounded-lg overflow-hidden'>
+    <div className='overflow-x-auto mb-5 bg-white'>
+      <div className='shadow overflow-hidden'>
         <table className='min-w-full leading-normal'>
           {/* Table headers */}
           <thead>
             <tr>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Name
               </th>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Login ID
               </th>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Email
               </th>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Type
               </th>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Action
               </th>
-              <th className='px-5 py-3 bg-[#265B91] text-left text-xs font-semibold text-slate-50 uppercase tracking-wider'>
+              <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Allocate
               </th>
             </tr>
@@ -46,36 +46,36 @@ const UserTable: React.FC<UserTableProps> = (props) => {
           {/* Table body */}
           <tbody>
             {props.userData?.map((user: UserInterface) => (
-              <tr key={user.id} className='odd:bg-white even:bg-gray-50'>
-                <td className='px-5 py-5 text-left border-b border-gray text-sm'>
+              <tr key={user.id} className='odd:bg-white even:bg-blue-50'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p className='text-gray-900 whitespace-no-wrap'>
                     {user.firstName} {user.lastName}
                   </p>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{user.id}</p>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{user.email}</p>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{user.role}</p>
                 </td>
-                <td className='px-5 py-5 border-b border-gray-200 text-sm'>
-                  <div className='flex space-x-2'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex items-center space-x-2 justify-center'>
                     <button className='bg-blue-500 hover:bg-blue-600 text-slate-50 p-2 rounded'>
-                      <FaSync />
+                      <FaSync className='w-7 h-4' />
                     </button>
                     <button className='bg-green-500 hover:bg-green-600 text-slate-50 p-2 rounded'>
-                      <FaEdit />
+                      <FaEdit className='w-7 h-4' />
                     </button>
                     <button className='bg-red-500 hover:bg-red-600 text-slate-50 p-2 rounded'>
-                      <FaTrash />
+                      <FaTrash className='w-7 h-4' />
                     </button>
                   </div>
                 </td>
-                <td className='px-5 py-5 border-b border-gray-200 text-sm'>
-                  <button className='bg-[#00B849] hover:bg-green-700 text-slate-50 font-md text-xs py-2 px-4 rounded'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
+                  <button className='bg-[#00B849] hover:bg-green-700 text-slate-50 font-md text-xs py-3 px-4 rounded font-semibold'>
                     ALLOCATE
                   </button>
                 </td>
