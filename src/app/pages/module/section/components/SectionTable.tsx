@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {FaEdit, FaTrash, FaEye, FaGlobe, FaSquare, FaInfoCircle, FaTh} from 'react-icons/fa'
 import {Section} from '../sectionInterfaces'
 import {HiMiniSquares2X2} from 'react-icons/hi2'
+import {useNavigate} from 'react-router-dom'
 
 interface SectionTableProps {
   sectionData: Section[]
@@ -12,6 +13,7 @@ interface SectionTableProps {
 
 const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelete, onView}) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+  const navigate = useNavigate()
 
   const data = [
     {
@@ -160,8 +162,16 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
                   </div>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <div className='flex justify-center items-center hover:cursor-pointer'>
-                    <HiMiniSquares2X2 className='text-blue-800' size={20} />
+
+                  <div className='flex justify-center items-center'>
+                    <HiMiniSquares2X2
+                      className='text-blue-800 hover:cursor-pointer'
+                      size={20}
+                      onClick={() => {
+                        navigate('/question')
+                      }}
+                    />
+
                   </div>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
