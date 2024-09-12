@@ -3,6 +3,8 @@ import {lazy, FC, Suspense} from 'react'
 import {Route, Routes, Navigate} from 'react-router-dom'
 import {MasterLayout} from 'sr/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
+import QuestionPage from 'app/pages/module/question/question.page'
+// import QuestionModal from 'app/pages/module/question/question.component/question.modal'
 // import EightySixResponseDetailsCard from 'app/pages/module/86Response/components/86ResponseDetailsCard'
 
 // Lazy loading components
@@ -84,6 +86,7 @@ const routeConfigs: RouteConfig[] = [
   {path: '/86-response', element: <EightySixResponse />},
   {path: '/86-response/:responseId', element: <EightySixResponseDetailsCard />},
   {path: '/chats', element: <Chats />},
+  {path: '/question', element: <QuestionPage />},
 ]
 
 const PrivateRoutes: FC = () => {
