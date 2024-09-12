@@ -19,6 +19,7 @@ import UserTable from './user.component/UserTable'
 import SellerDetailsCard from './user.component/SellerDetailsCard'
 import {IoSearchSharp} from 'react-icons/io5'
 import {RiArrowDownSLine, RiArrowUpSLine} from 'react-icons/ri'
+import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 // import {fetchUserResponse, userFilters} from '../user.interfaces'
 
 const Custom: React.FC = () => {
@@ -104,10 +105,8 @@ const Custom: React.FC = () => {
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
-        <div className='py-4'>
-          <div className='mb-6 mt-3'>
-            <p className='text-xl font-semibold leading-tight text-gray-600'>USER MANAGEMENT</p>
-          </div>
+        <div className='py-6'>
+          <h2 className='text-lg font-bold text-gray-700 mb-4'>USER MANAGEMENT</h2>
           {/* <div className='flex justify-between items-center flex-wrap mb-4'>
             <h2 className='text-2xl font-semibold leading-tight'>USER MANAGEMENT</h2>
             <Button
@@ -117,28 +116,7 @@ const Custom: React.FC = () => {
               className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center'
             />
           </div> */}
-          <div
-            onClick={toggleExpand}
-            className='flex justify-between items-center bg-white hover:cursor-pointer'
-          >
-            <div className='flex items-center bg-[#265B91] rounded-br-full px-6 py-3'>
-              <IoSearchSharp className='text-gray-50 mr-2 bg-transparent' size={20} />
-              <h3 className='text-gray-50 bg-transparent font-medium'>Filter</h3>
-            </div>
-
-            {!isExpanded && (
-              <p className='text-md  leading-tight mb-2 sm:mb-0 sm:mr-4 p-3 text-gray-400'>
-                Click to Search
-              </p>
-            )}
-            <div className='focus:outline-none p-3'>
-              {isExpanded ? (
-                <RiArrowUpSLine className='text-2xl' />
-              ) : (
-                <RiArrowDownSLine className='text-2xl' />
-              )}
-            </div>
-          </div>
+          <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
           {isExpanded && !selectedUser && (
             <div className='relative'>
               <Filter
