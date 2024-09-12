@@ -17,6 +17,7 @@ import {IoSearchSharp} from 'react-icons/io5'
 import {RiArrowDownSLine} from 'react-icons/ri'
 import {RiArrowUpSLine} from 'react-icons/ri'
 import {program} from './section.dummy'
+import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 
 const SectionList: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
@@ -194,28 +195,7 @@ const SectionList: React.FC = () => {
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
         <h2 className='text-lg font-bold text-gray-700 mb-4'>FIELD ASSESMENT-DIRECT OBSERVATION</h2>
-        <div
-          onClick={toggleExpand}
-          className='flex justify-between items-center bg-white hover:cursor-pointer'
-        >
-          <div className='flex items-center bg-[#265B91] rounded-br-full px-6 py-3'>
-            <IoSearchSharp className='text-gray-50 mr-2 bg-transparent' size={20} />
-            <h3 className='text-gray-50 bg-transparent font-medium'>Filter</h3>
-          </div>
-
-          {!isExpanded && (
-            <p className='text-md leading-tight mb-2 sm:mb-0 sm:mr-4 p-3 text-gray-400'>
-              Click to Search
-            </p>
-          )}
-          <div className='focus:outline-none p-3'>
-            {isExpanded ? (
-              <RiArrowUpSLine className='text-2xl' />
-            ) : (
-              <RiArrowDownSLine className='text-2xl' />
-            )}
-          </div>
-        </div>
+        <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
 
         {isExpanded && (
           <div className='relative'>
@@ -241,18 +221,6 @@ const SectionList: React.FC = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
-          />
-        )}
-        {!loading && totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalResults={totalResults}
-            onPageChange={onPageChange}
-            itemsPerPage={itemsPerPage}
-            name='Section'
-            onLimitChange={onLimitChange}
-            disabled={loading}
           />
         )}
 
