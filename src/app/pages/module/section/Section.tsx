@@ -22,7 +22,7 @@ import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 const SectionList: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
     () => [
-      {type: 'text', label: 'Section Name', name: 'name', placeholder: 'Section Name'},
+      {type: 'text', label: 'Section Name', name: 'name', placeholder: 'Enter Section Name'},
       {
         type: 'dropdown',
         label: 'programId',
