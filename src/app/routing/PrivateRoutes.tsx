@@ -16,7 +16,7 @@ const SubCategory = lazy(
 )
 const User = lazy(async () => import('app/pages/module/user/user.page'))
 const ProgramList = lazy(async () => import('app/pages/module/program/Program'))
-const SectionList = lazy(async () => import('app/pages/module/section/Section'))
+const Survey = lazy(async () => import('app/pages/module/section/survey.page'))
 const Products = lazy(async () => import('app/pages/module/masterData/product/Product'))
 const Orders = lazy(async () => import('app/pages/module/masterData/order/Order'))
 const ProductDetail = lazy(async () => import('app/pages/module/masterData/product/ProductDetail'))
@@ -63,8 +63,8 @@ const SuspensedView: FC<WithChildren> = ({children}) => {
 
 const routeConfigs: RouteConfig[] = [
   {path: '/program', element: <ProgramList />},
-  {path: '/section', element: <SectionList />},
-  {path: '/section/:id', element: <SectionList />},
+  {path: '/survey', element: <Survey />},
+  {path: '/survey/:id', element: <Survey />},
   {path: '/dashboard', element: <Dashboard />},
   {path: '/dashboard/:type', element: <Dashboard />},
   {path: '/business-category', element: <BusinessCategory />},

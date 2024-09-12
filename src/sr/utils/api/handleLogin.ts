@@ -14,15 +14,15 @@ const handleSignIn = async (payload: any) => {
     const response = await post<any>('/auth/login', payload, {
       headers,
     })
-    setCookieValue(ACCESS_TOKEN_KEY, response.tokens.access.token)
-    setCookieValue(REFRESH_TOKEN_KEY, response.tokens.refresh.token)
+    setCookieValue(ACCESS_TOKEN_KEY, response.results.tokens.access.token)
+    setCookieValue(REFRESH_TOKEN_KEY, response.results.tokens.refresh.token)
     const tokens: AuthModel = {
-      api_token: response.tokens.access.token,
-      refreshToken: response.tokens.refresh.token,
+      api_token: response.results.tokens.access.token,
+      refreshToken: response.results.tokens.refresh.token,
     }
     setAuth(tokens)
-    console.log('running', response)
-    localStorage.setItem('user', JSON.stringify(response.user))
+    // console.log('running', response)
+    localStorage.setItem('user', JSON.stringify(response.results.user))
     // setInterval(fetchTokenFromRefreshToken(getCookieValue(REFRESH_TOKEN_KEY) , '/auth'), (25 * 60 * 1000))
     // if (response.user) {
     //   window.location.href = '/dashboard'

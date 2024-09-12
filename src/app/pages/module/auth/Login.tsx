@@ -28,15 +28,16 @@ export default function Signin() {
   const handleSubmitForm = async (formData: any, e: any) => {
     let payload = {
       ...formData,
-      source: 'email',
+      // source: 'email',
     }
 
     try {
       const res = await handleSignIn(payload)
-      if (res.user) {
+      console.log('res.results.user', res)
+      if (res.results.user) {
         toast.success('User logged in successfully')
         setTimeout(() => {
-          window.location.href = '/dashboard'
+          window.location.href = '/survey'
         }, 1000)
       } else {
         toast.error('Login failed. Please check your credentials.')
