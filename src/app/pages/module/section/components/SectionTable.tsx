@@ -26,6 +26,46 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
       status: 'COMPLETED',
       id: '1',
     },
+    {
+      ulbId: '801324',
+      ulbName: 'MUZAFFARPUR',
+      state: 'BIHAR',
+      target: '5000',
+      doScheduledDate: '12-Aug-2024 17:09:49',
+      lastSyncedTime: '14-Aug-2024 14:03:50',
+      status: 'COMPLETED',
+      id: '2',
+    },
+    {
+      ulbId: '801324',
+      ulbName: 'MUZAFFARPUR',
+      state: 'BIHAR',
+      target: '5000',
+      doScheduledDate: '12-Aug-2024 17:09:49',
+      lastSyncedTime: '14-Aug-2024 14:03:50',
+      status: 'COMPLETED',
+      id: '3',
+    },
+    {
+      ulbId: '801324',
+      ulbName: 'MUZAFFARPUR',
+      state: 'BIHAR',
+      target: '5000',
+      doScheduledDate: '12-Aug-2024 17:09:49',
+      lastSyncedTime: '14-Aug-2024 14:03:50',
+      status: 'COMPLETED',
+      id: '4',
+    },
+    {
+      ulbId: '801324',
+      ulbName: 'MUZAFFARPUR',
+      state: 'BIHAR',
+      target: '5000',
+      doScheduledDate: '12-Aug-2024 17:09:49',
+      lastSyncedTime: '14-Aug-2024 14:03:50',
+      status: 'COMPLETED',
+      id: '5',
+    },
     // Add more records as needed
   ]
 
@@ -45,8 +85,12 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
     <div className='overflow-x-auto my-5 bg-white'>
       <div className='shadow overflow-hidden'>
         <div className='flex justify-end pt-2 pb-4 gap-4 mr-3'>
-          <div className='text-[#3690ea] text-sm font-semibold'>ULB list Download</div>
-          <div className='text-[#3690ea] text-sm font-semibold'>Ward list Download</div>
+          <div className='text-[#3690ea] text-sm font-semibold hover:cursor-pointer'>
+            ULB list Download
+          </div>
+          <div className='text-[#3690ea] text-sm font-semibold hover:cursor-pointer'>
+            Ward list Download
+          </div>
         </div>
         <table className='min-w-full leading-normal'>
           <thead>
@@ -83,8 +127,8 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.ulbId} className='odd:bg-white even:bg-gray-50'>
-                <td className='px-5 py-5 text-center border-b border-gray-200 text-sm border-r'>
+              <tr key={item.ulbId} className='odd:bg-white even:bg-blue-50'>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <div className='flex justify-center items-center'>
                     <span>{item.ulbId}</span>
                     <FaInfoCircle className='ml-2 text-blue-600' />
@@ -97,7 +141,7 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
                   <p>{item.state}</p>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <div className='flex justify-center items-center'>
+                  <div className='flex justify-center items-center hover:cursor-pointer'>
                     <FaEye className='text-blue-800' size={18} />
                   </div>
                 </td>
@@ -108,14 +152,17 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
                   <p>{item.lastSyncedTime}</p>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <span className='bg-green-500 text-white rounded px-2 py-1'>{item.status}</span>
+                  <span className='bg-green-500 text-white rounded px-2 py-1 hover:cursor-pointer'>
+                    {item.status}
+                  </span>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <div className='flex justify-center items-center'>
+                  <div className='flex justify-center items-center hover:cursor-pointer'>
                     <FaGlobe className='text-green-600' size={18} />
                   </div>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+
                   <div className='flex justify-center items-center'>
                     <HiMiniSquares2X2
                       className='text-blue-800 hover:cursor-pointer'
@@ -124,10 +171,11 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
                         navigate('/question')
                       }}
                     />
+
                   </div>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <div className='flex justify-center items-center'>
+                  <div className='flex justify-center items-center hover:cursor-pointer'>
                     <HiMiniSquares2X2 className='text-blue-800' size={20} />
                   </div>
                 </td>
