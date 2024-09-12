@@ -84,14 +84,14 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData, onEdit, onDelet
   return (
     <div className='overflow-x-auto my-5 bg-white'>
       <div className='shadow overflow-hidden'>
-        <div className='flex justify-end pt-2 pb-4 gap-4 mr-3'>
+        {/* <div className='flex justify-end pt-2 pb-4 gap-4 mr-3'>
           <div className='text-[#3690ea] text-sm font-semibold hover:cursor-pointer'>
             ULB list Download
           </div>
           <div className='text-[#3690ea] text-sm font-semibold hover:cursor-pointer'>
             Ward list Download
           </div>
-        </div>
+        </div> */}
         <table className='min-w-full leading-normal'>
           <thead>
             <tr>

@@ -69,7 +69,7 @@ const Pagination: React.FC<PaginationProps> = ({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={disabled || currentPage === 1}
             label='Previous'
-            className={`px-3 py-1.5 border border-gray-300  disabled:cursor-not-allowed disabled:!text-gray disabled:!bg-white bg-white text-blue-500 `}
+            className={`px-3 py-1.5 border border-gray-300  disabled:cursor-not-allowed disabled:!text-gray disabled:!bg-white bg-white text-[#265B91] `}
           />
           {paginationRange(currentPage, totalPages).map((number) => (
             <Button
@@ -77,14 +77,14 @@ const Pagination: React.FC<PaginationProps> = ({
               onClick={() => onPageChange(number)}
               disabled={disabled || currentPage === number}
               label={number.toString()}
-              className={`disabled:!bg-blue-500 disabled:!text-white disabled:!border-blue-500 disabled:cursor-not-allowed !bg-white !text-blue-500 px-3 py-1.5 border-t border-b border-r border-gray-300 `}
+              className={`disabled:!bg-[#265B91] disabled:!text-white disabled:!border-[#265B91] disabled:cursor-not-allowed !bg-white !text-[#265B91] px-3 py-1.5 border-t border-b border-r border-gray-300 `}
             />
           ))}
           <Button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={disabled || currentPage === totalPages}
             label='Next'
-            className={`px-3 py-1.5 border-r border-t border-b border-gray-300  disabled:cursor-not-allowed disabled:!text-gray disabled:!bg-white bg-white text-blue-500 `}
+            className={`px-3 py-1.5 border-r border-t border-b border-gray-300  disabled:cursor-not-allowed disabled:!text-gray disabled:!bg-white bg-white text-[#265B91] `}
           />
         </div>
       </div>

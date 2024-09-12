@@ -1,14 +1,12 @@
-import {useState} from 'react'
-import {AiOutlineClose, AiOutlineFilter} from 'react-icons/ai'
-import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
-import {Button} from './Button'
-import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
+import React, {useState} from 'react'
 import {IoSearchSharp} from 'react-icons/io5'
 import {RxCross2} from 'react-icons/rx'
+import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
+import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
 
 const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) => {
   const [filters, setFilters] = useState(preFilters)
-  // console.log('fields are :- ', fields)
+
   const handleChange = (e: any) => {
     const {name, value, type, checked} = e.target
     setFilters({
@@ -16,6 +14,7 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
       [name]: type === 'checkbox' ? checked : value,
     })
   }
+
   const handleClearFilter = () => {
     setFilters({})
     onApplyFilter({})
@@ -36,62 +35,33 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
   }
 
   const isFilterActive = (filterValue: any) => {
-    return filterValue != '' && filterValue != null
+    return filterValue !== '' && filterValue != null
   }
-  // fields.map((field: any) => {
-  //   console.log('filters is :', field)
-  // })
 
   return (
-    <div className='w-full p-4 bg-gray-200 shadow-md'>
-      <div className='grid grid-cols-4 gap-4'>
+    <div className='w-full p-6 bg-white rounded-lg shadow-lg'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {fields.map((field: any, index: number) => {
           if (field.type === 'dropdown') {
             return (
-              <div key={index}>
-                <DropdownField
-                  data={field.name}
-                  labelKey={field.labelKey || 'name'}
-                  label={field.topLabel}
-                  placeholder={field.placeholder}
-                  valueKey='id'
-                  value={filters[field.label] ? filters[field.label] : ''}
-                  // className={`${isFilterActive(filters[field.label]) ? 'bg-gray-200' : 'bg-white'}`}
-                  onChange={handleChange}
-                  name={field.label}
-                />
-              </div>
-            )
-          } else if (field.type === 'checkbox') {
-            return (
-              <div key={field.name} className='flex justify-center'>
-                <input
-                  type='checkbox'
-                  name={field.name}
-                  checked={filters[field.name]}
-                  onChange={handleChange}
-                  className='mr-2 mt-7'
-                />
-                <label
-                  className={`p-2 pl-8 pr-8 mt-7 border rounded ${
-                    isFilterActive(filters[field.name]) ? 'bg-gray-200' : 'bg-white'
-                  }`}
-                >
-                  {field.label}
-                </label>
-              </div>
+              <DropdownField
+                key={index}
+                data={field.name}
+                labelKey={field.labelKey || 'name'}
+                label={field.topLabel}
+                placeholder={field.placeholder}
+                valueKey='id'
+                value={filters[field.label] ? filters[field.label] : ''}
+                onChange={handleChange}
+                name={field.label}
+              />
             )
           } else {
             return (
               <TextField
                 key={field.name}
                 type={field.type}
-                labelStyle='style1'
                 label={field.label}
-                className={`text-black custom-input font-bold rounded-none form-input p-2 border  bg-gray-300 placeholder:text-[15px]  border-b-2 border-gray-400`}
-                // className={`custom-input form-input p-2 border rounded ${
-                //   isFilterActive(filters[field.email]) ? 'bg-gray-200' : 'bg-white'
-                // } placeholder:text-[15px]`}
                 name={field.name}
                 value={filters[field.name]}
                 onChange={handleChange}
@@ -101,33 +71,21 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
           }
         })}
       </div>
-      <div className='flex justify-start items-center mt-4 gap-3'>
-        <div
+      <div className='flex justify-start items-center mt-6 gap-4'>
+        <button
           onClick={handleApplyFilter}
-          className='bg-[#504aa7] rounded-full p-4 hover:cursor-pointer'
+          className='flex items-center justify-center bg-[#265B91] hover:bg-blue-700 text-slate-50 font-semibold py-2 px-4 ml-2 rounded-full shadow transition duration-300 ease-in-out'
         >
-          <IoSearchSharp className='text-gray-50' size={22} />
-        </div>
-        {/* <Button
-          disabled={Object.keys(filters).length === 0}
-          onClick={handleApplyFilter}
-          className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
-          Icon={AiOutlineFilter}
-          label='Apply Filter'
-        ></Button> */}
-        <div
+          <IoSearchSharp className='mr-2' size={18} />
+          Apply
+        </button>
+        <button
           onClick={handleClearFilter}
-          className='bg-[#c91906] rounded-full p-4 hover:cursor-pointer'
+          className='flex items-center justify-center bg-red-600 hover:bg-red-700 text-slate-50 font-semibold py-2 px-4 rounded-full shadow transition duration-300 ease-in-out'
         >
-          <RxCross2 onClick={handleClearFilter} className='text-gray-50 font-bold' size={22} />
-        </div>
-        {/* <Button
-          disabled={Object.keys(filters).length === 0}
-          onClick={handleClearFilter}
-          className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
-          Icon={AiOutlineClose}
-          label='Clear Filters'
-        ></Button> */}
+          <RxCross2 className='mr-2' size={18} />
+          Clear
+        </button>
       </div>
     </div>
   )
