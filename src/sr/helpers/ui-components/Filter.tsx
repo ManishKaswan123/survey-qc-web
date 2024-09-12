@@ -43,7 +43,7 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
   // })
 
   return (
-    <div className='w-full p-4 bg-slate-200 shadow-md'>
+    <div className='w-full p-4 bg-gray-200 shadow-md'>
       <div className='grid grid-cols-4 gap-4'>
         {fields.map((field: any, index: number) => {
           if (field.type === 'dropdown') {
@@ -102,8 +102,11 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
         })}
       </div>
       <div className='flex justify-start items-center mt-4 gap-3'>
-        <div onClick={handleApplyFilter} className='bg-purple-500 rounded-full p-3'>
-          <IoSearchSharp className='text-white' size={24} />
+        <div
+          onClick={handleApplyFilter}
+          className='bg-[#504aa7] rounded-full p-4 hover:cursor-pointer'
+        >
+          <IoSearchSharp className='text-gray-50' size={22} />
         </div>
         {/* <Button
           disabled={Object.keys(filters).length === 0}
@@ -112,8 +115,11 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
           Icon={AiOutlineFilter}
           label='Apply Filter'
         ></Button> */}
-        <div onClick={handleClearFilter} className='bg-red-500 rounded-full p-3'>
-          <RxCross2 onClick={handleClearFilter} className='text-white' size={24} />
+        <div
+          onClick={handleClearFilter}
+          className='bg-[#c91906] rounded-full p-4 hover:cursor-pointer'
+        >
+          <RxCross2 onClick={handleClearFilter} className='text-gray-50 font-bold' size={22} />
         </div>
         {/* <Button
           disabled={Object.keys(filters).length === 0}

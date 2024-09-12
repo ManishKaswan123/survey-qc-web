@@ -328,13 +328,15 @@ const SectionList: React.FC = () => {
           onClick={toggleExpand}
           className='flex justify-between items-center bg-white hover:cursor-pointer'
         >
-          <div className='flex items-center bg-blue-400 rounded-br-full px-6 py-3'>
-            <IoSearchSharp className='text-white mr-2 bg-transparent' size={20} />
-            <h3 className='text-white bg-transparent font-medium'>Filter</h3>
+          <div className='flex items-center bg-[#265B91] rounded-br-full px-6 py-3'>
+            <IoSearchSharp className='text-gray-50 mr-2 bg-transparent' size={20} />
+            <h3 className='text-gray-50 bg-transparent font-medium'>Filter</h3>
           </div>
 
           {!isExpanded && (
-            <p className='text-md  leading-tight mb-2 sm:mb-0 sm:mr-4 p-3'>Click to Search</p>
+            <p className='text-md  leading-tight mb-2 sm:mb-0 sm:mr-4 p-3 text-gray-400'>
+              Click to Search
+            </p>
           )}
           <div className='focus:outline-none p-3'>
             {isExpanded ? (
