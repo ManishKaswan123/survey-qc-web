@@ -4,7 +4,7 @@ import {RxCross2} from 'react-icons/rx'
 import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
 import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
 
-const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) => {
+const Filter = ({onApplyFilter, preFilters, fields}: any) => {
   const [filters, setFilters] = useState(preFilters)
 
   const handleChange = (e: any) => {
@@ -18,7 +18,6 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
   const handleClearFilter = () => {
     setFilters({})
     onApplyFilter({})
-    setIsFilterVisible(false)
   }
 
   const handleApplyFilter = () => {
@@ -31,7 +30,6 @@ const Filter = ({onApplyFilter, setIsFilterVisible, preFilters, fields}: any) =>
       })
     )
     onApplyFilter(activeFilters)
-    setIsFilterVisible(false)
   }
 
   const isFilterActive = (filterValue: any) => {

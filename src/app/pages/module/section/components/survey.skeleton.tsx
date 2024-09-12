@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SectionSkeleton: React.FC = () => {
+const SurveySkeleton: React.FC = () => {
   return (
     <div className='bg-white shadow-lg rounded-lg p-6 mb-4 animate-pulse'>
       <div className='h-6 bg-gray-300 rounded mb-3'></div>
@@ -14,4 +14,4 @@ const SectionSkeleton: React.FC = () => {
   )
 }
 
-export default SectionSkeleton
+export default SurveySkeleton

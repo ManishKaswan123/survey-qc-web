@@ -201,10 +201,10 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                       </Link>
                     </li> */}
                     <li className='items-center'>
-                      <Link to='/section' replace>
+                      <Link to='/survey' replace>
                         <button
                           className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'section' && subPath === undefined ? 'text-rose-600' : ''
+                            path === 'survey' && subPath === undefined ? 'text-rose-600' : ''
                           }`}
                         >
                           <svg
