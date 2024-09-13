@@ -2,8 +2,9 @@ import React from 'react'
 import {useNavigate} from 'react-router-dom'
 import {FaRocket} from 'react-icons/fa'
 import {SectionTableProps} from '../section.interfaces'
+import {statusColors, statusMap} from 'sr/constants/status'
 
-const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
+const SectionTable: React.FC<SectionTableProps> = ({sectionData, receivedData}) => {
   const navigate = useNavigate()
 
   return (
@@ -66,7 +67,13 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
                   <p>{`${survey.qaId?.firstName || ''} ${' '} ${survey.qaId?.lastName || ''}`}</p>
                 </td> */}
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <span className='text-yellow-500 font-bold text-md'>{}</span>
+                  <span
+                    className={`font-bold text-md ${
+                      statusColors[receivedData[section._id] || 'yetToStart']
+                    }`}
+                  >
+                    {statusMap.get(receivedData[section._id] || 'yetToStart')}
+                  </span>
                 </td>
 
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
@@ -75,7 +82,9 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
                       className='text-blue-800 hover:cursor-pointer'
                       size={20}
                       onClick={() => {
-                        navigate('/question/' + section._id)
+                        navigate(
+                          `/question/?sectionId=${section._id}&programId=${section.programId}`
+                        )
                       }}
                     />
                   </div>
