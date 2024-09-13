@@ -1,48 +1,55 @@
-interface Option {
-  value: string
-  label: string
+export interface FilterProps {
+  surveyId?: string
+  programId?: string
+  sectionId?: string
+  status?: string
+  createdBy?: string
+  limit?: number
+  page?: number
+  getAll?: boolean
+  projectBy?: string
+  sortBy?: string
+  populate?: string
 }
-type QuestionType =
-  | 'text'
-  | 'number'
-  | 'datepicker'
-  | 'daterangepicker'
-  | 'radio'
-  | 'checkbox'
-  | 'filetype'
-export interface Question {
-  questionNumber: number
-  questionName: string
-  questionType: QuestionType
-  validation: string
-  isMandatory: boolean
-  dependentOnQuestion?: string
-  dependentOnOption?: string
-  answerType: 'single' | 'multiple'
-  options: Option[]
+
+export interface Section {
+  sectionId: string
+  status: string
+  _id: string
+}
+export interface AnswerInterface {
+  textResponse: string
+  multipleChoiceResponse: string[]
+  remarks?: string
+  qaRemarks?: string
+  status?: string
+  programId?: string
+  sectionId?: string
+  questionId?: {
+    questionCode: string
+    name: string
+    id: string
+  }
+  createdBy?: {}
+  faId?: {}
+  surveyId?: {}
+  isActive?: boolean
   id: string
 }
 
-export interface QuestionApIResponse {
-  results: Question[]
-  page: number
-  limit: number
-  totalPages: number
-  totalResults: number
+export interface QuestionResponse {
+  status: string
+  results: {
+    results: AnswerInterface[]
+    page: number
+    limit: number
+    totalPages: number
+    totalResults: number
+  }
 }
 
-export interface QuestionFilters {
-  questionType?: string
-  validation?: string
-  isMandatory?: string
-  dependentOnQuestion?: string
-  answerType?: string
-}
-
-export interface TableProps {
-  setSelectedData: React.Dispatch<React.SetStateAction<any>>
-  setIsUpdateModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  questions: Question[]
-  handleDelete?: (id: string) => Promise<void>
-  handleView?: (fileUrl: string | undefined) => Promise<void>
+export interface QuestionTableProps {
+  key: string
+  question: AnswerInterface
+  setIsUpdateModalOpen?: (isOpen: boolean) => void
 }

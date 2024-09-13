@@ -1,8 +1,10 @@
 // src/actions/userActions.ts
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
+import {UserInterface} from 'sr/constants/User'
 export const fetchUserData = createAsyncThunk('user/fetchUserData', async (payload: any) => {
-  const {totalResults} = await fetchUser({})
+  const {results} = await fetchUser({})
+  const totalResults = results.totalResults
   const response = await fetchUser({limit: totalResults})
   const statistics: any = {
     data: [
@@ -13,7 +15,7 @@ export const fetchUserData = createAsyncThunk('user/fetchUserData', async (paylo
     totalUsers: totalResults,
   }
   // Update statistics based on user data
-  response.results.forEach((user: any) => {
+  response?.results?.results?.forEach((user: UserInterface) => {
     if (user.role === 'retailUser') {
       statistics.data[1].amount++
     } else if (user.role === 'businessUser') {

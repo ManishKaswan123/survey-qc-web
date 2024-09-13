@@ -1,6 +1,4 @@
-import ApiResponse from 'sr/models/ApiResponse'
-import {get, patch, post} from 'sr/utils/axios/index'
-import {alertService} from 'sr/utils/services/alert.service'
+import {patch} from 'sr/utils/axios/index'
 import {toast} from 'react-toastify'
 
 export const updateUser = async (payload: any, id: string) => {

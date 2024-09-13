@@ -29,7 +29,6 @@ const InvitationCoupon = lazy(
   async () => import('app/pages/module/invitationCoupon/InvitationCoupon')
 )
 const SellerPaymentPlan = lazy(async () => import('app/pages/module/seller/SellerPaymentPlan'))
-const UserDetailCard = lazy(async () => import('app/pages/module/user/user.component/UserDetail'))
 const AppVersionHistory = lazy(
   async () => import('app/pages/module/appVersionHistory/AppVersionHistory')
 )
@@ -72,7 +71,6 @@ const routeConfigs: RouteConfig[] = [
   {path: '/sub-category', element: <SubCategory />},
   {path: '/category', element: <Categories />},
   {path: '/user', element: <User />},
-  {path: '/user/:userId', element: <UserDetailCard />},
   {path: '/product', element: <Products />},
   {path: '/product/:productId', element: <ProductDetail />},
   {path: '/order', element: <Orders />},

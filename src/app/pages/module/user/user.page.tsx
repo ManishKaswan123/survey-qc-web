@@ -1,26 +1,17 @@
 import React, {useState, useMemo} from 'react'
-// import UserTable from './UserTable'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
-import {Spinner} from 'sr/helpers/ui-components/Spinner'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
-import {AiOutlineFilter, AiOutlineUpload, AiOutlineUserAdd} from 'react-icons/ai'
+import {AiOutlineUserAdd} from 'react-icons/ai'
 import {Button} from 'sr/helpers'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
-import {UserInterface} from 'sr/constants/User'
-// import SellerDetailsCard from './SellerDetailsCard'
 import {useQuery} from '@tanstack/react-query'
-// import UserTableSkeleton from './UserTableSkeleton'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {fetchUserResponse, userFilters} from './user.interfaces'
+import {UserInterface, userFilters} from './user.interfaces'
 import UserTableSkeleton from './user.component/UserTableSkeleton'
 import UserTable from './user.component/UserTable'
-import SellerDetailsCard from './user.component/SellerDetailsCard'
-import {IoSearchSharp} from 'react-icons/io5'
-import {RiArrowDownSLine, RiArrowUpSLine} from 'react-icons/ri'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
-// import {fetchUserResponse, userFilters} from '../user.interfaces'
 
 const Custom: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -77,11 +68,13 @@ const Custom: React.FC = () => {
     []
   )
 
-  const {data, error, isLoading, isError, refetch} = useQuery<fetchUserResponse>({
+  const {data, error, isLoading, isError, refetch} = useQuery({
     queryKey: ['users', {limit: itemsPerPage, page: currentPage, ...filters}],
     queryFn: async () => fetchUser({limit: itemsPerPage, page: currentPage, ...filters}),
     retry: false,
   })
+
+  console.log('data is manish :- ', data)
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -132,43 +125,48 @@ const Custom: React.FC = () => {
               <div className='flex justify-between   p-3 mt-5'>
                 <h3 className='text-md font-semibold text-gray-600'>User List</h3>
                 <div className='flex items-center'>
-                  <Button
+                  {/* <Button
                     label='USER BULK UPLOAD'
                     Icon={AiOutlineUpload}
                     onClick={() => {
                       // Implement bulk upload functionality
                     }}
                     className='bg-[#00B849] hover:bg-green-700 text-slate-50 font-medium text-sm py-3 px-4 rounded flex items-center'
-                  />
+                  /> */}
                   <Button
                     label='ADD USER'
                     Icon={AiOutlineUserAdd}
                     onClick={() => {
                       // Implement add user functionality
                     }}
-                    className='bg-[#0F68F3] hover:bg-blue-700 text-slate-50 font-medium text-sm py-3 px-4 rounded flex items-center ml-2'
+                    className='bg-[#265B91] hover:bg-[#1e4770] text-slate-50 font-medium text-sm py-3 px-4 rounded flex items-center ml-2'
                   />
                 </div>
               </div>
               <hr className='border-gray-200 pb-4' />
             </div>
           )}
-          {isLoading ? (
-            <UserTableSkeleton />
-          ) : !selectedUser ? (
-            <div>
-              <UserTable userData={data?.results} onSelectUser={setSelectedUser} />
-            </div>
-          ) : (
-            <SellerDetailsCard
-              setReRender={async () => refetch()}
-              setSelectedUser={setSelectedUser}
-              selectedUser={selectedUser}
-              onGoBack={() => {
-                setSelectedUser(undefined)
-              }}
-            />
-          )}
+          {
+            isLoading ? (
+              <UserTableSkeleton />
+            ) : (
+              // !selectedUser ?
+              <div>
+                <UserTable userData={data?.results?.results} onSelectUser={setSelectedUser} />
+              </div>
+            )
+            // :
+            // (
+            //   <SellerDetailsCard
+            //     setReRender={async () => refetch()}
+            //     setSelectedUser={setSelectedUser}
+            //     selectedUser={selectedUser}
+            //     onGoBack={() => {
+            //       setSelectedUser(undefined)
+            //     }}
+            //   />
+            // )
+          }
         </div>
         {isLoading || isError ? (
           <PaginationSkeleton />
@@ -176,9 +174,9 @@ const Custom: React.FC = () => {
           !selectedUser && (
             <Pagination
               currentPage={currentPage}
-              totalPages={data?.totalPages || 0}
+              totalPages={data?.results?.totalPages || 0}
               onPageChange={onPageChange}
-              totalResults={data?.totalResults || 0}
+              totalResults={data?.results?.totalResults || 0}
               itemsPerPage={itemsPerPage}
               name='Users'
               onLimitChange={onLimitChange}
