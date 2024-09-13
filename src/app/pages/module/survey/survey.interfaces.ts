@@ -1,3 +1,5 @@
+import {statusType} from 'sr/constants/status'
+
 export interface FilterProps {
   programId?: string
   status?: string
@@ -22,7 +24,7 @@ export interface Survey {
   firstName: string
   lastName: string
   sections: Section[]
-  status: string
+  status: statusType
   createdBy: Record<string, any>
   programId: Record<string, any>
   isActive: boolean
