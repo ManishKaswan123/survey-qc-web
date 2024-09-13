@@ -231,6 +231,36 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                       </Link>
                     </li>
                     <li className='items-center'>
+                      <Link to='/section' replace>
+                        <button
+                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                            path === 'section' && subPath === undefined ? 'text-rose-600' : ''
+                          }`}
+                        >
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            className='h-5 w-5 mr-2'
+                            fill='none'
+                            viewBox='0 0 24 24'
+                            stroke='currentColor'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M3 7h18M3 11h18M3 15h18M3 19h18'
+                            />
+                          </svg>
+
+                          {sideCollapseItem === 'show' ? (
+                            <span className='text-left'>Section</span>
+                          ) : (
+                            ''
+                          )}
+                        </button>
+                      </Link>
+                    </li>
+                    <li className='items-center'>
                       <Link to='/dashboard' replace>
                         <button
                           className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${

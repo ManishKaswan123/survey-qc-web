@@ -16,7 +16,8 @@ const SubCategory = lazy(
 )
 const User = lazy(async () => import('app/pages/module/user/user.page'))
 const ProgramList = lazy(async () => import('app/pages/module/program/Program'))
-const Survey = lazy(async () => import('app/pages/module/section/survey.page'))
+const Survey = lazy(async () => import('app/pages/module/survey/survey.page'))
+const Section = lazy(async () => import('app/pages/module/section/section.page'))
 const Products = lazy(async () => import('app/pages/module/masterData/product/Product'))
 const Orders = lazy(async () => import('app/pages/module/masterData/order/Order'))
 const ProductDetail = lazy(async () => import('app/pages/module/masterData/product/ProductDetail'))
@@ -87,6 +88,7 @@ const routeConfigs: RouteConfig[] = [
   {path: '/86-response/:responseId', element: <EightySixResponseDetailsCard />},
   {path: '/chats', element: <Chats />},
   {path: '/question', element: <QuestionPage />},
+  {path: '/section', element: <Section />},
 ]
 
 const PrivateRoutes: FC = () => {
