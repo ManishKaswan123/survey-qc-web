@@ -1,12 +1,41 @@
 import {QueryObserverResult} from '@tanstack/react-query'
-import {UserInterface} from 'sr/constants/User'
+
+export interface UserInterface {
+  languagePreference: []
+  sellerStatus?: string
+  sellerPaymentPlanId?: string
+  email: string
+  mobile: string
+  role: string
+  isEmailVerified: boolean
+  isMobileVerified: boolean
+  firstName: string
+  lastName: string
+  createdAt: string
+  updatedAt: string
+  isActive: boolean
+  id: string
+}
+
+export interface PayloadType {
+  limit?: number
+  page?: number
+  role?: string
+  sellerStatus?: string
+  isEmailVerified?: boolean
+  sortBy?: string
+  projectBy?: string
+}
 
 export interface fetchUserResponse {
-  results: UserInterface[]
-  page: number
-  limit: number
-  totalPages: number
-  totalResults: number
+  status: string
+  results: {
+    results: UserInterface[]
+    page: number
+    limit: number
+    totalPages: number
+    totalResults: number
+  }
 }
 
 export interface userFilters {
@@ -14,9 +43,10 @@ export interface userFilters {
   sellerStatus?: string
   isEmailVerified?: boolean
 }
+
 export interface UserTableProps {
   userData: UserInterface[] | undefined
-  onSelectUser: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
+  onSelectUser?: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
 }
 
 export interface SellerDetailsApiResponse {

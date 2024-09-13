@@ -1,19 +1,19 @@
 import React from 'react'
 import {FaSync, FaEdit, FaTrash} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
-import {UserInterface} from 'sr/constants/User'
-import {UserTableProps} from '../user.interfaces'
+import {UserInterface, UserTableProps} from '../user.interfaces'
+import {MdCloudSync} from 'react-icons/md'
 
 const UserTable: React.FC<UserTableProps> = (props) => {
   const navigate = useNavigate()
 
-  const handleView = (user: UserInterface) => {
-    props.onSelectUser(user)
-  }
+  // const handleView = (user: UserInterface) => {
+  //   props.onSelectUser(user)
+  // }
 
-  const handleUserDetail = (user: UserInterface) => {
-    navigate(`/user/${user.id}`)
-  }
+  // const handleUserDetail = (user: UserInterface) => {
+  //   navigate(`/user/${user?.id}`)
+  // }
 
   return (
     <div className='overflow-x-auto mb-5 bg-white'>
@@ -46,14 +46,14 @@ const UserTable: React.FC<UserTableProps> = (props) => {
           {/* Table body */}
           <tbody>
             {props.userData?.map((user: UserInterface) => (
-              <tr key={user.id} className='odd:bg-white even:bg-blue-50'>
+              <tr key={user?.id} className='odd:bg-white even:bg-blue-50'>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p className='text-gray-900 whitespace-no-wrap'>
                     {user.firstName} {user.lastName}
                   </p>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{user.id}</p>
+                  <p>{user?.id}</p>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{user.email}</p>
@@ -63,19 +63,19 @@ const UserTable: React.FC<UserTableProps> = (props) => {
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <div className='flex items-center space-x-2 justify-center'>
-                    <button className='bg-blue-500 hover:bg-blue-600 text-slate-50 p-2 rounded'>
-                      <FaSync className='w-7 h-4' />
+                    <button className='bg-blue-500 hover:bg-blue-600 text-slate-50 p-2 rounded-full'>
+                      <MdCloudSync />
                     </button>
-                    <button className='bg-green-500 hover:bg-green-600 text-slate-50 p-2 rounded'>
-                      <FaEdit className='w-7 h-4' />
+                    <button className='bg-green-500 hover:bg-green-600 text-slate-50 p-2 rounded-full'>
+                      <FaEdit />
                     </button>
-                    <button className='bg-red-500 hover:bg-red-600 text-slate-50 p-2 rounded'>
-                      <FaTrash className='w-7 h-4' />
+                    <button className='bg-red-500 hover:bg-red-600 text-slate-50 p-2 rounded-full'>
+                      <FaTrash />
                     </button>
                   </div>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
-                  <button className='bg-[#00B849] hover:bg-green-700 text-slate-50 font-md text-xs py-3 px-4 rounded font-semibold'>
+                  <button className='bg-[#4a95e0] hover:bg-[#4686ed] text-slate-50 font-md text-xs py-3 px-4 rounded font-semibold '>
                     ALLOCATE
                   </button>
                 </td>

@@ -1,22 +1,6 @@
 import {get} from 'sr/utils/axios/index'
 import {UserInterface} from 'sr/constants/User'
-
-interface PayloadType {
-  limit?: number
-  page?: number
-  role?: string
-  sellerStatus?: string
-  isEmailVerified?: boolean
-  sortBy?: string
-  projectBy?: string
-}
-interface fetchUserResponse {
-  results: UserInterface[]
-  page: number
-  limit: number
-  totalPages: number
-  totalResults: number
-}
+import {PayloadType, fetchUserResponse} from '../user.interfaces'
 
 const filterPayload = (payload: PayloadType) => {
   return Object.fromEntries(
@@ -29,7 +13,7 @@ export const fetchUser = async (payload: PayloadType): Promise<fetchUserResponse
   try {
     const res = await get<fetchUserResponse>(`/users`, filteredPayload)
 
-    if (res && res.results && res.totalResults > 0) {
+    if (res && res.status == 'success') {
       return res // Return the fetched data
     } else {
       // Handle the case where results are not present
