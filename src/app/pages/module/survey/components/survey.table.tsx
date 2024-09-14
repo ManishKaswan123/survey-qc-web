@@ -19,23 +19,18 @@ const SurveyTable: React.FC<SurveyTableProps> = ({surveyData}) => {
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Mobile
               </th>
+
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Created By
+                FA
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Updated At
-              </th>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                FA ID
-              </th>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                QA ID
+                QA
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Status
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider'>
-                DO
+                QC
               </th>
             </tr>
           </thead>
@@ -48,12 +43,7 @@ const SurveyTable: React.FC<SurveyTableProps> = ({surveyData}) => {
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{survey.mobile}</p>
                 </td>
-                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{survey.createdBy.firstName + ' ' + survey.createdBy.lastName}</p>
-                </td>
-                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{survey.updatedAt}</p>
-                </td>
+
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{`${survey.faId?.firstName || ''} ${' '} ${survey.faId?.lastName || ''}`}</p>
                 </td>
@@ -71,7 +61,9 @@ const SurveyTable: React.FC<SurveyTableProps> = ({surveyData}) => {
                       className='text-[#265B91] hover:cursor-pointer'
                       size={20}
                       onClick={() => {
-                        navigate('/section', {state: survey.sections})
+                        navigate(`/section?programId=${survey.programId}&surveyId=${survey.id}`, {
+                          state: survey.sections,
+                        })
                       }}
                     />
                   </div>

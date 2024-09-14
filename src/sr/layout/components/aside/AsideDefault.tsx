@@ -170,7 +170,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                     className={` pl-[0.2rem] md:min-w-full text-rose-800 text-sm uppercase font-bold block pt-4 pb-2 no-underline`}
                   ></h6>
                   <ul className='md:flex-col md:min-w-full flex flex-col list-none'>
-                    {/* <li className='items-center'>
+                    <li className='items-center'>
                       <Link to='/program' replace>
                         <button
                           className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
@@ -199,7 +199,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                           )}
                         </button>
                       </Link>
-                    </li> */}
+                    </li>
                     <li className='items-center'>
                       <Link to='/survey' replace>
                         <button
@@ -296,7 +296,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                         </button>
                       </Link>
                     </li>
-                    {/* <li
+                    <li
                       onClick={() => setShow(!show)}
                       className='uppercase flex items-center cursor-pointer text-gray-900 font-semibold hover:text-rose-600'
                     >
@@ -341,7 +341,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                           <path strokeLinecap='round' strokeLinejoin='round' d='M19 9l-7 7-7-7' />
                         )}
                       </svg>
-                    </li> */}
+                    </li>
                     {show === true && (
                       <ul className='pl-6'>
                         {' '}
