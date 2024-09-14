@@ -105,6 +105,10 @@ body {
   font-weight: 400;
 }
 
+.primary-bg {
+  background-color: #265b91;
+}
+
 @keyframes lds-ellipsis1 {
   0% {
     transform: scale(0);
