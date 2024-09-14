@@ -12,7 +12,7 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
         <table className='min-w-full leading-normal'>
           <thead>
             <tr>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+              <th className='py-5 primary-bg text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Display Order
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>

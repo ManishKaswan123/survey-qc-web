@@ -14,14 +14,7 @@ import QuestionCard from './question.component/question.card'
 
 const Custom: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
-    () => [
-      {type: 'text', label: 'Status', name: 'status', placeholder: 'Enter Status'},
-      {type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'},
-      {type: 'text', label: 'Section Id', name: 'sectionId', placeholder: 'Enter Section Id'},
-      {type: 'text', label: 'Survey Id', name: 'surveyId', placeholder: 'Enter Survey Id'},
-      {type: 'text', label: 'Created By', name: 'createdBy', placeholder: 'Enter Created By'},
-      {type: 'text', label: 'FA Id', name: 'faId', placeholder: 'Enter FA Id'},
-    ],
+    () => [{type: 'text', label: 'Status', name: 'status', placeholder: 'Enter Status'}],
     []
   )
 

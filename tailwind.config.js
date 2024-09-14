@@ -43,7 +43,9 @@ module.exports = {
         gray: {
           400: '#DEDFE4', // light
         },
-        'primary': '#1b4f80',
+        primary: {
+          100: '#1b4f80',
+        },
       },
       transitionDuration: {
         1500: '1500ms',

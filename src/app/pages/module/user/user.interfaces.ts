@@ -46,7 +46,10 @@ export interface userFilters {
 
 export interface UserTableProps {
   userData: UserInterface[] | undefined
-  onSelectUser?: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
+  onSelectUser: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
+  setIsChangePasswordModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsUpdateModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  // onDelete: (id: string) => void
 }
 
 export interface SellerDetailsApiResponse {
