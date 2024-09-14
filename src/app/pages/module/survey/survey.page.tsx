@@ -40,13 +40,16 @@ const Custom: React.FC = () => {
   }
 
   const {data, error, isLoading, isError, refetch} = useQuery({
-    queryKey: ['surveys', {limit: itemsPerPage, page: currentPage, ...filters}],
+    queryKey: [
+      'surveys',
+      {limit: itemsPerPage, page: currentPage, ...filters, populate: `faId,qaId`},
+    ],
     queryFn: async () =>
       fetchSurveys({
         limit: itemsPerPage,
         page: currentPage,
         ...filters,
-        populate: `createdBy,updatedBy,faId,qaId`,
+        populate: `faId,qaId`,
       }),
     // placeholderData: keepPreviousData,
   })
@@ -83,7 +86,7 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <h2 className='text-lg font-bold text-gray-700 mb-4'>FIELD ASSESMENT-DIRECT OBSERVATION</h2>
+        <h2 className='text-lg font-bold text-gray-700 mb-4'>FIELD ASSESMENT</h2>
         <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
 
         {isExpanded && (

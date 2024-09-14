@@ -3,7 +3,7 @@ import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {useLocation, useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate, useParams} from 'react-router-dom'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useQuery} from '@tanstack/react-query'
 import {FilterProps, Section} from './section.interfaces'
@@ -32,7 +32,10 @@ const Custom: React.FC = () => {
   const [filters, setFilters] = useState<FilterProps>()
   const location = useLocation()
   const receivedData = location.state || []
-  //   const {programId} = location.state || {}
+  const queryParams = new URLSearchParams(location.search)
+  const programId = queryParams.get('programId')
+  const surveyId = queryParams.get('surveyId')
+
   const [isExpanded, setIsExpanded] = useState(false)
 
   const mappedReceivedData = useMemo(
@@ -55,6 +58,7 @@ const Custom: React.FC = () => {
         limit: itemsPerPage,
         page: currentPage,
         ...filters,
+        // programId: programId || '',
       }),
     // placeholderData: keepPreviousData,
   })
@@ -87,7 +91,8 @@ const Custom: React.FC = () => {
   //   })
   //   console.log('View questions for section:', sectionId)
   // }
-//   console.log('mapped received data', mappedReceivedData)
+  //   console.log('mapped received data', mappedReceivedData)
+  console.log('programId, surveyId', programId, surveyId)
 
   return (
     <div className='container mx-auto px-4 sm:px-8'>
@@ -107,7 +112,13 @@ const Custom: React.FC = () => {
         {isLoading ? (
           <SkeletonSectionTable />
         ) : (
-          data && <SectionTable sectionData={data.results.results} receivedData={mappedReceivedData} />
+          data && (
+            <SectionTable
+              sectionData={data.results.results}
+              receivedData={mappedReceivedData}
+              surveyId={surveyId || ''}
+            />
+          )
         )}
 
         {isLoading ? (
