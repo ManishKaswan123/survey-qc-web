@@ -2,8 +2,9 @@ import React from 'react'
 import {useNavigate} from 'react-router-dom'
 import {FaRocket} from 'react-icons/fa'
 import {SectionTableProps} from '../section.interfaces'
+import {statusColors, statusMap} from 'sr/constants/status'
 
-const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
+const SectionTable: React.FC<SectionTableProps> = ({sectionData, receivedData, surveyId}) => {
   const navigate = useNavigate()
 
   return (
@@ -12,22 +13,22 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
         <table className='min-w-full leading-normal'>
           <thead>
             <tr>
-              <th className='py-5 primary-bg text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+              {/* <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Display Order
+              </th> */}
+              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                Section Code
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Section Name
               </th>
 
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Section Code
-              </th>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+              {/* <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Description
-              </th>
+              </th> */}
 
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                version
+                Count
               </th>
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Status
@@ -46,27 +47,33 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
                     <FaInfoCircle className='ml-2 text-blue-600' />
                   </div>
                 </td> */}
-                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                {/* <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{section.displayOrder}</p>
+                </td> */}
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <p>{section.sectionCode}</p>
                 </td>
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{section.sectionName}</p>
                 </td>
-                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{section.sectionCode}</p>
-                </td>
 
-                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                {/* <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{section.description}</p>
-                </td>
+                </td> */}
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{section.__v}</p>
+                  <p>{}</p>
                 </td>
                 {/* <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{`${survey.qaId?.firstName || ''} ${' '} ${survey.qaId?.lastName || ''}`}</p>
                 </td> */}
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                  <span className='text-yellow-500 font-bold text-md'>{}</span>
+                  <span
+                    className={`font-bold text-md ${
+                      statusColors[receivedData[section._id] || 'yetToStart']
+                    }`}
+                  >
+                    {statusMap.get(receivedData[section._id] || 'yetToStart')}
+                  </span>
                 </td>
 
                 <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
@@ -75,7 +82,7 @@ const SectionTable: React.FC<SectionTableProps> = ({sectionData}) => {
                       className='text-blue-800 hover:cursor-pointer'
                       size={20}
                       onClick={() => {
-                        navigate('/question/' + section._id)
+                        navigate(`/question/?surveyId=${surveyId}`)
                       }}
                     />
                   </div>

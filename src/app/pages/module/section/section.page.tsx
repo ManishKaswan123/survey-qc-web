@@ -3,10 +3,10 @@ import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {useLocation, useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate, useParams} from 'react-router-dom'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useQuery} from '@tanstack/react-query'
-import {FilterProps} from './section.interfaces'
+import {FilterProps, Section} from './section.interfaces'
 import {fetchSections} from './section.helper'
 import SurveySkeleton from '../survey/components/survey.skeleton'
 import SectionTable from './section.component/section.table'
@@ -31,8 +31,21 @@ const Custom: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<FilterProps>()
   const location = useLocation()
-  const {programId} = location.state || {}
+  const receivedData = location.state || []
+  const queryParams = new URLSearchParams(location.search)
+  const programId = queryParams.get('programId')
+  const surveyId = queryParams.get('surveyId')
+
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const mappedReceivedData = useMemo(
+    () =>
+      receivedData.reduce((acc: any, item: Record<string, string>) => {
+        acc[item.sectionId] = item.status
+        return acc
+      }, {} as Record<string, string>),
+    [receivedData]
+  )
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -45,6 +58,7 @@ const Custom: React.FC = () => {
         limit: itemsPerPage,
         page: currentPage,
         ...filters,
+        // programId: programId || '',
       }),
     // placeholderData: keepPreviousData,
   })
@@ -77,6 +91,8 @@ const Custom: React.FC = () => {
   //   })
   //   console.log('View questions for section:', sectionId)
   // }
+  //   console.log('mapped received data', mappedReceivedData)
+  console.log('programId, surveyId', programId, surveyId)
 
   return (
     <div className='container mx-auto px-4 sm:px-8'>
@@ -96,7 +112,13 @@ const Custom: React.FC = () => {
         {isLoading ? (
           <SkeletonSectionTable />
         ) : (
-          data && <SectionTable sectionData={data.results.results} />
+          data && (
+            <SectionTable
+              sectionData={data.results.results}
+              receivedData={mappedReceivedData}
+              surveyId={surveyId || ''}
+            />
+          )
         )}
 
         {isLoading ? (

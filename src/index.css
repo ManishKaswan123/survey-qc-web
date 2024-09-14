@@ -1229,6 +1229,9 @@ button[disabled] {
   font-family: 'Montserrat', sans-serif;
   font-weight: 400; /* Regular */
 }
+.primary-bg {
+  background-color: #265B91;
+}
 
 @tailwind base;
 @tailwind components;

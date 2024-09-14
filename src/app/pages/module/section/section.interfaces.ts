@@ -29,4 +29,6 @@ export interface SectionApiResponse {
 }
 export interface SectionTableProps {
   sectionData: Section[]
+  receivedData: Record<string, any>
+  surveyId: string
 }

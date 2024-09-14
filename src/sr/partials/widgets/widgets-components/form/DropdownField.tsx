@@ -51,7 +51,7 @@ const DropdownField = ({
   return (
     <div className='input-wrapper my-2 mx-4'>
       {label && (
-        <label htmlFor={id || name} className='block text-sm font-medium text-gray-700 mb-1'>
+        <label htmlFor={id || name} className='input-wrapper block text-sm font-medium text-gray-700 mb-1'>
           {label}
           {required && <span className='text-red-500'>*</span>}
         </label>
