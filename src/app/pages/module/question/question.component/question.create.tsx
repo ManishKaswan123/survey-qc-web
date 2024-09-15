@@ -1,5 +1,11 @@
 import React, {useState} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
+import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
+import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
+import {useForm} from 'react-hook-form'
+import {Button} from 'sr/helpers'
+import {MultiValue} from 'react-select'
+import MultiSelectField, {OptionType} from 'sr/partials/widgets/widgets-components/form/MultiSelect'
 
 interface CreateQuestionPopupProps {
   isOpen: boolean
@@ -7,10 +13,56 @@ interface CreateQuestionPopupProps {
 }
 
 const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsOpen}) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: {errors},
+  } = useForm()
   const closeModal = () => setIsOpen(false)
   const [isVisibleOnField, setIsVisibleOnField] = useState(false)
   const [options, setOptions] = useState([{fieldName: '', fieldValue: '', labelName: ''}])
-  const [questionOptions, setQuestionOptions] = useState([{questionId: '', optionValue: []}])
+  const [questionOptions, setQuestionOptions] = useState<
+    {questionId: string; optionValue: OptionType[]}[]
+  >([{questionId: '', optionValue: []}])
+
+  const programOptions = [
+    {id: 1, name: 'Program 1'},
+    {id: 2, name: 'Program 2'},
+  ]
+
+  // Define sectionOptions as a flat array of objects
+  const sectionOptions = [
+    {id: 'section1', name: 'Section 1'},
+    {id: 'section2', name: 'Section 2'},
+  ]
+
+  const mandatoryOptions = [
+    {id: 'yes', name: 'Yes'},
+    {id: 'no', name: 'No'},
+  ]
+
+  const questionIdOptions = [
+    {id: '1', name: 'Question 1'},
+    {id: '2', name: 'Question 2'},
+  ]
+
+  const optionValueOptions: OptionType[] = [
+    {value: 'value1', label: 'Value 1'},
+    {value: 'value2', label: 'Value 2'},
+  ]
+
+  const labelNameOptions = [
+    {id: '1', name: 'Label 1'},
+    {id: '2', name: 'Label 2'},
+  ]
+
+  const sourceOptions = [
+    {id: '1', name: 'Source 1'},
+    {id: '2', name: 'Source 2'},
+  ]
+
+  const toggleSwitch = () => setIsVisibleOnField(!isVisibleOnField)
 
   const addQuestionOption = () => {
     setQuestionOptions([...questionOptions, {questionId: '', optionValue: []}])
@@ -20,10 +72,16 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     setOptions([...options, {fieldName: '', fieldValue: '', labelName: ''}])
   }
 
-  const handleQuestionOptionChange = (index: number, field: string, value: any) => {
-    const updatedOptions = questionOptions.map((option, i) =>
-      i === index ? {...option, [field]: value} : option
-    )
+  const handleQuestionOptionChange = (
+    index: number,
+    field: 'questionId' | 'optionValue',
+    newValue: MultiValue<OptionType>
+  ) => {
+    const updatedOptions = [...questionOptions]
+    updatedOptions[index] = {
+      ...updatedOptions[index],
+      [field]: newValue as OptionType[],
+    }
     setQuestionOptions(updatedOptions)
   }
 
@@ -54,35 +112,67 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 {/* Existing form fields (Program, Section, etc.) */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Program</label>
-                    <select className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-                      <option>Program 1</option>
-                      <option>Program 2</option>
-                    </select>
+                    <DropdownField
+                      key={1}
+                      data={programOptions}
+                      labelKey='name'
+                      label='Program'
+                      placeholder='Select Program'
+                      valueKey='id'
+                      name='program'
+                      required={true}
+                      register={register('program', {required: true})}
+                      error={errors.program && !watch('program')}
+                      errorText='Please select a program'
+                    />
                   </div>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Section</label>
-                    <select className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-                      <option>Section 1</option>
-                      <option>Section 2</option>
-                    </select>
+                    <DropdownField
+                      key={2}
+                      data={sectionOptions} // Ensure data is a flat array
+                      labelKey='name'
+                      label='Section'
+                      placeholder='Select Section'
+                      valueKey='id'
+                      name='section'
+                      required={true}
+                      register={register('section', {required: true})}
+                      error={errors.section && !watch('section')}
+                      errorText='Please select a section'
+                    />
                   </div>
                 </div>
 
                 {/* Question Code and Name */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Question Code</label>
-                    <input
+                    <TextField
+                      key={3}
                       type='text'
-                      className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      label='Question Code'
+                      className='custom-input form-input p-2 border rounded mb-2'
+                      id='questionCode'
+                      required={true}
+                      name='questionCode'
+                      placeholder='Enter Question Code'
+                      register={register('questionCode', {required: true})}
+                      error={errors.questionCode && !watch('questionCode')}
+                      errorText='Please enter Question Code'
                     />
                   </div>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Question Name</label>
-                    <input
+                    <TextField
+                      key={4}
                       type='text'
-                      className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      label='Question Name'
+                      className='custom-input form-input p-2 border rounded mb-2'
+                      id='questionName'
+                      required={true}
+                      name='questionName'
+                      placeholder='Enter Question Name'
+                      register={register('questionName', {required: true})}
+                      error={errors.questionName && !watch('questionName')}
+                      errorText='Please enter Question Name'
                     />
                   </div>
                 </div>
@@ -90,60 +180,88 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 {/* Question Type and Is Mandatory */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Question Type</label>
-                    <select className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-                      <option>Type 1</option>
-                      <option>Type 2</option>
-                    </select>
+                    <DropdownField
+                      key={5}
+                      data={questionOptions}
+                      labelKey='name'
+                      label='Question Type'
+                      placeholder='Select Question Type'
+                      valueKey='id'
+                      name='questionType'
+                      required={true}
+                      register={register('questionType', {required: true})}
+                      error={errors.questionType && !watch('questionType')}
+                      errorText='Please select a question type'
+                    />
                   </div>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Is Mandatory</label>
-                    <select className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-                      <option>Yes</option>
-                      <option>No</option>
-                    </select>
+                    <DropdownField
+                      key={6}
+                      data={mandatoryOptions}
+                      labelKey='name'
+                      label='Is Mandatory'
+                      placeholder='Select Mandatory'
+                      valueKey='id'
+                      name='isMandatory'
+                      required={true}
+                      register={register('isMandatory', {required: true})}
+                      error={errors.isMandatory && !watch('isMandatory')}
+                      errorText='Please select if mandatory'
+                    />
                   </div>
                 </div>
 
                 {/* Field Regex and Display Order */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Field Regex</label>
-                    <input
+                    <TextField
+                      key={7}
                       type='text'
-                      className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      label='Field Regex'
+                      className='custom-input form-input p-2 border rounded mb-2'
+                      id='fieldRegex'
+                      required={false}
+                      name='fieldRegex'
+                      placeholder='Enter Field Regex'
+                      register={register('fieldRegex', {required: false})}
+                      error={errors.fieldRegex && !watch('fieldRegex')}
+                      errorText='Please enter Field Regex'
                     />
                   </div>
                   <div>
-                    <label className='block text-sm font-medium text-gray-700'>Display Order</label>
-                    <input
+                    <TextField
+                      key={8}
                       type='number'
-                      className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      label='Display Order'
+                      className='custom-input form-input p-2 border rounded mb-2'
+                      id='displayOrder'
+                      required={true}
+                      name='displayOrder'
+                      placeholder='Enter Display Order'
+                      register={register('displayOrder', {required: true})}
+                      error={errors.displayOrder && !watch('displayOrder')}
+                      errorText='Please enter Display Order'
                     />
                   </div>
                 </div>
 
                 {/* Visible On Field */}
-                <div className='flex items-center'>
-                  <label className='block text-sm font-medium text-gray-700 mr-4'>
+                <div className='flex items-center space-x-4'>
+                  <label className='block text-sm font-medium text-gray-700'>
                     Visible On Field
                   </label>
-                  <input
-                    type='radio'
-                    name='visibleOnField'
-                    value='yes'
-                    onChange={() => setIsVisibleOnField(true)}
-                    className='mr-2'
-                  />
-                  <label className='mr-4'>Yes</label>
-                  <input
-                    type='radio'
-                    name='visibleOnField'
-                    value='no'
-                    onChange={() => setIsVisibleOnField(false)}
-                    className='mr-2'
-                  />
-                  <label>No</label>
+                  <div
+                    onClick={toggleSwitch}
+                    className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                      isVisibleOnField ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  >
+                    <div
+                      className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
+                        isVisibleOnField ? 'translate-x-6' : ''
+                      }`}
+                    />
+                  </div>
                 </div>
 
                 {isVisibleOnField && (
@@ -152,134 +270,134 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                     {questionOptions.map((option, index) => (
                       <div key={index} className='grid grid-cols-2 gap-4'>
                         <div>
-                          <label className='block text-sm font-medium text-gray-700'>
-                            Question ID
-                          </label>
-                          <select
-                            value={option.questionId}
-                            onChange={(e) =>
-                              handleQuestionOptionChange(index, 'questionId', e.target.value)
-                            }
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-                          >
-                            <option>ID 1</option>
-                            <option>ID 2</option>
-                          </select>
+                          <DropdownField
+                            data={questionIdOptions} // Use your flat array of question IDs
+                            labelKey='name'
+                            label='Question ID'
+                            placeholder='Select Question ID'
+                            valueKey='id'
+                            name={`questionId_${index}`}
+                            required={true}
+                            register={register(`questionId_${index}`, {required: true})}
+                            error={errors[`questionId_${index}`] && !watch(`questionId_${index}`)}
+                            errorText='Please select a question ID'
+                          />
                         </div>
-                        <div>
-                          <label className='block text-sm font-medium text-gray-700'>
-                            Option Value
-                          </label>
-                          <select
-                            multiple
+                        <div className='mt-2'>
+                          <MultiSelectField
+                            options={optionValueOptions}
+                            label='Option Value'
+                            name={`optionValue_${index}`}
                             value={option.optionValue}
-                            onChange={(e) =>
-                              handleQuestionOptionChange(
-                                index,
-                                'optionValue',
-                                Array.from(e.target.selectedOptions, (option) => option.value)
-                              )
+                            onChange={(selectedOptions) =>
+                              handleQuestionOptionChange(index, 'optionValue', selectedOptions)
                             }
-                            className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-                          >
-                            <option>Value 1</option>
-                            <option>Value 2</option>
-                          </select>
+                            placeholder='Select Option Values'
+                            error={errors[`optionValue_${index}`] && !watch(`optionValue_${index}`)}
+                            errorText='Please select option values'
+                          />
                         </div>
                       </div>
                     ))}
 
-                    <button
-                      type='button'
+                    <Button
                       onClick={addQuestionOption}
+                      label='Add More'
                       className='mt-4 bg-blue-500 text-gray-50 py-1 px-3 rounded hover:bg-blue-600'
-                    >
-                      Add More
-                    </button>
+                    />
                   </div>
                 )}
 
                 {/* Option Heading */}
                 <div className='mt-4'>
-                  <h4 className='text-md font-medium'>Options</h4>
+                  <h4 className='text-lg font-semibold mb-4'>Options</h4>
+
                   {options.map((option, index) => (
-                    <div key={index} className='grid grid-cols-3 gap-4'>
+                    <div key={index} className='grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4'>
                       <div>
-                        <label className='block text-sm font-medium text-gray-700'>
-                          Field Name
-                        </label>
-                        <input
+                        <TextField
                           type='text'
+                          label='Field Name'
                           value={option.fieldName}
                           onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
-                          className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                          name={`fieldName_${index}`}
+                          placeholder='Enter field name'
                         />
                       </div>
                       <div>
-                        <label className='block text-sm font-medium text-gray-700'>
-                          Field Value
-                        </label>
-                        <input
+                        <TextField
                           type='text'
+                          label='Field Value'
                           value={option.fieldValue}
                           onChange={(e) => handleOptionChange(index, 'fieldValue', e.target.value)}
-                          className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                          name={`fieldValue_${index}`}
+                          placeholder='Enter field value'
                         />
                       </div>
                       <div>
-                        <label className='block text-sm font-medium text-gray-700'>
-                          Label Name
-                        </label>
-                        <select
+                        <DropdownField
+                          data={labelNameOptions}
+                          labelKey='name'
+                          label='Label Name'
+                          placeholder='Select Label'
+                          valueKey='id'
+                          name={`labelName_${index}`}
                           value={option.labelName}
                           onChange={(e) => handleOptionChange(index, 'labelName', e.target.value)}
-                          className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
-                        >
-                          <option>Label 1</option>
-                          <option>Label 2</option>
-                        </select>
+                        />
                       </div>
                     </div>
                   ))}
 
-                  <button
-                    type='button'
+                  <Button
                     onClick={addOption}
+                    label='Add More'
                     className='mt-4 bg-blue-500 text-gray-50 py-1 px-3 rounded hover:bg-blue-600'
-                  >
-                    Add More
-                  </button>
+                  />
                 </div>
 
                 {/* DataSource Heading */}
                 <div className='mt-4'>
-                  <h4 className='text-md font-medium'>DataSource</h4>
-                  <div className='grid grid-cols-3 gap-4'>
+                  <h4 className='text-lg font-semibold mb-4'>DataSource</h4>
+                  <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                     <div>
-                      <label className='block text-sm font-medium text-gray-700'>Source</label>
-                      <select className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'>
-                        <option>Source 1</option>
-                        <option>Source 2</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className='block text-sm font-medium text-gray-700'>Label Key</label>
-                      <input
-                        type='text'
-                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                      <DropdownField
+                        data={sourceOptions}
+                        labelKey='name'
+                        label='Source'
+                        placeholder='Select Source'
+                        valueKey='id'
+                        name='source'
+                        // Replace the below value and onChange with your state and handler
+                        value='' // Example value, replace with actual state value
+                        onChange={(e) => console.log(e)} // Example handler, replace with actual handler
                       />
                     </div>
                     <div>
-                      <label className='block text-sm font-medium text-gray-700'>Label Value</label>
-                      <input
+                      <TextField
                         type='text'
-                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                        label='Label Key'
+                        name='labelKey'
+                        // Replace the below value and onChange with your state and handler
+                        value='' // Example value, replace with actual state value
+                        onChange={(e) => console.log(e)} // Example handler, replace with actual handler
+                        placeholder='Enter label key'
+                      />
+                    </div>
+                    <div>
+                      <TextField
+                        type='text'
+                        label='Label Value'
+                        name='labelValue'
+                        // Replace the below value and onChange with your state and handler
+                        value='' // Example value, replace with actual state value
+                        onChange={(e) => console.log(e)} // Example handler, replace with actual handler
+                        placeholder='Enter label value'
                       />
                     </div>
                   </div>
                 </div>
-
-                <div className='mt-4 flex justify-end'>
+                {/* <div className='mt-4 flex justify-end'>
                   <button
                     type='button'
                     className='bg-red-500 text-gray-50 py-2 px-4 rounded mr-2 hover:bg-red-600'
@@ -293,6 +411,21 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   >
                     Save
                   </button>
+                </div> */}
+
+                {/* Submit and Cancel Buttons */}
+                <div className='flex justify-end mt-4'>
+                  <Button
+                    // onClick={handleSubmit(onSubmit)}
+                    type='submit'
+                    label='Submit'
+                    className='bg-blue-500 hover:bg-blue-600 text-gray-50 font-bold py-2 px-4 rounded shadow-md inline-flex items-center'
+                  />
+                  <Button
+                    onClick={closeModal}
+                    label='Cancel'
+                    className='bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded shadow-md inline-flex items-center ml-2'
+                  />
                 </div>
               </form>
             </div>
