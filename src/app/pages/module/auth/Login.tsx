@@ -58,7 +58,11 @@ export default function Signin() {
       <div className='flex flex-col justify-center items-center'>
         <div className='rounded-lg bg-[#F7F7F7] px-4 py-2 w-80 '>
           <div className='image-container flex justify-center items-center'>
-            <img src={companyLogo} alt='Company Logo' className='image' />
+            <img
+              src={'/media/logos/company_logo.jpeg'}
+              alt='Company Logo'
+              className='image w-[4rem]'
+            />
           </div>
           <div className='text-center font-bold text-4xl pt-1'>Login</div>
           <div className='text-center text-slate-500 text-md pt-2 px-4 pb-2'>
