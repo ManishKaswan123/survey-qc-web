@@ -133,7 +133,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                   <div className='w-full flex justify-between items-center'>
                     <Link to='/dashboard'>
                       <button className='md:block text-left md:pb-2 text-rose-800 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-xl uppercase font-bold px-0'>
-                        86DeadStock
+                        Survey
                       </button>
                     </Link>
                     <button
@@ -167,10 +167,10 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                   ></h6>
                   <ul className='md:flex-col md:min-w-full flex flex-col list-none'>
                     <li className='items-center'>
-                      <Link to='/program' replace>
+                      <Link to='/dashboard' replace>
                         <button
                           className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'program' && subPath === undefined ? 'text-rose-600' : ''
+                            path === 'dashboard' && subPath === undefined ? 'text-rose-600' : ''
                           }`}
                         >
                           <svg
@@ -184,12 +184,18 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                               strokeLinecap='round'
                               strokeLinejoin='round'
                               strokeWidth={2}
-                              d='M9 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2m-4 0v4m0-4H9m0 0H7'
+                              d='M3 9.75L12 4l9 5.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z'
+                            />
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M9 21V11.25a1 1 0 011-1h4a1 1 0 011 1V21'
                             />
                           </svg>
 
                           {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Program</span>
+                            <span className='text-left'>Home</span>
                           ) : (
                             ''
                           )}
@@ -220,72 +226,6 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
 
                           {sideCollapseItem === 'show' ? (
                             <span className='text-left'>Field Assesment</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
-                    <li className='items-center'>
-                      <Link to='/section' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'section' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M3 7h18M3 11h18M3 15h18M3 19h18'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Section</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
-                    <li className='items-center'>
-                      <Link to='/dashboard' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'dashboard' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M3 9.75L12 4l9 5.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z'
-                            />
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M9 21V11.25a1 1 0 011-1h4a1 1 0 011 1V21'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Home</span>
                           ) : (
                             ''
                           )}
@@ -342,6 +282,66 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                       <ul className='pl-6'>
                         {' '}
                         {/* Added padding-left for indentation */}
+                        <li className='items-center'>
+                          <Link to='/program' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'program' && subPath === undefined ? 'text-rose-600' : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  strokeWidth={2}
+                                  d='M9 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2m-4 0v4m0-4H9m0 0H7'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>Program</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
+                          <Link to='/section' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'section' && subPath === undefined ? 'text-rose-600' : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  strokeWidth={2}
+                                  d='M3 7h18M3 11h18M3 15h18M3 19h18'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>Section</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
                         <li className='items-center'>
                           <Link to='/all-questions' replace>
                             <button
