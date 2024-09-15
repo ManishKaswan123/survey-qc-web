@@ -168,6 +168,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
 
   const onSubmitForm: SubmitHandler<any> = async (data: FormData) => {
     // console.log(getValues('images'), getValues('imagePath'))
+    console.log('inside submit form')
     await onSubmit(data)
     reset()
   }
