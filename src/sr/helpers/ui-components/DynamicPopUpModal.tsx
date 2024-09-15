@@ -318,20 +318,20 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
               //   )
               // case 'checkbox':
               //   return (
-              //     <TextField
-              //       key={index}
-              //       type={field.type}
-              //       labelStyle='style1'
-              //       label={field.label}
-              //       className='custom-input form-input p-2 border rounded mb-2'
-              //       id={field.name}
-              //       required={field.required}
-              //       name={field.name}
-              //       placeholder={field.placeholder}
-              //       register={register(field.name, {required: field.required})}
-              //       error={errors[field.name] && !watch(field.name)}
-              //       errorText={`Please enter ${field.placeholder}`}
-              //     />
+              // <TextField
+              //   key={index}
+              //   type={field.type}
+              //   labelStyle='style1'
+              //   label={field.label}
+              //   className='custom-input form-input p-2 border rounded mb-2'
+              //   id={field.name}
+              //   required={field.required}
+              //   name={field.name}
+              //   placeholder={field.placeholder}
+              //   register={register(field.name, {required: field.required})}
+              //   error={errors[field.name] && !watch(field.name)}
+              //   errorText={`Please enter ${field.placeholder}`}
+              // />
               //   )
             }
           })}
