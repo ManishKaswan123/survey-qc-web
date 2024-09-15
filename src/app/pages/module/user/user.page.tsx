@@ -35,6 +35,13 @@ const Custom: React.FC = () => {
   const [isAllocateModalOpen, setIsAllocateModalOpen] = useState<boolean>(false)
   const [allocatedSurveyIds, setAllocatedSurveyIds] = useState<string[]>([])
   const [rerender, setRerender] = useState<boolean>(false)
+  // Step 1: Retrieve and parse the user object from localStorage
+  const userString = localStorage.getItem('user')
+  const user = userString ? JSON.parse(userString) : null
+
+  // Step 2: Access companyId and programId from the user object
+  const companyId = user?.companyId
+  const programId = user?.programId
 
   const role = useMemo(
     () => [
@@ -208,8 +215,8 @@ const Custom: React.FC = () => {
         placeholder: 'Select Language',
         labelKey: 'name',
         id: 'id',
+        required: true,
       },
-
       {
         type: 'text',
         label: 'Email',
@@ -224,7 +231,6 @@ const Custom: React.FC = () => {
         placeholder: 'Mobile',
         required: true,
       },
-
       {
         type: 'dropdown',
         label: 'role',
@@ -235,24 +241,26 @@ const Custom: React.FC = () => {
         labelKey: 'name',
         id: 'id',
       },
-      {
-        type: 'dropdown',
-        label: 'isEmailVerified',
-        name: isEmailVerified,
-        topLabel: 'Email Verified',
-        placeholder: 'Select Email Verified',
-        labelKey: 'name',
-        id: 'id',
-      },
-      {
-        type: 'dropdown',
-        label: 'isMobileVerified',
-        name: isMobileVerified,
-        topLabel: 'Email Verified',
-        placeholder: 'Select Email Verified',
-        labelKey: 'name',
-        id: 'id',
-      },
+      // {
+      //   type: 'dropdown',
+      //   label: 'isEmailVerified',
+      //   name: isEmailVerified,
+      //   topLabel: 'Email Verified',
+      //   placeholder: 'Select Email Verified',
+      //   labelKey: 'name',
+      //   id: 'id',
+      //   required: true,
+      // },
+      // {
+      //   type: 'dropdown',
+      //   label: 'isMobileVerified',
+      //   name: isMobileVerified,
+      //   topLabel: 'Mobile Verified',
+      //   placeholder: 'Select Mobile Verified',
+      //   labelKey: 'name',
+      //   id: 'id',
+      //   required: true,
+      // },
       {
         type: 'text',
         label: 'First Name',
@@ -265,6 +273,7 @@ const Custom: React.FC = () => {
         label: 'Last Name',
         name: 'lastName',
         placeholder: 'Last Name',
+        required: true,
       },
     ],
     []
@@ -291,7 +300,7 @@ const Custom: React.FC = () => {
       }),
   })
 
-  console.log('surveyData', surveyData)
+  // console.log('surveyData', surveyData)
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
@@ -344,11 +353,13 @@ const Custom: React.FC = () => {
         mobile: payload.mobile,
         password: payload.password,
         firstName: payload.firstName,
+        lastName: payload.lastName,
+        programId,
+        companyId,
       }
 
       // Dynamically add optional fields if they have a value
       const optionalFields = [
-        'lastName',
         'languagePreference',
         'stateCode',
         'districtCode',
@@ -363,13 +374,13 @@ const Custom: React.FC = () => {
               ? [payload[field]]
               : field === 'stateCode' || 'districtCode' || 'subDistrictCode' || 'villageCode'
               ? parseInt(payload[field])
-              : payload[field]
+              : payload[field].toString()
         }
       })
 
-      console.log('Create User Data:', UserData)
+      // console.log('Create User Data:', UserData)
       await createUser(UserData)
-      setRerender((prev) => !prev)
+      refetch()
       toast.success('User created successfully')
     } catch (e) {
       console.error('Failed to create User', e)
@@ -379,6 +390,7 @@ const Custom: React.FC = () => {
   }
 
   const handleUpdateUser = async (payload: any) => {
+    // console.log('Update User Payload', payload)
     try {
       if (!selectedUser) return
       const UserData: {[key: string]: any} = {
@@ -386,12 +398,15 @@ const Custom: React.FC = () => {
         mobile: payload.mobile,
         firstName: payload.firstName,
         email: payload.email,
+        lastName: payload.lastName,
+        programId,
+        companyId,
       }
 
       // Dynamically add properties to VleData if they have a value
       const optionalFields = [
         'dob',
-        'lastName',
+        // 'lastName',
         'pinCode',
         'languagePreference',
         'stateCode',
@@ -410,8 +425,10 @@ const Custom: React.FC = () => {
               : payload[field]
         }
       })
+      console.log('user data is', UserData)
       await updateUser(UserData, selectedUser.id)
-      setRerender((prev) => !prev)
+      // setRerender((prev) => !prev)
+      refetch()
       toast.success('User updated successfully')
     } catch (e) {
       console.error('Failed to update User', e)

@@ -172,7 +172,6 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
     await onSubmit(data)
     reset()
   }
-  // console.log('default values are ', Object.keys(defaultValues).length)
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>

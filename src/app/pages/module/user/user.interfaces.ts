@@ -14,6 +14,8 @@ export interface UserInterface {
   createdAt: string
   updatedAt: string
   isActive: boolean
+  comapnyId: string
+  programId: string
   id: string
 }
 
