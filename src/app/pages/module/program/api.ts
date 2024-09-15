@@ -11,9 +11,9 @@ export const fetchPrograms = async (payload: PayloadType): Promise<ProgramApiRes
   const filteredPayload = filterPayload(payload)
 
   try {
-    const res = await get<ProgramApiResponse>('/programs', filteredPayload)
+    const res = await get<ProgramApiResponse>('/program', filteredPayload)
 
-    if (res.results && res.results.length > 0) {
+    if (res && res.status == 'success') {
       return res // Return the fetched data
     } else {
       throw new Error('No data found')

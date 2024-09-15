@@ -12,6 +12,8 @@ import productTypeReducer from '../slice/productSlice'
 import subCatTypeReducer from '../slice/subCatSlice'
 import loginUserSlice from '../slice/loginUserSlice'
 import eightySixTypeReducer from '../slice/eightySixSlice'
+import programTypeReducer from '../slice/programSlice'
+import sectionTypeReducer from '../slice/sectionSlice'
 
 const rootReducer = combineReducers({
   sendOtp: sendOtpReducer,
@@ -26,6 +28,8 @@ const rootReducer = combineReducers({
   subCat: subCatTypeReducer,
   loginUser: loginUserSlice,
   eightySix: eightySixTypeReducer,
+  program: programTypeReducer,
+  section: sectionTypeReducer,
 })
 
 export const store = configureStore({

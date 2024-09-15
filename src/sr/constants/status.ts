@@ -21,4 +21,13 @@ export const statusMap = new Map<statusType, string>([
   ['yetToStart', 'Yet to start'],
   ['rejected', 'Rejected'],
 ])
-export const statusOptions = Array.from(statusMap.values())
+export const statusObject = [
+  {id: 'submitted', value: 'Submitted'},
+  {id: 'approved', value: 'Approved'},
+  {id: 'flagged', value: 'Flagged'},
+  {id: 'resubmitted', value: 'Resubmitted'},
+  {id: 'yetToStart', value: 'Yet to start'},
+  {id: 'rejected', value: 'Rejected'},
+]
+export const statusValues = Array.from(statusMap.values())
+export const statusKeys = Array.from(statusMap.values())

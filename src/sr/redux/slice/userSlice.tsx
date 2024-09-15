@@ -1,17 +1,24 @@
 // src/reducers/userReducer.ts
 import {createSlice} from '@reduxjs/toolkit'
 import {fetchUserData} from '../action/userActions'
+import {UserInterface} from 'sr/constants/User'
 
 interface UserState {
   data: any
   statistics: any
+  userRoleMap: Record<string, UserInterface[]>
   status: 'idle' | 'loading' | 'succeeded' | 'failed'
   error: string | null
 }
 
 const initialState: UserState = {
-  data: null,
-  statistics: null,
+  userRoleMap: {
+    SuperAdmin: [],
+    QA: [],
+    FA: [],
+  },
+  data: {},
+  statistics: {},
   status: 'idle',
   error: null,
 }
@@ -27,8 +34,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUserData.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.data = action.payload.data
-        state.statistics = action.payload.statistics
+        state.userRoleMap = action.payload.userRoleMap
       })
       .addCase(fetchUserData.rejected, (state, action) => {
         state.status = 'failed'

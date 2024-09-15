@@ -10,6 +10,8 @@ import {fetchTransactionData} from 'sr/redux/action/transactionAction'
 import {fetchProductData} from 'sr/redux/action/productActions'
 import {fetchSubCatData} from 'sr/redux/action/subCatActions'
 import {fetch86Action} from 'sr/redux/action/eightySixAction'
+import {fetchProgramAction} from 'sr/redux/action/programActions'
+import {fetchSectionAction} from 'sr/redux/action/sectionActions'
 
 export const useActions = () => {
   const dispatch = useDispatch()
@@ -23,6 +25,8 @@ export const useActions = () => {
       fetchProductData,
       fetchSubCatData,
       fetch86Action,
+      fetchProgramAction,
+      fetchSectionAction,
     },
     dispatch
   )

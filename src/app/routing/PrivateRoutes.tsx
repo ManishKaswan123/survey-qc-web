@@ -4,6 +4,7 @@ import {Route, Routes, Navigate} from 'react-router-dom'
 import {MasterLayout} from 'sr/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
 import QuestionPage from 'app/pages/module/question/question.page'
+import CustomQuestions from 'app/pages/module/question/question.masterData.page'
 // import QuestionModal from 'app/pages/module/question/question.component/question.modal'
 // import EightySixResponseDetailsCard from 'app/pages/module/86Response/components/86ResponseDetailsCard'
 
@@ -87,6 +88,7 @@ const routeConfigs: RouteConfig[] = [
   {path: '/chats', element: <Chats />},
   {path: '/question', element: <QuestionPage />},
   {path: '/section', element: <Section />},
+  {path: '/all-questions', element: <CustomQuestions />},
 ]
 
 const PrivateRoutes: FC = () => {
