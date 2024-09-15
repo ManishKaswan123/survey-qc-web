@@ -26,6 +26,15 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     {questionId: string; optionValue: OptionType[]}[]
   >([{questionId: '', optionValue: []}])
 
+  const questionType = [
+    {id: '1', name: 'Multiple Choice'},
+    {id: '2', name: 'True/False'},
+    {id: '3', name: 'Number'},
+    {id: '4', name: 'Text'},
+    {id: '5', name: 'Date'},
+    {id: '6', name: 'Checkbox'},
+  ]
+
   const programOptions = [
     {id: 1, name: 'Program 1'},
     {id: 2, name: 'Program 2'},
@@ -102,7 +111,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
             &#8203;
           </span>
 
-          <div className='inline-block w-full max-w-2xl h-[90vh] text-left align-middle transition-all transform bg-white shadow-xl rounded-lg'>
+          <div className='inline-block w-full max-w-3xl h-[95vh] text-left align-middle transition-all transform bg-white shadow-xl rounded-lg'>
             <div className='h-full overflow-y-auto p-6'>
               <h2 className='text-xl  leading-6 text-gray-900 font-bold'>Create New Question</h2>
 
@@ -180,7 +189,8 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   <div>
                     <DropdownField
                       key={5}
-                      data={questionOptions}
+                      //   data={questionOptions}
+                      data={questionType}
                       labelKey='name'
                       label='Question Type'
                       placeholder='Select Question Type'
