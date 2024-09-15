@@ -1,39 +1,34 @@
 // src/actions/userActions.ts
 import {createAsyncThunk} from '@reduxjs/toolkit'
 import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
-import {UserInterface} from 'sr/constants/User'
+import {rolesArray, UserInterface} from 'sr/constants/User'
+
+// Fetch user data and map by role
 export const fetchUserData = createAsyncThunk('user/fetchUserData', async (payload: any) => {
-  const {results} = await fetchUser({})
-  const totalResults = results.totalResults
-  const response = await fetchUser({limit: totalResults})
-  const statistics: any = {
-    data: [
-      {type: 'Seller', amount: 0, percentage: '', barColor: 'bg-blue-500'},
-      {type: 'Retail User', amount: 0, percentage: '', barColor: 'bg-green-500'},
-      {type: 'Business User', amount: 0, percentage: '', barColor: 'bg-pink-500'},
-    ],
-    totalUsers: totalResults,
+  // Fetch all users with the "getAll: true" option
+  const {results} = await fetchUser({getAll: true})
+
+  // Initialize a role-based user map with only two keys: QA and FA
+  const userRoleMap: Record<string, UserInterface[]> = {
+    QA: [],
+    FA: [],
   }
-  // Update statistics based on user data
-  response?.results?.results?.forEach((user: UserInterface) => {
-    if (user.role === 'retailUser') {
-      statistics.data[1].amount++
-    } else if (user.role === 'businessUser') {
-      statistics.data[2].amount++
+
+  // Filter and group users by role
+  results.results.forEach((user: UserInterface) => {
+    // Push users with SuperAdmin or QA role to the QA array
+    if (user.role === 'SuperAdmin' || user.role === 'QA') {
+      userRoleMap.QA.push(user)
     }
 
-    if (user.sellerStatus == 'approved') {
-      statistics.data[0].amount++
+    // Push users with FA or SuperAdmin role to the FA array
+    if (user.role === 'SuperAdmin' || user.role === 'FA') {
+      userRoleMap.FA.push(user)
     }
   })
 
-  // Calculate percentages and assign bar colors
-  statistics.data.forEach((stat: any) => {
-    stat.percentage =
-      totalResults > 0 ? ((stat.amount / totalResults) * 100).toFixed(1) + '%' : '0%'
-  })
+  // Return the mapped result
   return {
-    data: response,
-    statistics: statistics,
+    userRoleMap, // Users grouped by QA and FA roles
   }
 })

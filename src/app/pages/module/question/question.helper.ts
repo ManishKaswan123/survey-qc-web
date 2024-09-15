@@ -1,4 +1,5 @@
-import {get} from 'sr/utils/axios'
+
+import {get, patch, post, remove} from 'sr/utils/axios'
 import {AnswerResponse, FilterProps, QuestionResponse} from './question.interface'
 
 const filterPayload = (payload: FilterProps) => {
@@ -47,7 +48,7 @@ export const fetchStaticQuestions = async (payload?: FilterProps): Promise<any> 
   const filteredPayload = filterPayload(payload ?? {})
 
   try {
-    const res = await get<any>(`/question`, filteredPayload)
+    const res = await get<any>(`/question`, {...filteredPayload})
 
     // console.log('res of answer is this :-', res)
     if (res && res.status == 'success') {
@@ -59,5 +60,38 @@ export const fetchStaticQuestions = async (payload?: FilterProps): Promise<any> 
   } catch (error) {
     // Throw the error to be handled by the caller
     throw new Error(`Failed to fetch : ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+export const createQuestion = async (payload: Record<string, any>): Promise<boolean> => {
+  try {
+    const res = await post<any>(`/question`, payload)
+    if (res) {
+      return true
+    }
+    throw new Error('Create failed')
+  } catch (e: any) {
+    throw new Error(e.message)
+  }
+}
+export const updateQuestion = async (
+  payload: Record<string, any>,
+  id: string
+): Promise<boolean> => {
+  try {
+    const res = await patch<any>(`/question/${id}`, payload)
+    if (res) {
+      return true
+    }
+    throw new Error('Update failed')
+  } catch (e: any) {
+    throw new Error(e.message)
+  }
+}
+export const deleteQuestion = async (payload: string): Promise<boolean> => {
+  try {
+    const res = await remove<any>(`/question/${payload}`)
+    return true
+  } catch (e: any) {
+    throw new Error(e.message)
   }
 }

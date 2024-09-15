@@ -343,6 +343,38 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                         {' '}
                         {/* Added padding-left for indentation */}
                         <li className='items-center'>
+                          <Link to='/all-questions' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'all-questions' && subPath === undefined
+                                  ? 'text-rose-600'
+                                  : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d='M9 12h6m2 4H7m12-8H5m16 8a9 9 0 11-18 0 9 9 0 0118 0z'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>Questions</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
                           <Link to='/business-category' replace>
                             <button
                               className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${

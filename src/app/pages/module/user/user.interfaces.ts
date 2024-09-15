@@ -25,6 +25,7 @@ export interface PayloadType {
   isEmailVerified?: boolean
   sortBy?: string
   projectBy?: string
+  getAll?: boolean
 }
 
 export interface fetchUserResponse {

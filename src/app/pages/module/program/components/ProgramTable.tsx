@@ -12,13 +12,13 @@ interface ProgramTableProps {
 const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelete, onView}) => {
   const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
 
-  const toggleDetails = (id: string) => {
+  const toggleDetails = (_id: string) => {
     setExpandedPrograms((prev) => {
       const newSet = new Set(prev)
-      if (newSet.has(id)) {
-        newSet.delete(id)
+      if (newSet.has(_id)) {
+        newSet.delete(_id)
       } else {
-        newSet.add(id)
+        newSet.add(_id)
       }
       return newSet
     })
@@ -52,20 +52,20 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
           </thead>
           <tbody>
             {programData.map((program) => (
-              <tr key={program.id} className='odd:bg-white even:bg-gray-50'>
+              <tr key={program._id} className='odd:bg-white even:bg-gray-50'>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p className='text-gray-900 whitespace-no-wrap'>{program.name}</p>
                 </td>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p>
-                    {expandedPrograms.has(program.id)
+                    {expandedPrograms.has(program._id)
                       ? program.details
                       : `${program.details.substring(0, 50)}...`}
                     <button
                       className='text-blue-500 hover:text-blue-700 ml-2'
-                      onClick={() => toggleDetails(program.id)}
+                      onClick={() => toggleDetails(program._id)}
                     >
-                      {expandedPrograms.has(program.id) ? 'less' : 'more'}
+                      {expandedPrograms.has(program._id) ? 'less' : 'more'}
                     </button>
                   </p>
                 </td>
@@ -79,7 +79,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                   <div className='flex ml-[20%]'>
                     <button
                       className='text-green-500 hover:text-green-700 text-center'
-                      onClick={() => onView(program.id)}
+                      onClick={() => onView(program._id)}
                     >
                       <FaEye size={16} />
                     </button>

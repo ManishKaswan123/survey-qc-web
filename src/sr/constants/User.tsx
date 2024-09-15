@@ -51,3 +51,9 @@ export interface UserInterface {
   sellerPaymentPlanId?: string
   id: string // `id` is required
 }
+export const rolesArray = ['SuperAdmin', 'QA', 'FA']
+export const rolesMap = {
+  SuperAdmin: 'Super Admin',
+  QA: 'QUALITY ANALYST',
+  FA: 'Field Agent',
+}
