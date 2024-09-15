@@ -21,8 +21,8 @@ const EIGHTYSIX_WHATSAPP_SUPPORT_NUMBER = '8506909095'
 export const DEFAULT_LANG = 'en'
 export const REDIRECT_URI_KEY = 'redirect_uri'
 
-export const ACCESS_TOKEN_KEY = 'EightySixUI_token'
-export const REFRESH_TOKEN_KEY = 'EightySixUI_refresh_token'
+export const ACCESS_TOKEN_KEY = 'Survey_token'
+export const REFRESH_TOKEN_KEY = 'Survey_refresh_token'
 
 export const MIN_TOKEN_VALIDITY_MINUTE = 1
 
@@ -33,5 +33,5 @@ export const GET_WHATSAPPHANDLER_API = (message: string) => {
   return url
 }
 
-export const WEBSITE_NAME = 'EightySixUI'
+export const WEBSITE_NAME = 'Survey'
 export const WEBSITE_URL = 'https://abc.com'

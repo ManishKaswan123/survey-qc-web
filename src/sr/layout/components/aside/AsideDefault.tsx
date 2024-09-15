@@ -103,13 +103,9 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
               <Link to='/dashboard' className='flex items-end justify-center py-2'>
                 <button className='text-rose-800 md:block text-left text-blueGray-600 mr-0 inline-block whitespace-nowrap sm:text-xl md:text-4xl font-bold sm:pr-2 md:pr-0'>
                   {sideCollapseItem === 'show' ? (
-                    <img
-                      className='w-[8rem]'
-                      src={'/media/logos/company_logo.jpeg'}
-                      alt='86DeadStock'
-                    />
+                    <img className='w-[4rem]' src={'/media/logos/company_logo.jpeg'} alt='Survey' />
                   ) : (
-                    '86'
+                    'Survey'
                   )}
                 </button>
               </Link>
