@@ -70,7 +70,9 @@ const SectionTable: React.FC<SectionTableProps> = ({
                         className='text-blue-800 hover:cursor-pointer'
                         size={20}
                         onClick={() => {
-                          navigate(`/question/?surveyId=${surveyId}`)
+                          navigate(
+                            `/question?programId=${programId}&sectionId=${section._id}&surveyId=${surveyId} `
+                          )
                         }}
                       />
                     </div>

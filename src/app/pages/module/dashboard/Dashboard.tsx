@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import TotalCard from './TotalResults'
 import {useSelector} from 'react-redux'
@@ -6,6 +6,8 @@ import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
 import StatisticsCard from 'sr/helpers/ui-components/dashboardComponents/StatisticsCard'
 import {DummyData, StatisticsData} from 'sr/constants/dashboard'
+import {fetchDashboard} from './helpers/dashboard.helper'
+import {dashboardCardInterface} from './dashboard.interface'
 
 // const dummyData: DummyData = {
 //   users: [
@@ -33,72 +35,87 @@ import {DummyData, StatisticsData} from 'sr/constants/dashboard'
 // }
 
 const Custom: React.FC = () => {
-  const {
-    users,
-    userStatus,
-    orders,
-    orderStatus,
-    transactions,
-    transactionStatus,
-    products,
-    productStatus,
-    businessTypes,
-    businessTypesStatus,
-    categories,
-    categoryStatus,
-    subCat,
-    subCatStatus,
-  } = useSelector((state: RootState) => ({
-    users: state.user.statistics,
-    userStatus: state.user.status,
-    orders: state.order.statistics,
-    orderStatus: state.order.status,
-    transactions: state.transaction.statistics,
-    transactionStatus: state.transaction.status,
-    products: state.product.statistics,
-    productStatus: state.product.status,
-    businessTypes: state.businessType.totalBusinessTypes,
-    businessTypesStatus: state.businessType.status,
-    categories: state.categoryType.totalCategories,
-    categoryStatus: state.categoryType.status,
-    subCat: state.subCat.totalSubCat,
-    subCatStatus: state.subCat.status,
-  }))
+  const [dashboardData, setDashboardData] = useState<any>([])
+  const [totalCards, setTotalCards] = useState<dashboardCardInterface[]>([])
+  // const {
+  //   users,
+  //   userStatus,
+  //   orders,
+  //   orderStatus,
+  //   transactions,
+  //   transactionStatus,
+  //   products,
+  //   productStatus,
+  //   businessTypes,
+  //   businessTypesStatus,
+  //   categories,
+  //   categoryStatus,
+  //   subCat,
+  //   subCatStatus,
+  // } = useSelector((state: RootState) => ({
+  //   users: state.user.statistics,
+  //   userStatus: state.user.status,
+  //   orders: state.order.statistics,
+  //   orderStatus: state.order.status,
+  //   transactions: state.transaction.statistics,
+  //   transactionStatus: state.transaction.status,
+  //   products: state.product.statistics,
+  //   productStatus: state.product.status,
+  //   businessTypes: state.businessType.totalBusinessTypes,
+  //   businessTypesStatus: state.businessType.status,
+  //   categories: state.categoryType.totalCategories,
+  //   categoryStatus: state.categoryType.status,
+  //   subCat: state.subCat.totalSubCat,
+  //   subCatStatus: state.subCat.status,
+  // }))
 
-  const {
-    fetchUserData,
-    fetchOrderData,
-    fetchTransactionData,
-    fetchProductData,
-    fetchBusinessType,
-    fetchCategoryType,
-    fetchSubCatData,
-  } = useActions()
+  // const {
+  //   fetchUserData,
+  //   fetchOrderData,
+  //   fetchTransactionData,
+  //   fetchProductData,
+  //   fetchBusinessType,
+  //   fetchCategoryType,
+  //   fetchSubCatData,
+  // } = useActions()
 
-  const fetchDataIfNeeded = useCallback(() => {
-    if (userStatus !== 'succeeded') fetchUserData({})
-    if (orderStatus !== 'succeeded') fetchOrderData({})
-    if (transactionStatus !== 'succeeded') fetchTransactionData({})
-    if (productStatus !== 'succeeded') fetchProductData({})
-    if (businessTypesStatus !== 'succeeded') fetchBusinessType({})
-    if (categoryStatus !== 'succeeded') fetchCategoryType({})
-    if (subCatStatus !== 'succeeded') fetchSubCatData({})
-  }, [
-    userStatus,
-    orderStatus,
-    transactionStatus,
-    productStatus,
-    businessTypesStatus,
-    categoryStatus,
-    subCatStatus,
-    fetchUserData,
-    fetchOrderData,
-    fetchTransactionData,
-    fetchProductData,
-    fetchBusinessType,
-    fetchCategoryType,
-    fetchSubCatData,
-  ])
+  // const fetchDataIfNeeded = useCallback(() => {
+  //   if (userStatus !== 'succeeded') fetchUserData({})
+  //   if (orderStatus !== 'succeeded') fetchOrderData({})
+  //   if (transactionStatus !== 'succeeded') fetchTransactionData({})
+  //   if (productStatus !== 'succeeded') fetchProductData({})
+  //   if (businessTypesStatus !== 'succeeded') fetchBusinessType({})
+  //   if (categoryStatus !== 'succeeded') fetchCategoryType({})
+  //   if (subCatStatus !== 'succeeded') fetchSubCatData({})
+  // }, [
+  //   userStatus,
+  //   orderStatus,
+  //   transactionStatus,
+  //   productStatus,
+  //   businessTypesStatus,
+  //   categoryStatus,
+  //   subCatStatus,
+  //   fetchUserData,
+  //   fetchOrderData,
+  //   fetchTransactionData,
+  //   fetchProductData,
+  //   fetchBusinessType,
+  //   fetchCategoryType,
+  //   fetchSubCatData,
+  // ])
+
+  const fetchDataIfNeeded = async () => {
+    const response = await fetchDashboard()
+    if (response?.status === 'success') {
+      console.log('respnose is ', response)
+      const cards = response?.results?.statusWiseSurveyCount?.map((item: any) => ({
+        title: item._id,
+        total: item.count,
+      }))
+      setTotalCards(cards)
+      setDashboardData(response?.results)
+    }
+  }
 
   useEffect(() => {
     fetchDataIfNeeded()
@@ -107,48 +124,42 @@ const Custom: React.FC = () => {
   const calculatePercentage = (amount: number, total: number): string =>
     `${((amount / total) * 100).toFixed(1)}%`
 
-  const masterData: StatisticsData[] | undefined = useMemo(() => {
-    if (!businessTypes || !categories || !subCat) return undefined
-    return [
-      {
-        type: 'Business',
-        amount: businessTypes,
-        percentage: calculatePercentage(businessTypes, businessTypes + categories + subCat),
-        barColor: 'bg-blue-500',
-      },
-      {
-        type: 'Category',
-        amount: categories,
-        percentage: calculatePercentage(categories, businessTypes + categories + subCat),
-        barColor: 'bg-green-500',
-      },
-      {
-        type: 'Sub Category',
-        amount: subCat,
-        percentage: calculatePercentage(subCat, businessTypes + categories + subCat),
-        barColor: 'bg-pink-500',
-      },
-    ]
-  }, [businessTypes, categories, subCat])
+  // const masterData: StatisticsData[] | undefined = useMemo(() => {
+  //   if (!businessTypes || !categories || !subCat) return undefined
+  //   return [
+  //     {
+  //       type: 'Business',
+  //       amount: businessTypes,
+  //       percentage: calculatePercentage(businessTypes, businessTypes + categories + subCat),
+  //       barColor: 'bg-blue-500',
+  //     },
+  //     {
+  //       type: 'Category',
+  //       amount: categories,
+  //       percentage: calculatePercentage(categories, businessTypes + categories + subCat),
+  //       barColor: 'bg-green-500',
+  //     },
+  //     {
+  //       type: 'Sub Category',
+  //       amount: subCat,
+  //       percentage: calculatePercentage(subCat, businessTypes + categories + subCat),
+  //       barColor: 'bg-pink-500',
+  //     },
+  //   ]
+  // }, [businessTypes, categories, subCat])
 
-  const statisticsSections = [
-    {title: 'Users', data: users?.data},
-    {title: 'Master Data', data: masterData},
-    {title: 'Orders', data: orders?.data},
-    {title: 'Transactions', data: transactions?.data},
-    {title: 'Products', data: products?.data},
-  ]
+  // const statisticsSections = [
+  //   {title: 'Users', data: users?.data},
+  //   {title: 'Master Data', data: masterData},
+  //   {title: 'Orders', data: orders?.data},
+  //   {title: 'Transactions', data: transactions?.data},
+  //   {title: 'Products', data: products?.data},
+  // ]
 
-  const totalCards = [
-    {title: 'Users', total: users?.totalUsers},
-    {title: 'Sellers', total: users?.data?.[0]?.amount},
-    {title: 'Business Types', total: businessTypes},
-    {title: 'Categories', total: categories},
-    {title: 'Sub Categories', total: subCat},
-    {title: 'Products', total: products?.totalProducts},
-    {title: 'Orders', total: orders?.totalOrders},
-    {title: 'Transactions', total: transactions?.totalTransactions},
-  ]
+  // const totalCards = [
+  //   {title: 'submitted', total: users?.totalUsers},
+  //   {title: 'Sellers', total: users?.data?.[0]?.amount},
+  // ]
 
   return (
     <div className='p-4'>
@@ -159,12 +170,12 @@ const Custom: React.FC = () => {
           <TotalCard key={index} totalUsers={card.total} title={card.title} />
         ))}
       </div>
-      <h1 className='text-xl font-semibold mb-2'>Statistics</h1>
+      {/* <h1 className='text-xl font-semibold mb-2'>Statistics</h1>
       <div className='mb-4 grid grid-cols-3 gap-3'>
         {statisticsSections.map((section, index) => (
           <StatisticsCard key={index} data={section.data} title={section.title} />
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -17,19 +17,19 @@ export interface Section {
   status: string
   _id: string
 }
+
 export interface AnswerInterface {
-  textResponse: string
-  multipleChoiceResponse: string[]
+  textResponse?: string
+  dateResponse?: string
+  toDateResponse?: string
+  multipleChoiceResponse?: string[]
+  numberResponse?: number
   remarks?: string
   qaRemarks?: string
   status?: string
   programId?: string
   sectionId?: string
-  questionId?: {
-    questionCode: string
-    name: string
-    id: string
-  }
+  questionId: string
   createdBy?: {}
   faId?: {}
   surveyId?: {}
@@ -37,7 +37,98 @@ export interface AnswerInterface {
   id: string
 }
 
+export interface DataSourceConfig {
+  dynamicParams: any[]
+  fixedParams: any[]
+}
+
+export interface DataSource {
+  config: DataSourceConfig
+  source: string
+  labelKey: string
+  valueKey: string
+}
+
+export interface OptionLabelName {
+  en: string
+  hi: string
+}
+
+export interface Option {
+  fieldName: string
+  fieldValue: string
+  labelName: OptionLabelName
+  _id: string
+}
+
+export interface LabelName {
+  en: string
+  hi: string
+}
+
+export interface QuestionInterface {
+  dataSource: DataSource
+  programId: string
+  sectionId: string
+  questionCode: string
+  fieldName: string
+  questionType: string
+  isMandatory: boolean
+  fieldRegex: string
+  displayOrder: number
+  visibleOnFieldIds: any[]
+  options: Option[]
+  labelName: LabelName
+  createdBy: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  id: string
+}
+
+export interface OptionInterface {
+  fieldName: string
+  fieldValue: string
+  labelName: LabelName
+  _id: string
+}
+
+export interface QuestionAnswer {
+  programId: string
+  sectionId: string
+  questionCode: string
+  fieldName: string
+  questionType: string
+  options: OptionInterface[]
+  status: string
+  questionId: string
+  answerId?: string
+  remarks?: string
+  qaRemarks?: string | null
+  textResponse?: string
+  dateResponse?: string
+  toDateResponse?: string
+  multipleChoiceResponse?: string[]
+  numberResponse?: number
+}
+
+export interface QuestionTableProps {
+  key: string
+  data: QuestionAnswer
+  setIsUpdateModalOpen?: (isOpen: boolean) => void
+}
 export interface QuestionResponse {
+  status: string
+  results: {
+    results: QuestionInterface[]
+    page: number
+    limit: number
+    totalPages: number
+    totalResults: number
+  }
+}
+
+export interface AnswerResponse {
   status: string
   results: {
     results: AnswerInterface[]
@@ -46,10 +137,4 @@ export interface QuestionResponse {
     totalPages: number
     totalResults: number
   }
-}
-
-export interface QuestionTableProps {
-  key: string
-  question: AnswerInterface
-  setIsUpdateModalOpen?: (isOpen: boolean) => void
 }
