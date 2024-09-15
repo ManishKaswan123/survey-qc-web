@@ -375,10 +375,132 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                           </Link>
                         </li>
                         <li className='items-center'>
-                          <Link to='/business-category' replace>
+                          <Link to='/state' replace>
                             <button
                               className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'business-category' && subPath === undefined
+                                path === 'state' && subPath === undefined ? 'text-rose-600' : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d='M3 10l1.5 1.5L5 11l1 1 1.5-1.5L8 9l1-1h3l2 1 1 1 1.5 1.5L17 11h1l1 1v2l-1 1-1.5 1.5L16 18l-1 1h-2l-1.5-1.5L10 17l-1-1H7l-1 1-1.5 1.5L3 19l-1-1v-5l1-1 1-1V9l1-1 1-1L7 6h1l1-1V4l1-1h3l1 1v1l1 1h1l1 1 1 1v1h-1l-1-1h-1l-1 1h-1l-1 1h-1l-1-1H8L6 9H5l-1 1-1-1z'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>State</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
+                          <Link to='/district' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
+                                path === 'district' && subPath === undefined ? 'text-rose-600' : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d='M4 7h1l1-1h2l1 1h8l1-1h2l1 1h1v10h-1l-1 1h-2l-1-1H8l-1 1H5l-1-1H3V7zM4 8v7h1v-6h14v6h1V8H4z'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>District</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
+                          <Link to='/subDistrict' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'subDistrict' && subPath === undefined
+                                  ? 'text-rose-600'
+                                  : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d='M4 9v7h2v2h12v-2h2V9H4zm4 0h8v7H8V9z'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>Sub District</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
+                          <Link to='/village' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'village' && subPath === undefined ? 'text-rose-600' : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d='M12 2l-7 7v8a2 2 0 002 2h10a2 2 0 002-2v-8l-7-7zM9 12v6H7v-6h2zm2-4l3 3h-2v7h-2v-7H8l3-3z'
+                                />
+                              </svg>
+
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>Village</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                        <li className='items-center'>
+                          <Link to='/mobile-app-config-history' replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === 'mobile-app-config-history' && subPath === undefined
                                   ? 'text-rose-600'
                                   : ''
                               }`}
@@ -399,133 +521,7 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                               </svg>
 
                               {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Business Category</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/category' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
-                                path === 'category' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M3 7a1 1 0 011-1h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V7zM3 14a1 1 0 011-1h16a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Category</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/sub-category' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
-                                path === 'sub-category' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M4 6h16M4 12h8m-8 6h16'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Sub Category</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/invitation-coupon' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'invitation-coupon' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M9 11V9a2 2 0 114 0v2m-4 0a2 2 0 104 0m0 0v2a2 2 0 11-4 0v-2m0 0H6a2 2 0 00-2 2v4a2 2 0 002 2h12a2 2 0 002-2v-4a2 2 0 00-2-2h-3'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Invitation Coupon</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/seller-payment-plan' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'seller-payment-plan' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M6 12h12M6 16h12M6 8h12M6 20h12M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Seller Payment Plan</span>
+                                <span className='text-left'>Mobile App Config History</span>
                               ) : (
                                 ''
                               )}
@@ -590,6 +586,36 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
 
                           {sideCollapseItem === 'show' ? (
                             <span className='text-left'>User Management</span>
+                          ) : (
+                            ''
+                          )}
+                        </button>
+                      </Link>
+                    </li>
+                    <li className='items-center'>
+                      <Link to='/complaints' replace>
+                        <button
+                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
+                            path === 'contact-us' && subPath === undefined ? 'text-rose-600' : ''
+                          }`}
+                        >
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            className='h-5 w-5 mr-2'
+                            fill='none'
+                            viewBox='0 0 24 24'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              d='M16.5 3h-9A2.5 2.5 0 005 5.5v13A2.5 2.5 0 007.5 21h9a2.5 2.5 0 002.5-2.5v-13A2.5 2.5 0 0016.5 3zM4 8.8l8 4.6 8-4.6M4 8.8l8 4.6 8-4.6'
+                            />
+                          </svg>
+
+                          {sideCollapseItem === 'show' ? (
+                            <span className='text-left'>Complaints</span>
                           ) : (
                             ''
                           )}

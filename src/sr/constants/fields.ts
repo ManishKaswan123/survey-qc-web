@@ -1,12 +1,15 @@
 type Field = {
+  id?: string
+  labelKey?: string
   name: any
   type: string
   label: string
   placeholder?: string
   required?: boolean
+  disabled?: boolean
   wrapperLabel?: string
   topLabel?: string
-  labelKey?: string
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 export type FieldsArray = Field[]
 

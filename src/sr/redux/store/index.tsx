@@ -14,6 +14,9 @@ import loginUserSlice from '../slice/loginUserSlice'
 import eightySixTypeReducer from '../slice/eightySixSlice'
 import programTypeReducer from '../slice/programSlice'
 import sectionTypeReducer from '../slice/sectionSlice'
+import stateTypeReducer from '../slice/stateSlice'
+import districtTypeReducer from '../slice/districtSlice'
+import appConfigTypeReducer from '../slice/appConfigSlice'
 
 const rootReducer = combineReducers({
   sendOtp: sendOtpReducer,
@@ -30,6 +33,9 @@ const rootReducer = combineReducers({
   eightySix: eightySixTypeReducer,
   program: programTypeReducer,
   section: sectionTypeReducer,
+  state: stateTypeReducer,
+  district: districtTypeReducer,
+  appConfig: appConfigTypeReducer,
 })
 
 export const store = configureStore({

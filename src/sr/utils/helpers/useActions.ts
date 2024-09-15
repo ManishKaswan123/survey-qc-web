@@ -12,11 +12,17 @@ import {fetchSubCatData} from 'sr/redux/action/subCatActions'
 import {fetch86Action} from 'sr/redux/action/eightySixAction'
 import {fetchProgramAction} from 'sr/redux/action/programActions'
 import {fetchSectionAction} from 'sr/redux/action/sectionActions'
+import { fetchDistrictData } from 'sr/redux/action/districtActions'
+import { fetchStateData } from 'sr/redux/action/stateActions'
+import { fetchAppConfigData } from 'sr/redux/action/appConfigActions'
 
 export const useActions = () => {
   const dispatch = useDispatch()
   return bindActionCreators(
     {
+      fetchDistrictData,
+      fetchStateData,
+      fetchAppConfigData,
       fetchUserData,
       fetchBusinessType,
       fetchCategoryType,

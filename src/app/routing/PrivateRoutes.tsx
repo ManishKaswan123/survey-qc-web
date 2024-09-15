@@ -5,10 +5,18 @@ import {MasterLayout} from 'sr/layout/MasterLayout'
 import TopBarProgress from 'react-topbar-progress-indicator'
 import QuestionPage from 'app/pages/module/question/question.page'
 import CustomQuestions from 'app/pages/module/question/question.masterData.page'
+import AppVersionHistory from 'app/pages/module/appVersionHistory copy/AppVersionHistory'
+import State from 'app/pages/module/state/State'
+import SubDistrict from 'app/pages/module/subDistrict/SubDistrict'
+import District from 'app/pages/module/district/District'
+import Village from 'app/pages/module/village/Village'
+import AppConfigHistory from 'app/pages/module/appConfigHistroy/appConfigHistory'
+import ContactUs from 'app/pages/module/contactUs/ContactUs'
 // import QuestionModal from 'app/pages/module/question/question.component/question.modal'
 // import EightySixResponseDetailsCard from 'app/pages/module/86Response/components/86ResponseDetailsCard'
 
 // Lazy loading components
+
 const Dashboard = lazy(async () => import('app/pages/module/dashboard/Dashboard'))
 const Categories = lazy(async () => import('app/pages/module/masterData/categories/Categories'))
 const BusinessCategory = lazy(async () => import('app/pages/module/masterData/business/Business'))
@@ -30,9 +38,7 @@ const InvitationCoupon = lazy(
   async () => import('app/pages/module/invitationCoupon/InvitationCoupon')
 )
 const SellerPaymentPlan = lazy(async () => import('app/pages/module/seller/SellerPaymentPlan'))
-const AppVersionHistory = lazy(
-  async () => import('app/pages/module/appVersionHistory/AppVersionHistory')
-)
+
 const SellerOnBoarding = lazy(async () => import('app/pages/module/seller/SellerOnBoarding'))
 const ChangePassword = lazy(async () => import('app/pages/module/userProfile/ChangePassword'))
 const EightSix = lazy(async () => import('app/pages/module/86/86'))
@@ -89,6 +95,12 @@ const routeConfigs: RouteConfig[] = [
   {path: '/question', element: <QuestionPage />},
   {path: '/section', element: <Section />},
   {path: '/all-questions', element: <CustomQuestions />},
+  {path: '/state', element: <State />},
+  {path: '/subDistrict', element: <SubDistrict />},
+  {path: '/district', element: <District />},
+  {path: '/village', element: <Village />},
+  {path: '/mobile-app-config-history', element: <AppConfigHistory />},
+  {path: '/complaints', element: <ContactUs />},
 ]
 
 const PrivateRoutes: FC = () => {
