@@ -104,9 +104,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
 
           <div className='inline-block w-full max-w-2xl h-[90vh] text-left align-middle transition-all transform bg-white shadow-xl rounded-lg'>
             <div className='h-full overflow-y-auto p-6'>
-              <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                Create New Question
-              </Dialog.Title>
+              <h2 className='text-xl  leading-6 text-gray-900 font-bold'>Create New Question</h2>
 
               <form className='mt-4 space-y-4'>
                 {/* Existing form fields (Program, Section, etc.) */}
@@ -247,8 +245,8 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
 
                 {/* Visible On Field */}
                 <div className='flex items-center space-x-4'>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Visible On Field
+                  <label className=''>
+                    <h4 className='text-lg font-semibold my-3'>Visible On Field</h4>
                   </label>
                   <div
                     onClick={toggleSwitch}
