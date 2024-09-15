@@ -9,6 +9,8 @@ const UserTable: React.FC<UserTableProps> = ({
   onSelectUser,
   setIsChangePasswordModalOpen,
   setIsUpdateModalOpen,
+  setIsAllocateModalOpen,
+  onDelete,
 }) => {
   const navigate = useNavigate()
 
@@ -20,6 +22,15 @@ const UserTable: React.FC<UserTableProps> = ({
   const handleUpdate = (user: UserInterface) => {
     onSelectUser(user)
     setIsUpdateModalOpen(true)
+  }
+
+  const handleAllocate = (user: UserInterface) => {
+    onSelectUser(user)
+    setIsAllocateModalOpen(true)
+  }
+
+  const handleDelete = (id: string) => {
+    onDelete(id)
   }
 
   return (
@@ -42,7 +53,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 Status
               </th>
               <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Type
+                Role
               </th>
               <th className='py-5 bg-[#265B91] text-left text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Action
@@ -68,7 +79,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p>{user?.email}</p>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
+                <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <p
                     className={
                       user?.isActive
@@ -96,13 +107,19 @@ const UserTable: React.FC<UserTableProps> = ({
                     >
                       <FaEdit />
                     </button>
-                    <button className='bg-red-500 hover:bg-red-600 text-slate-50 p-2 rounded-full'>
+                    <button
+                      onClick={() => handleDelete(user?.id)}
+                      className='bg-red-500 hover:bg-red-600 text-slate-50 p-2 rounded-full'
+                    >
                       <FaTrash />
                     </button>
                   </div>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
-                  <button className='bg-[#4a95e0] hover:bg-[#4686ed] text-slate-50 font-md text-xs py-3 px-4 rounded font-semibold '>
+                  <button
+                    onClick={() => handleAllocate(user)}
+                    className='bg-[#4a95e0] hover:bg-[#4686ed] text-slate-50 font-md text-xs py-3 px-4 rounded font-semibold '
+                  >
                     ALLOCATE
                   </button>
                 </td>

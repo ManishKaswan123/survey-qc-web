@@ -49,7 +49,8 @@ export interface UserTableProps {
   onSelectUser: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
   setIsChangePasswordModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   setIsUpdateModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-  // onDelete: (id: string) => void
+  setIsAllocateModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  onDelete: (id: string) => void
 }
 
 export interface SellerDetailsApiResponse {
@@ -99,4 +100,10 @@ export interface sellerDetailsCardProps {
   selectedUser: UserInterface | undefined
   setSelectedUser: React.Dispatch<React.SetStateAction<UserInterface | undefined>>
   setReRender: () => Promise<QueryObserverResult<any, Error>>
+}
+
+export interface allocateUserInterface {
+  userType: string
+  userId: string
+  surveyIds: string[]
 }
