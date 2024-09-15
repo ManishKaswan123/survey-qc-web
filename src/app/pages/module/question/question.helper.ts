@@ -31,7 +31,25 @@ export const fetchAnswers = async (payload?: FilterProps): Promise<AnswerRespons
   try {
     const res = await get<AnswerResponse>(`/answer`, filteredPayload)
 
-    console.log('res of answer is this :-', res)
+    // console.log('res of answer is this :-', res)
+    if (res && res.status == 'success') {
+      return res // Return the fetched data
+    } else {
+      // Handle the case where results are not present
+      throw new Error('No data found')
+    }
+  } catch (error) {
+    // Throw the error to be handled by the caller
+    throw new Error(`Failed to fetch : ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+export const fetchStaticQuestions = async (payload?: FilterProps): Promise<any> => {
+  const filteredPayload = filterPayload(payload ?? {})
+
+  try {
+    const res = await get<any>(`/question`, filteredPayload)
+
+    // console.log('res of answer is this :-', res)
     if (res && res.status == 'success') {
       return res // Return the fetched data
     } else {

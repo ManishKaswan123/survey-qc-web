@@ -1,104 +1,111 @@
 import React, {useEffect, useMemo, useState} from 'react'
+import {useLocation} from 'react-router-dom'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {useLocation, useNavigate, useParams} from 'react-router-dom'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
-import {useQuery} from '@tanstack/react-query'
-import {FilterProps, Section} from './section.interfaces'
-import {fetchSections} from './section.helper'
 import SurveySkeleton from '../survey/components/survey.skeleton'
 import SectionTable from './section.component/section.table'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import SkeletonSectionTable from './section.component/section.skeletonTable'
+import {fetchSections} from './section.helper'
+import {Section} from './section.interfaces'
+import {fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
+import {useQuery} from '@tanstack/react-query'
 
 const Custom: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
-    () => [
-      {type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'},
-      //   {type: 'text', label: 'Status', name: 'status', placeholder: 'Enter Status'},
-      //   {type: 'text', label: 'Created By', name: 'createdBy', placeholder: 'Enter Created By'},
-      //   {type: 'text', label: 'QA Id', name: 'qaId', placeholder: 'Enter QA Id'},
-      //   {type: 'text', label: 'FA Id', name: 'faId', placeholder: 'Enter FA Id'},
-    ],
+    () => [{type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'}],
     []
   )
 
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
-  const [totalResults, setTotalResults] = useState<number>(0)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10)
-  const [filters, setFilters] = useState<FilterProps>()
   const location = useLocation()
-  const receivedData = location.state || []
   const queryParams = new URLSearchParams(location.search)
-  const programId = queryParams.get('programId')
-  const surveyId = queryParams.get('surveyId')
+  const programId = queryParams.get('programId') || ''
+  const surveyId = queryParams.get('surveyId') || ''
+  const receivedData = location.state || []
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [filters, setFilters] = useState({})
   const [isExpanded, setIsExpanded] = useState(false)
+  const [totalQuestionsMap, setTotalQuestionsMap] = useState({})
+  const [totalAttemptedQuestionsMap, setTotalAttemptedQuestionsMap] = useState({})
 
-  const mappedReceivedData = useMemo(
-    () =>
-      receivedData.reduce((acc: any, item: Record<string, string>) => {
-        acc[item.sectionId] = item.status
-        return acc
-      }, {} as Record<string, string>),
-    [receivedData]
-  )
+  const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded)
-  }
+  // Fetch static questions and build the totalQuestionsMap
+  useEffect(() => {
+    const buildTotalQuestionsMap = async () => {
+      try {
+        const {results} = await fetchStaticQuestions({programId, getAll: true})
+        const map = results.results.reduce((acc: any, curr: any) => {
+          acc[curr.sectionId] = (acc[curr.sectionId] || 0) + 1
+          return acc
+        }, {})
+        setTotalQuestionsMap(map)
+      } catch (error) {
+        console.error('Error fetching static questions:', error)
+      }
+    }
 
-  const {data, error, isLoading, isError, refetch} = useQuery({
+    buildTotalQuestionsMap()
+  }, [programId])
+
+  // Fetch survey questions and build the totalAttemptedQuestionsMap
+  useEffect(() => {
+    const buildAttemptedQuestionsMap = async () => {
+      try {
+        const {results} = await fetchQuestions({surveyId, getAll: true})
+        const map = results.results.reduce((acc: any, curr: any) => {
+          acc[curr.sectionId] = (acc[curr.sectionId] || 0) + 1
+          return acc
+        }, {})
+        setTotalAttemptedQuestionsMap(map)
+      } catch (error) {
+        console.error('Error fetching survey questions:', error)
+      }
+    }
+
+    buildAttemptedQuestionsMap()
+  }, [surveyId])
+
+  // Memoized data to avoid re-computation on every render
+  const mappedReceivedData = useMemo(() => {
+    return receivedData.reduce((acc: Record<string, string>, item: Record<string, string>) => {
+      acc[item.sectionId] = item.status
+      return acc
+    }, {})
+  }, [receivedData])
+
+  // Query to fetch sections with filters
+  const {data, error, isLoading} = useQuery({
     queryKey: ['sections', {limit: itemsPerPage, page: currentPage, ...filters}],
-    queryFn: async () =>
+    queryFn: () =>
       fetchSections({
         limit: itemsPerPage,
         page: currentPage,
         ...filters,
-        // programId: programId || '',
       }),
-    // placeholderData: keepPreviousData,
   })
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page)
-  }
-
-  const onLimitChange = (newLimit: number) => {
-    setItemsPerPage(newLimit)
+  const handlePageChange = (page: number) => setCurrentPage(page)
+  const handleLimitChange = (limit: number) => {
+    setItemsPerPage(limit)
     setCurrentPage(1)
   }
 
-  const handleApplyFilter = (newFilters: FilterProps) => {
+  const handleApplyFilter = (newFilters: any) => {
     setFilters(newFilters)
     setCurrentPage(1)
   }
-
-  // const handleEdit = (section: Section) => {
-  //   console.log('Edit section:', section)
-  // }
-
-  // const handleDelete = (section: Section) => {
-  //   console.log('Delete section:', section)
-  // }
-
-  // const handleView = (sectionId: string) => {
-  //   navigate(`/question`, {
-  //     state: {sectionId},
-  //   })
-  //   console.log('View questions for section:', sectionId)
-  // }
-  //   console.log('mapped received data', mappedReceivedData)
-  console.log('programId, surveyId', programId, surveyId)
 
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
         <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
-        <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
+        <FilterHeader onToggle={handleToggleExpand} isExpanded={isExpanded} />
 
         {isExpanded && (
           <div className='relative'>
@@ -109,6 +116,7 @@ const Custom: React.FC = () => {
             />
           </div>
         )}
+
         {isLoading ? (
           <SkeletonSectionTable />
         ) : (
@@ -116,7 +124,10 @@ const Custom: React.FC = () => {
             <SectionTable
               sectionData={data.results.results}
               receivedData={mappedReceivedData}
-              surveyId={surveyId || ''}
+              surveyId={surveyId}
+              programId={programId}
+              totalQuestionsMap={totalQuestionsMap}
+              totalAttemptedQuestionsMap={totalAttemptedQuestionsMap}
             />
           )
         )}
@@ -126,13 +137,12 @@ const Custom: React.FC = () => {
         ) : (
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
-            totalResults={totalResults}
-            onPageChange={onPageChange}
+            totalPages={data?.results.totalPages || 1}
+            totalResults={data?.results.totalResults || 0}
+            onPageChange={handlePageChange}
             itemsPerPage={itemsPerPage}
             name='Section'
-            onLimitChange={onLimitChange}
-            disabled={isLoading}
+            onLimitChange={handleLimitChange}
           />
         )}
       </div>
@@ -141,10 +151,7 @@ const Custom: React.FC = () => {
 }
 
 const SectionPage: React.FC = () => {
-  return (
-    <>
-      <DashboardWrapper customComponent={Custom} selectedItem={'/sections'}></DashboardWrapper>
-    </>
-  )
+  return <DashboardWrapper customComponent={Custom} selectedItem='/sections' />
 }
+
 export default SectionPage
