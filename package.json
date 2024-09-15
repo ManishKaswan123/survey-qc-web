@@ -6,6 +6,7 @@
     "dependencies": {
         "@formatjs/intl-relativetimeformat": "10.0.1",
         "@fortawesome/fontawesome-free": "6.1.1",
+        "@headlessui/react": "^2.1.8",
         "@material-tailwind/react": "^2.1.9",
         "@mui/material": "^5.16.7",
         "@mui/styled-engine-sc": "^6.1.0",
