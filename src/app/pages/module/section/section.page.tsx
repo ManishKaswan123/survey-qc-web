@@ -13,10 +13,79 @@ import {fetchSections} from './section.helper'
 import {Section} from './section.interfaces'
 import {fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
 import {useQuery} from '@tanstack/react-query'
+import {Button} from 'sr/helpers'
+import {AiOutlinePlus} from 'react-icons/ai'
+import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
 
 const Custom: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
     () => [{type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'}],
+    []
+  )
+
+  const programData = [
+    {id: 1, title: 'Program 1'},
+    {id: 2, title: 'Program 2'},
+    {id: 3, title: 'Program 3'},
+  ]
+
+  const labelData = [
+    {id: 'en', title: 'English'},
+    {id: 'hi', title: 'Hindi'},
+    {id: 'pun', title: 'Punjabi'},
+  ]
+
+  const createUpdateFields: FieldsArray = useMemo(
+    () => [
+      {
+        type: 'text',
+        label: 'Section Code',
+        name: 'sectionCode',
+        placeholder: 'Section Code',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Section Name',
+        name: 'sectionName',
+        placeholder: 'Section Name',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Description',
+        name: 'description',
+        placeholder: 'Description',
+      },
+      {
+        type: 'dropdown',
+        label: 'labelName',
+        name: labelData,
+        topLabel: 'Label Name',
+        placeholder: 'Select Label Name',
+        required: true,
+        labelKey: 'title',
+        id: 'id',
+      },
+
+      {
+        type: 'dropdown',
+        label: 'programId',
+        name: programData,
+        topLabel: 'Program',
+        placeholder: 'Select Program',
+        required: true,
+        labelKey: 'title',
+        id: 'id',
+      },
+      {
+        type: 'text',
+        label: 'Display Order',
+        name: 'displayOrder',
+        placeholder: 'Display Order',
+        required: true,
+      },
+    ],
     []
   )
 
@@ -32,6 +101,7 @@ const Custom: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [totalQuestionsMap, setTotalQuestionsMap] = useState({})
   const [totalAttemptedQuestionsMap, setTotalAttemptedQuestionsMap] = useState({})
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
@@ -101,10 +171,23 @@ const Custom: React.FC = () => {
     setCurrentPage(1)
   }
 
+  const handleCreateSection = async (values: any) => {
+    console.log('Create Section:', values)
+    setIsCreateModalOpen(false)
+  }
+
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
+        <div className='flex flex-row justify-between mb-4'>
+          <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
+          <Button
+            label='Create new'
+            Icon={AiOutlinePlus}
+            onClick={() => setIsCreateModalOpen(true)}
+            className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
+          ></Button>
+        </div>
         <FilterHeader onToggle={handleToggleExpand} isExpanded={isExpanded} />
 
         {isExpanded && (
@@ -146,6 +229,16 @@ const Custom: React.FC = () => {
           />
         )}
       </div>
+      {isCreateModalOpen && (
+        <DynamicModal
+          // imageType='imagePath'
+          label='Create Section'
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          fields={createUpdateFields}
+          onSubmit={handleCreateSection}
+        />
+      )}
     </div>
   )
 }
