@@ -24,6 +24,8 @@ import QuestionSkeleton from './question.component/question.skeleton'
 import QuestionCard from './question.component/question.card'
 import QuestionMasterCard from './question.component/question.master.card'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
+import {is} from 'immer/dist/internal'
+import CreateQuestionPopup from './question.component/question.create'
 
 const CustomQuestions: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
@@ -261,7 +263,8 @@ const CustomQuestions: React.FC = () => {
           />
         )}
       </div>
-      {isCreateModalOpen && (
+      {}
+      {/* {isCreateModalOpen && (
         <DynamicModal
           label='Create Question'
           isOpen={isCreateModalOpen}
@@ -269,6 +272,9 @@ const CustomQuestions: React.FC = () => {
           fields={createFields}
           onSubmit={handleCreateQuestion}
         />
+      )} */}
+      {isCreateModalOpen && (
+        <CreateQuestionPopup isOpen={isCreateModalOpen} setIsOpen={setIsCreateModalOpen} />
       )}
       {isUpdateModalOpen && (
         <DynamicModal
