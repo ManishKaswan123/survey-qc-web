@@ -141,13 +141,13 @@ export interface AnswerResponse {
 
 // question.interface.ts
 
-export interface Option {
+export interface OptionQuestion {
   fieldName: string
   fieldValue: string
   labelName: Record<string, string> // language code to label map
 }
 
-export interface DataSource {
+export interface DataSourceQuestion {
   source: 'API' | 'INLINE' | 'CONFIG' // e.g., 'internal', 'external'
   labelKey?: string
   valueKey?: string
@@ -185,8 +185,8 @@ export interface Question {
   isActive: boolean
   id: string
   fieldRegex?: string
-  options: Option[] // Array of options
-  dataSource: DataSource // Data source configuration
+  options: OptionQuestion[] // Array of options
+  dataSource: DataSourceQuestion // Data source configuration
   visibleOnFieldIds: VisibleOnFieldId[] // Array of visible field configurations
   questionConfig: Record<string, any> // Additional config, dynamic key-value
 }
@@ -209,7 +209,7 @@ export interface QuestionCreatePayload {
   visibleOnFieldIds?: VisibleOnFieldId[]
   options?: Option[]
   labelName: Record<string, string>
-  dataSource?: DataSource
+  dataSource?: DataSourceQuestion
   displayOrder: number
   programId: string
   sectionId: string

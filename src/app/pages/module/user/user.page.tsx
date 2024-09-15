@@ -41,6 +41,7 @@ const Custom: React.FC = () => {
       {name: 'Super Admin', id: 'SuperAdmin'},
       {name: 'Quality Analyst', id: 'QA'},
       {name: 'Field Agent', id: 'FA'},
+      {name: 'Project Admin', id: 'ProjectAdmin'},
     ],
     []
   )
