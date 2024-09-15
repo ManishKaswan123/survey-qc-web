@@ -26,6 +26,7 @@ import QuestionMasterCard from './question.component/question.master.card'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
 import {is} from 'immer/dist/internal'
 import CreateQuestionPopup from './question.component/question.create'
+import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 
 const CustomQuestions: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
@@ -40,6 +41,9 @@ const CustomQuestions: React.FC = () => {
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
   //   const userStatus = useSelector((state: RootState) => state.user.status)
   //   const {fetchUserData} = useActions()
+
+  const [isExpanded, setIsExpanded] = useState(false)
+  const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
   const createFields: FieldsArray = useMemo(
     () => [
@@ -204,7 +208,28 @@ const CustomQuestions: React.FC = () => {
     <>
       <div className='container mx-auto px-4 sm:px-8'>
         <div className='py-4'>
-          <div className='flex justify-between items-center flex-wrap mb-4'>
+          <div className='flex flex-row justify-between mb-4'>
+            <h2 className='text-lg font-bold text-gray-700 mb-4'>Questions</h2>
+            <Button
+              label='Create new'
+              Icon={AiOutlinePlus}
+              onClick={() => setIsCreateModalOpen(true)}
+              className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
+            ></Button>
+          </div>
+          <FilterHeader onToggle={handleToggleExpand} isExpanded={isExpanded} />
+
+          {isExpanded && (
+            <div className='relative'>
+              <Filter
+                onApplyFilter={handleApplyFilter}
+                setIsFilterVisible={setIsFilterVisible}
+                preFilters={filters || {}}
+                fields={createFields}
+              />
+            </div>
+          )}
+          {/* <div className='flex justify-between items-center flex-wrap mb-4'>
             <h2 className='text-2xl font-semibold leading-tight mb-2 sm:mb-0 sm:mr-4'>Questions</h2>
             <div className='flex items-center'>
               <Button
@@ -220,8 +245,8 @@ const CustomQuestions: React.FC = () => {
                 className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center'
               />
             </div>
-          </div>
-          {isFilterVisible && (
+          </div> */}
+          {/* {isFilterVisible && (
             <div className='relative'>
               <Filter
                 onApplyFilter={handleApplyFilter}
@@ -230,7 +255,7 @@ const CustomQuestions: React.FC = () => {
                 fields={createFields}
               />
             </div>
-          )}
+          )} */}
           {isLoading ? (
             <QuestionSkeleton />
           ) : (
