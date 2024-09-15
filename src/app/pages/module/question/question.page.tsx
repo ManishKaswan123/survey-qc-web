@@ -7,14 +7,35 @@ import {useLocation, useNavigate} from 'react-router-dom'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useQuery} from '@tanstack/react-query'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
-import {AnswerInterface, FilterProps} from './question.interface'
-import {fetchQuestions} from './question.helper'
+import {AnswerInterface, FilterProps, QuestionAnswer, QuestionInterface} from './question.interface'
+import {fetchAnswers, fetchQuestions} from './question.helper'
 import QuestionSkeleton from './question.component/question.skeleton'
 import QuestionCard from './question.component/question.card'
+import {set} from 'react-hook-form'
 
 const Custom: React.FC = () => {
+  const status = useMemo(
+    () => [
+      {name: 'Submitted', id: 'submitted'},
+      {name: 'Approved', id: 'approved'},
+      {name: 'Flagged', id: 'flagged'},
+      {name: 'Re Submitted', id: 'resubmitted'},
+      {name: 'Not Started', id: 'yetToStart'},
+      {name: 'Rejected', id: 'rejected'},
+      {name: 'In Progress', id: 'inProgress'},
+    ],
+    []
+  )
   const filterFields: FieldsArray = useMemo(
-    () => [{type: 'text', label: 'Status', name: 'status', placeholder: 'Enter Status'}],
+    () => [
+      {
+        type: 'dropdown',
+        label: 'status',
+        name: status,
+        topLabel: 'Status',
+        placeholder: 'SelectStatus',
+      },
+    ],
     []
   )
 
@@ -24,10 +45,19 @@ const Custom: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<FilterProps>()
   const navigate = useNavigate()
-  const location = useLocation()
-  const {programId} = location.state || {}
   const [isExpanded, setIsExpanded] = useState(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false)
+  const [mappedData, setMappedData] = useState<QuestionAnswer[]>([])
+  const [check, setCheck] = useState<boolean>(false)
+  const [answerData, setAnswerData] = useState<AnswerInterface[]>([])
+  const [questionData, setQuestionData] = useState<QuestionInterface[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const programId = queryParams.get('programId') || ''
+  const surveyId = queryParams.get('surveyId') || ''
+  const sectionId = queryParams.get('sectionId') || ''
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -42,7 +72,7 @@ const Custom: React.FC = () => {
           multipleChoiceResponse: ['Option 1', 'Option 2'],
           remarks: 'Sample remark 1',
           qaRemarks: 'Sample QA remark 1',
-          status: 'Completed',
+          status: 'submitted',
           programId: '84213840-6caa-4b9a-a750-41542393c829',
           sectionId: '366b8fcb-8d00-4e72-b18a-dae6b0633be7',
           questionId: {
@@ -70,7 +100,7 @@ const Custom: React.FC = () => {
           multipleChoiceResponse: [],
           remarks: 'Sample remark 2',
           qaRemarks: 'Sample QA remark 2',
-          status: 'Completed',
+          status: 'resubmitted',
           programId: '7a7934d7-b2f1-497d-9699-0766c5e22335',
           sectionId: 'f00a6b61-b99f-4b82-b79f-2987d2a0b3fb',
           questionId: {
@@ -98,7 +128,7 @@ const Custom: React.FC = () => {
           multipleChoiceResponse: ['Option 2', 'Option 1', 'Option 3'],
           remarks: 'Sample remark 3',
           qaRemarks: 'Sample QA remark 3',
-          status: 'Completed',
+          status: 'Flagged',
           programId: '7b604be6-6a81-4850-84aa-cc9c29ba62c1',
           sectionId: 'a3d3f412-b35e-4ea6-82db-85bac195f691',
           questionId: {
@@ -126,7 +156,7 @@ const Custom: React.FC = () => {
           multipleChoiceResponse: [],
           remarks: 'Sample remark 4',
           qaRemarks: 'Sample QA remark 4',
-          status: 'Completed',
+          status: 'approved',
           programId: 'f2133cd5-65c2-44fd-aedc-1a376b97182b',
           sectionId: 'efba0f84-6f5f-43d3-9406-b031b16032f9',
           questionId: {
@@ -154,7 +184,7 @@ const Custom: React.FC = () => {
           multipleChoiceResponse: [],
           remarks: 'Sample remark 5',
           qaRemarks: 'Sample QA remark 5',
-          status: 'Completed',
+          status: 'yetToStart',
           programId: '5259d043-2713-4e75-a38f-e5387439db13',
           sectionId: '77946ca1-73a1-4af1-a38f-af2bef758e74',
           questionId: {
@@ -185,17 +215,128 @@ const Custom: React.FC = () => {
     },
   }
 
-  const {data, error, isLoading, isError, refetch} = useQuery({
-    queryKey: ['surveys', {limit: itemsPerPage, page: currentPage, ...filters}],
-    queryFn: async () =>
-      fetchQuestions({
-        limit: itemsPerPage,
-        page: currentPage,
+  // console.log('filtes:', filters)
+  // const {data, error, isLoading, isError, refetch} = useQuery({
+  //   queryKey: ['question', {getAll: true, ...filters}],
+  //   queryFn: async () =>
+  //     fetchQuestions({
+  //       getAll: true,
+  //       ...filters,
+  //     }),
+  //   // placeholderData: keepPreviousData,
+  // })
+
+  useEffect(() => {
+    const handleQuestion = async () => {
+      setIsLoading(true)
+      const questions = await fetchQuestions({
+        getAll: true,
+        programId: programId,
+        sectionId: sectionId,
+      })
+      if (questions?.status === 'success') {
+        setIsLoading(false)
+        setQuestionData(questions?.results?.results)
+      }
+    }
+    handleQuestion()
+  }, [])
+
+  useEffect(() => {
+    const handleAnswer = async () => {
+      setIsLoading(true)
+      const answers = await fetchAnswers({
+        getAll: true,
         ...filters,
-        populate: `createdBy,updatedBy,questionId`,
-      }),
-    // placeholderData: keepPreviousData,
-  })
+        programId: programId,
+        sectionId: sectionId,
+        surveyId: surveyId,
+      })
+      if (answers?.status === 'success') {
+        setIsLoading(false)
+        setAnswerData(answers?.results?.results)
+      }
+    }
+    handleAnswer()
+  }, [filters])
+
+  useEffect(() => {
+    if (questionData && answerData) {
+      console.log('checking')
+      console.log('questionData:', questionData)
+      console.log('answerData:', answerData)
+      let mappedData = mapQuestionsAndAnswers()
+      if (filters && filters?.status && filters?.status !== 'yetToStart') {
+        console.log('filtered data:', filters)
+        mappedData = mappedData.filter((data) => data?.status === filters?.status)
+      }
+      setMappedData(mappedData)
+    }
+  }, [filters, answerData, questionData])
+  // useEffect(() => {
+  //   if (
+  //     !check &&
+  //     data &&
+  //     data?.results?.results.length > 0 &&
+  //     answerData?.data &&
+  //     answerData?.data?.results?.results.length > 0
+  //   ) {
+  //     console.log('ans d')
+  //     const mappedData = mapQuestionsAndAnswers()
+  //     setMappedData(mappedData)
+  //   }
+  // }, [filters])
+
+  // const answers = useQuery({
+  //   queryKey: ['answer', {getAll: true, ...filters}],
+  //   queryFn: async () =>
+  //     fetchAnswers({
+  //       getAll: true,
+  //       ...filters,
+  //     }),
+  //   // placeholderData: keepPreviousData,
+  // })
+
+  const mapQuestionsAndAnswers = (): QuestionAnswer[] => {
+    return (
+      questionData?.map((question: QuestionInterface) => {
+        const answer = answerData?.find((ans: AnswerInterface) => ans.questionId === question.id)
+
+        return {
+          programId: question?.programId,
+          sectionId: question?.sectionId,
+          questionCode: question?.questionCode,
+          fieldName: question?.fieldName,
+          questionType: question?.questionType,
+          options: question?.options,
+          status: answer?.status ?? 'yetToStart', // Default to 'yetToStart' if status is undefined
+          questionId: question?.id,
+          answerId: answer?.id,
+          remarks: answer?.remarks,
+          qaRemarks: answer?.qaRemarks,
+          textResponse: answer?.textResponse,
+          dateResponse: answer?.dateResponse,
+          toDateResponse: answer?.toDateResponse,
+          multipleChoiceResponse: answer?.multipleChoiceResponse,
+          numberResponse: answer?.numberResponse,
+        }
+      }) || []
+    )
+  }
+
+  // useEffect(() => {
+  //   if (
+  //     !check &&
+  //     data &&
+  //     data?.results?.results.length > 0 &&
+  //     answers?.data &&
+  //     answers?.data?.results?.results.length > 0
+  //   ) {
+  //     console.log('ans d')
+  //     const mappedData = mapQuestionsAndAnswers()
+  //     setMappedData(mappedData)
+  //   }
+  // }, [answers])
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
@@ -207,8 +348,8 @@ const Custom: React.FC = () => {
   }
 
   const handleApplyFilter = (newFilters: FilterProps) => {
+    setCheck(false)
     setFilters(newFilters)
-    setCurrentPage(1)
   }
 
   return (
@@ -230,28 +371,14 @@ const Custom: React.FC = () => {
           <QuestionSkeleton />
         ) : (
           <div className='mt-5'>
-            {dummyData?.results?.results?.map((question: AnswerInterface) => (
+            {mappedData?.map((data: QuestionAnswer) => (
               <QuestionCard
-                key={question?.id}
-                question={question}
+                key={data?.questionId}
+                data={data}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
               />
             ))}
           </div>
-        )}
-        {isLoading ? (
-          <PaginationSkeleton />
-        ) : (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalResults={totalResults}
-            onPageChange={onPageChange}
-            itemsPerPage={itemsPerPage}
-            name='Survey'
-            onLimitChange={onLimitChange}
-            disabled={isLoading}
-          />
         )}
       </div>
     </div>

@@ -13,6 +13,14 @@ import UserTableSkeleton from './user.component/UserTableSkeleton'
 import UserTable from './user.component/UserTable'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
+import {fetchSurveys} from '../survey/survey.helper'
+import UserAllocationModal from './user.component/UserAllocationModel'
+import {createUser} from './user.helpers/createUser'
+import {toast} from 'react-toastify'
+import {updateUser} from './user.helpers/updateUser'
+import {deleteUser} from './user.helpers/deleteUser'
+import {set} from 'react-hook-form'
+import {allocateUser} from './user.helpers/userAllocate'
 
 const Custom: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -24,11 +32,15 @@ const Custom: React.FC = () => {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false)
+  const [isAllocateModalOpen, setIsAllocateModalOpen] = useState<boolean>(false)
+  const [allocatedSurveyIds, setAllocatedSurveyIds] = useState<string[]>([])
+  const [rerender, setRerender] = useState<boolean>(false)
 
   const role = useMemo(
     () => [
-      {name: 'Super Admin', id: 'admin'},
-      {name: 'Field Assistant', id: 'fa'},
+      {name: 'Super Admin', id: 'SuperAdmin'},
+      {name: 'Quality Analyst', id: 'QA'},
+      {name: 'Field Agent', id: 'FA'},
     ],
     []
   )
@@ -36,7 +48,7 @@ const Custom: React.FC = () => {
   const language = useMemo(
     () => [
       {name: 'English', id: 'en'},
-      {name: 'Hindi', id: 'ji'},
+      {name: 'Hindi', id: 'hi'},
     ],
     []
   )
@@ -57,12 +69,10 @@ const Custom: React.FC = () => {
     []
   )
 
-  const sellerStatus = useMemo(
+  const status = useMemo(
     () => [
-      {name: 'Pending', id: 'pending'},
-      {name: 'Submitted', id: 'submitted'},
-      {name: 'Approved', id: 'approved'},
-      {name: 'Rejected', id: 'rejected'},
+      {name: 'Active', id: 'true'},
+      {name: 'Inactive', id: 'false'},
     ],
     []
   )
@@ -72,10 +82,10 @@ const Custom: React.FC = () => {
       {type: 'dropdown', label: 'role', name: role, topLabel: 'Role', placeholder: 'Select Role'},
       {
         type: 'dropdown',
-        label: 'sellerStatus',
-        name: sellerStatus,
-        topLabel: 'Seller Status',
-        placeholder: 'Select Seller Status',
+        label: 'isActive',
+        name: status,
+        topLabel: 'Status',
+        placeholder: 'Select Status',
       },
       {
         type: 'dropdown',
@@ -94,21 +104,21 @@ const Custom: React.FC = () => {
         type: 'text',
         label: 'Password',
         name: 'password',
-        placeholder: 'Password',
+        placeholder: 'Enter Password',
         required: true,
       },
-      {
-        type: 'text',
-        label: 'Confirm Password',
-        name: 'confirmPassword',
-        placeholder: 'Confirm Password',
-        required: true,
-      },
+      // {
+      //   type: 'text',
+      //   label: 'Confirm Password',
+      //   name: 'confirmPassword',
+      //   placeholder: 'Confirm Password',
+      //   required: true,
+      // },
     ],
     []
   )
 
-  const createUpdateFields: FieldsArray = useMemo(
+  const createFields: FieldsArray = useMemo(
     () => [
       {
         type: 'dropdown',
@@ -116,10 +126,10 @@ const Custom: React.FC = () => {
         name: language,
         topLabel: 'Language',
         placeholder: 'Select Language',
-        labelKey: 'firstName',
+        labelKey: 'name',
         id: 'id',
-        required: true,
       },
+
       {
         type: 'text',
         label: 'Email',
@@ -127,7 +137,13 @@ const Custom: React.FC = () => {
         placeholder: 'Email',
         required: true,
       },
-
+      {
+        type: 'text',
+        label: 'Password',
+        name: 'password',
+        placeholder: 'Password',
+        required: true,
+      },
       {
         type: 'number',
         label: 'Mobile',
@@ -143,7 +159,7 @@ const Custom: React.FC = () => {
         topLabel: 'Role',
         placeholder: 'Select Role',
         required: true,
-        labelKey: 'firstName',
+        labelKey: 'name',
         id: 'id',
       },
       {
@@ -152,8 +168,7 @@ const Custom: React.FC = () => {
         name: isEmailVerified,
         topLabel: 'Email Verified',
         placeholder: 'Select Email Verified',
-        required: true,
-        labelKey: 'firstName',
+        labelKey: 'name',
         id: 'id',
       },
       {
@@ -162,8 +177,7 @@ const Custom: React.FC = () => {
         name: isMobileVerified,
         topLabel: 'Email Verified',
         placeholder: 'Select Email Verified',
-        required: true,
-        labelKey: 'firstName',
+        labelKey: 'name',
         id: 'id',
       },
       {
@@ -178,7 +192,78 @@ const Custom: React.FC = () => {
         label: 'Last Name',
         name: 'lastName',
         placeholder: 'Last Name',
+      },
+    ],
+    []
+  )
+
+  const updateFields: FieldsArray = useMemo(
+    () => [
+      {
+        type: 'dropdown',
+        label: 'languagePreference',
+        name: language,
+        topLabel: 'Language',
+        placeholder: 'Select Language',
+        labelKey: 'name',
+        id: 'id',
+      },
+
+      {
+        type: 'text',
+        label: 'Email',
+        name: 'email',
+        placeholder: 'Email',
         required: true,
+      },
+      {
+        type: 'number',
+        label: 'Mobile',
+        name: 'mobile',
+        placeholder: 'Mobile',
+        required: true,
+      },
+
+      {
+        type: 'dropdown',
+        label: 'role',
+        name: role,
+        topLabel: 'Role',
+        placeholder: 'Select Role',
+        required: true,
+        labelKey: 'name',
+        id: 'id',
+      },
+      {
+        type: 'dropdown',
+        label: 'isEmailVerified',
+        name: isEmailVerified,
+        topLabel: 'Email Verified',
+        placeholder: 'Select Email Verified',
+        labelKey: 'name',
+        id: 'id',
+      },
+      {
+        type: 'dropdown',
+        label: 'isMobileVerified',
+        name: isMobileVerified,
+        topLabel: 'Email Verified',
+        placeholder: 'Select Email Verified',
+        labelKey: 'name',
+        id: 'id',
+      },
+      {
+        type: 'text',
+        label: 'First Name',
+        name: 'firstName',
+        placeholder: 'First Name',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Last Name',
+        name: 'lastName',
+        placeholder: 'Last Name',
       },
     ],
     []
@@ -190,6 +275,22 @@ const Custom: React.FC = () => {
     retry: false,
   })
 
+  const surveyData = useQuery({
+    queryKey: [
+      'surveys',
+      {
+        getAll: true,
+        projectBy: 'firstName lastName id',
+      },
+    ],
+    queryFn: async () =>
+      fetchSurveys({
+        getAll: true,
+        projectBy: 'firstName lastName id',
+      }),
+  })
+
+  console.log('surveyData', surveyData)
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
@@ -209,17 +310,119 @@ const Custom: React.FC = () => {
     setIsFilterVisible(false)
   }
 
-  const handleUpdatePassword = async (payload: string) => {
+  const handleUpdatePassword = async (payload: any) => {
     // Implement update password functionality
-    console.log('payload is :- ', payload)
+    // console.log('payload is :- ', payload)
+    // console.log('selectedUser is :- ', selectedUser)
+    // try {
+    //   if (!selectedUser) return
+    //   const userData = {
+    //     // ...selectedUser,
+    //     password: payload?.password,
+    //   }
+    //   await updateUser(userData, selectedUser.id)
+    //   setRerender((prev) => !prev)
+    //   toast.success('User created successfully')
+    // } catch (e) {
+    //   console.error('Failed to update password', e)
+    // } finally {
+    //   setIsChangePasswordModalOpen(false)
+    // }
   }
 
-  const handleCreateUser = async (payload: UserInterface) => {
-    // Implement create user functionality
+  // const handleCreateUser = async (payload: UserInterface) => {
+  //   // Implement create user functionality
+  // }
+
+  const handleCreateUser = async (payload: any) => {
+    try {
+      console.log('Create User Payload', payload)
+      const UserData: {[key: string]: any} = {
+        role: payload.role,
+        email: payload.email,
+        mobile: payload.mobile,
+        password: payload.password,
+        firstName: payload.firstName,
+      }
+
+      // Dynamically add optional fields if they have a value
+      const optionalFields = [
+        'lastName',
+        'languagePreference',
+        'stateCode',
+        'districtCode',
+        'subDistrictCode',
+        'villageCode',
+      ]
+
+      optionalFields.forEach((field) => {
+        if (payload[field]) {
+          UserData[field] =
+            field === 'languagePreference'
+              ? [payload[field]]
+              : field === 'stateCode' || 'districtCode' || 'subDistrictCode' || 'villageCode'
+              ? parseInt(payload[field])
+              : payload[field]
+        }
+      })
+
+      console.log('Create User Data:', UserData)
+      await createUser(UserData)
+      setRerender((prev) => !prev)
+      toast.success('User created successfully')
+    } catch (e) {
+      console.error('Failed to create User', e)
+    } finally {
+      setIsCreateModalOpen(false)
+    }
   }
 
-  const handleUpdateUser = async (payload: UserInterface) => {
-    // Implement update user functionality
+  const handleUpdateUser = async (payload: any) => {
+    try {
+      if (!selectedUser) return
+      const UserData: {[key: string]: any} = {
+        role: payload.role,
+        mobile: payload.mobile,
+        firstName: payload.firstName,
+        email: payload.email,
+      }
+
+      // Dynamically add properties to VleData if they have a value
+      const optionalFields = [
+        'dob',
+        'lastName',
+        'pinCode',
+        'languagePreference',
+        'stateCode',
+        'districtCode',
+        'subDistrictCode',
+        'villageCode',
+      ]
+
+      optionalFields.forEach((field) => {
+        if (payload[field]) {
+          UserData[field] =
+            field === 'languagePreference'
+              ? [payload[field]]
+              : field === 'stateCode' || 'districtCode' || 'subDistrictCode' || 'villageCode'
+              ? parseInt(payload[field])
+              : payload[field]
+        }
+      })
+      await updateUser(UserData, selectedUser.id)
+      setRerender((prev) => !prev)
+      toast.success('User updated successfully')
+    } catch (e) {
+      console.error('Failed to update User', e)
+    } finally {
+      setIsUpdateModalOpen(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteUser(id)
+    setRerender((prev) => !prev)
+    toast.success(`User deleted successfully`)
   }
 
   const defaultData: UserInterface | undefined = useMemo(() => {
@@ -227,7 +430,23 @@ const Custom: React.FC = () => {
     return selectedUser
   }, [selectedUser])
 
-  console.log('selectedUser', selectedUser)
+  const handleAllocate = async (selectedSurveyIds: string[]) => {
+    try {
+      const payload = {
+        userId: selectedUser?.id,
+        userType: selectedUser?.role,
+        surveyIds: selectedSurveyIds,
+      }
+      await allocateUser(payload)
+      setRerender((prev) => !prev)
+      toast.success('Users allocated successfully')
+    } catch (e) {
+      console.error('Failed to allocate users', e)
+    } finally {
+      setIsUpdateModalOpen(false)
+    }
+  }
+
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
@@ -278,11 +497,13 @@ const Custom: React.FC = () => {
                 onSelectUser={setSelectedUser}
                 setIsChangePasswordModalOpen={setIsChangePasswordModalOpen}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
+                setIsAllocateModalOpen={setIsAllocateModalOpen}
+                onDelete={handleDelete}
               />
             </div>
           )}
         </div>
-        {isLoading || isError ? (
+        {isLoading ? (
           <PaginationSkeleton />
         ) : (
           !selectedUser && (
@@ -313,7 +534,7 @@ const Custom: React.FC = () => {
           label='Create User'
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
-          fields={createUpdateFields}
+          fields={createFields}
           onSubmit={handleCreateUser}
         />
       )}
@@ -322,9 +543,16 @@ const Custom: React.FC = () => {
           label='Update User'
           isOpen={isUpdateModalOpen}
           onClose={() => setIsUpdateModalOpen(false)}
-          fields={createUpdateFields}
+          fields={updateFields}
           defaultValues={defaultData}
           onSubmit={handleUpdateUser}
+        />
+      )}
+      {isAllocateModalOpen && surveyData && (
+        <UserAllocationModal
+          survey={surveyData?.data?.results.results}
+          onAllocate={handleAllocate}
+          onClose={() => setIsAllocateModalOpen(false)}
         />
       )}
     </>
