@@ -6,49 +6,40 @@ import {Button} from 'sr/helpers'
 import Filter from 'sr/helpers/ui-components/Filter'
 import AppVersionHistoryTable from './AppVersionHistoryTable'
 import {deleteAppVersion} from 'sr/utils/api/deleteAppVersion'
+import {toast} from 'react-toastify'
 import {fetchAppVersion} from 'sr/utils/api/fetchAppVersion'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import {FieldsArray} from 'sr/constants/fields'
 import {createAppVersion} from 'sr/utils/api/createAppVersion'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
-import {useQuery} from '@tanstack/react-query'
-import AppVersionHistorySkeleton from './AppVersionHistorySkeleton'
-import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-// interface appVersionHistoryApiResponse {
-//   title?: string
-//   descriptions?: string
-//   code?: number
-//   isForceUpdate?: boolean
-//   isActive?: boolean
-//   platform?: string
-//   link?: string
-//   createdAt: string
-//   updatedAt: string
-//   id: string
-// }
-interface appVersionHistoryFilters {
-  title?: string
-  code?: number
-  isActive?: boolean
-}
-interface appVersionHistoryPayload {
+import {useSelector} from 'react-redux'
+import {RootState} from 'sr/redux/store'
+import {useActions} from 'sr/utils/helpers/useActions'
+interface AppVersionHistoryProps {
   title: string
   descriptions: string
-  code: number
+  code: string
   isForceUpdate: boolean
-  platform: string
-  link: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  id: string
 }
 
 const Custom: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [filters, setFilters] = useState<appVersionHistoryFilters>()
-  const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
-  const [itemsPerPage, setItemsPerPage] = useState<number>(8)
-  // const userData = useSelector((state: RootState) => state.user.data)
-  // const userStatus = useSelector((state: RootState) => state.user.status)
-  // const {fetchUserData} = useActions()
+  const [data, setData] = useState<any>()
+  const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalResults, setTotalResults] = useState(0)
+  const [filters, setFilters] = useState({})
+  const [isFilterVisible, setIsFilterVisible] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isChanged, setisChanged] = useState<any>(false)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const userData = useSelector((state: RootState) => state.user.data)
+  const userStatus = useSelector((state: RootState) => state.user.status)
+  const {fetchUserData} = useActions()
 
   const isActive = useMemo(
     () => [
@@ -69,8 +60,19 @@ const Custom: React.FC = () => {
       },
       {type: 'text', label: 'Title', name: 'title', placeholder: 'Title'},
       {type: 'text', label: 'Code', name: 'code', placeholder: 'Code'},
+      // {
+      //   type: 'dropdown',
+      //   label: 'createdBy',
+      //   name: userData?.results,
+      //   topLabel: 'Created By',
+      //   placeholder: 'Select Created By',
+      //   labelKey: 'firstName',
+      //   id: 'id',
+      // },
+
+      // {type: 'text', label: 'Sort By', name: 'sortBy', placeholder: 'Sort By'},
     ],
-    [isActive]
+    [isActive, userData]
   )
   const createFields: FieldsArray = useMemo(
     () => [
@@ -106,48 +108,49 @@ const Custom: React.FC = () => {
         placeholder: 'Select Force Update',
         required: true,
       },
-      {
-        type: 'dropdown',
-        label: 'platform',
-        name: [
-          {id: 'android', name: 'Android'},
-          {id: 'ios', name: 'IOS'},
-        ],
-        topLabel: 'Platform',
-        placeholder: 'Select Platform',
-        required: true,
-      },
-      {
-        type: 'text',
-        label: 'Link',
-        name: 'link',
-        placeholder: 'Link',
-        required: true,
-      },
     ],
     []
   )
-  const {data, error, isLoading, isError, refetch} = useQuery({
-    queryKey: ['appVersionHistory', {limit: itemsPerPage, page: currentPage, ...filters}],
-    queryFn: async () => fetchAppVersion({limit: itemsPerPage, page: currentPage, ...filters}),
-    // placeholderData: keepPreviousData,
-  })
-  // useEffect(() => {
-  //   fetchUserDataIfNeeded()
-  // }, [])
 
-  // const fetchUserDataIfNeeded = useCallback(() => {
-  //   if (userStatus !== 'succeeded') {
-  //     fetchUserData({})
-  //   }
-  // }, [userStatus])
+  const fetchData = useCallback(async () => {
+    try {
+      const payload = {
+        limit: itemsPerPage,
+        page: currentPage,
+        ...filters,
+      }
 
-  const handleApplyFilter = (newFilters: appVersionHistoryFilters) => {
+      const response = await fetchAppVersion(payload)
+      setData(response.results)
+      setTotalPages(response.totalPages || 0)
+      setTotalResults(response.totalResults || 0)
+    } catch (error) {
+      console.error('Error fetching mobile app version history:', error)
+    } finally {
+    }
+  }, [currentPage, filters, itemsPerPage, isChanged])
+
+  const fetchUserDataIfNeeded = useCallback(() => {
+    if (userStatus !== 'succeeded') {
+      fetchUserData({})
+    }
+  }, [userStatus])
+
+  useEffect(() => {
+    setLoading(true)
+    fetchData().then(() => setLoading(false))
+  }, [currentPage, filters, itemsPerPage, isChanged])
+
+  useEffect(() => {
+    fetchUserDataIfNeeded()
+  }, [])
+  const handleApplyFilter = (newFilters: any) => {
     setFilters(newFilters)
-    setIsFilterVisible(false)
     setCurrentPage(1)
+    setIsFilterVisible(false)
   }
   const onPageChange = async (pageNumber: number) => {
+    setLoading(true)
     setCurrentPage(pageNumber)
   }
 
@@ -157,20 +160,22 @@ const Custom: React.FC = () => {
   }
 
   const onDeleteAppVersionHistory = async (id: string) => {
-    const res = await deleteAppVersion(id)
-    if (!res) {
-      return
-    }
-    refetch()
+    setLoading(true)
+    await deleteAppVersion(id)
+    setLoading(false)
+    setisChanged(!isChanged)
+    toast.success(`App version history deleted successfully`)
   }
-  const handleCreateAppVersionHistory = async (payload: appVersionHistoryPayload) => {
-    setIsCreateModalOpen(false)
-    const res = await createAppVersion(payload)
-    if (!res) {
+  const handleCreateAppVersion = async (payload: FormData) => {
+    try {
+      await createAppVersion(payload)
+      setisChanged(!isChanged)
+      toast.success('App Version created successfully')
+    } catch (e) {
+      console.error('Failed to create app version', e)
+    } finally {
       setIsCreateModalOpen(false)
-      return
     }
-    refetch()
   }
 
   return (
@@ -201,30 +206,34 @@ const Custom: React.FC = () => {
               <Filter
                 onApplyFilter={handleApplyFilter}
                 setIsFilterVisible={setIsFilterVisible}
-                preFilters={filters || {}}
+                preFilters={filters}
                 fields={fields}
               />
             </div>
           )}
-          {isLoading ? (
-            <AppVersionHistorySkeleton />
+          {loading ? (
+            <Spinner />
           ) : (
-            <AppVersionHistoryTable data={data?.results} onDelete={onDeleteAppVersionHistory} />
+            <AppVersionHistoryTable data={data} onDelete={onDeleteAppVersionHistory} />
           )}
         </div>
-        {isLoading ? (
-          <PaginationSkeleton />
-        ) : (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={data?.totalPages || 0}
-            onPageChange={onPageChange}
-            totalResults={data?.totalResults}
-            itemsPerPage={itemsPerPage}
-            name='App Version History'
-            onLimitChange={onLimitChange}
-            disabled={isLoading}
-          />
+        {!loading && (
+          <>
+            {totalResults > 0 ? (
+              <Pagination
+                totalResults={totalResults}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+                itemsPerPage={itemsPerPage}
+                name='App Version History'
+                onLimitChange={onLimitChange}
+                disabled={loading}
+              />
+            ) : (
+              <div className='items-center text-center text-xl mt-auto'>No Result Found</div>
+            )}
+          </>
         )}
       </div>
       {/* {showPopup && <BusinessCategoryForm />} */}
@@ -234,7 +243,7 @@ const Custom: React.FC = () => {
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
           fields={createFields}
-          onSubmit={handleCreateAppVersionHistory}
+          onSubmit={handleCreateAppVersion}
         />
       )}
     </>
