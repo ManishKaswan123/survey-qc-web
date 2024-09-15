@@ -92,6 +92,8 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
               ? 'bg-gray-400'
               : data?.status?.toLowerCase() === 'rejected'
               ? 'bg-red-400'
+              : data?.status?.toLowerCase() === 'inProgress'
+              ? 'bg-lime-300'
               : 'bg-red-400'
           }`}
         >

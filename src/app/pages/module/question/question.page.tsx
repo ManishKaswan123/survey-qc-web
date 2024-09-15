@@ -22,6 +22,7 @@ const Custom: React.FC = () => {
       {name: 'Re Submitted', id: 'resubmitted'},
       {name: 'Not Started', id: 'yetToStart'},
       {name: 'Rejected', id: 'rejected'},
+      {name: 'In Progress', id: 'inProgress'},
     ],
     []
   )
@@ -44,8 +45,6 @@ const Custom: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<FilterProps>()
   const navigate = useNavigate()
-  const location = useLocation()
-  const {programId} = location.state || {}
   const [isExpanded, setIsExpanded] = useState(false)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false)
   const [mappedData, setMappedData] = useState<QuestionAnswer[]>([])
@@ -53,6 +52,12 @@ const Custom: React.FC = () => {
   const [answerData, setAnswerData] = useState<AnswerInterface[]>([])
   const [questionData, setQuestionData] = useState<QuestionInterface[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const programId = queryParams.get('programId') || ''
+  const surveyId = queryParams.get('surveyId') || ''
+  const sectionId = queryParams.get('sectionId') || ''
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -226,6 +231,8 @@ const Custom: React.FC = () => {
       setIsLoading(true)
       const questions = await fetchQuestions({
         getAll: true,
+        programId: programId,
+        sectionId: sectionId,
       })
       if (questions?.status === 'success') {
         setIsLoading(false)
@@ -241,6 +248,9 @@ const Custom: React.FC = () => {
       const answers = await fetchAnswers({
         getAll: true,
         ...filters,
+        programId: programId,
+        sectionId: sectionId,
+        surveyId: surveyId,
       })
       if (answers?.status === 'success') {
         setIsLoading(false)
