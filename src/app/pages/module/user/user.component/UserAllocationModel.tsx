@@ -1,20 +1,131 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState, useCallback} from 'react'
 import {Survey} from '../../survey/survey.interfaces'
-
+import {fetchSurveys} from '../../survey/survey.helper'
+import {fetchState} from 'sr/utils/api/fetchState'
+import {fetchDistrict} from 'sr/utils/api/fetchDistrict'
+import {fetchSubDistrict} from 'sr/utils/api/fetchSubDistrict'
+import {fetchVillage} from 'sr/utils/api/fetchVillage'
+import {useSelector} from 'react-redux'
+import {RootState} from 'sr/redux/store'
+import {useActions} from 'sr/utils/helpers/useActions'
 interface UserAllocationModalProps {
-  survey?: Survey[]
   onAllocate: (selectedUserIds: string[]) => void
   onClose: () => void
 }
 
-const UserAllocationModal: React.FC<UserAllocationModalProps> = ({
-  survey = [],
-  onAllocate,
-  onClose,
-}) => {
+const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, onClose}) => {
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
-  const [leftUsers, setLeftUsers] = useState<Survey[]>(survey)
+  const [leftUsers, setLeftUsers] = useState<Survey[]>([])
   const [rightUsers, setRightUsers] = useState<Survey[]>([])
+
+  const stateData = useSelector((state: RootState) => state.state.data)
+  const {fetchStateData} = useActions()
+  const stateStatus = useSelector((state: RootState) => state.state.status)
+  // State for location dropdowns
+  const [states, setStates] = useState<any[]>([])
+  const [districts, setDistricts] = useState<any[]>([])
+  const [subdistricts, setSubdistricts] = useState<any[]>([])
+  const [villages, setVillages] = useState<any[]>([])
+
+  const [selectedState, setSelectedState] = useState<number>()
+  const [selectedDistrict, setSelectedDistrict] = useState<number>()
+  const [selectedSubdistrict, setSelectedSubdistrict] = useState<number>()
+  const [selectedVillage, setSelectedVillage] = useState<number>()
+
+  // Fetch states on component mount
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await fetchState({
+  //       getAll: true,
+  //     })
+  //     console.log('this is state response', response)
+  //     setStates(response.results)
+  //   }
+  //   fetchData()
+  // }, [])
+
+  console.log('this is state data', stateData)
+  const fetchDataIfNeeded = useCallback(() => {
+    if (stateStatus != 'succeeded') fetchStateData()
+  }, [stateStatus])
+  useEffect(() => {
+    fetchDataIfNeeded()
+  }, [])
+
+  // Fetch districts based on selected state
+  useEffect(() => {
+    if (selectedState) {
+      const fetchData = async () => {
+        const response = await fetchDistrict({
+          getAll: true,
+          stateCode: selectedState,
+        })
+        setDistricts(response.results)
+      }
+      fetchData()
+    } else {
+      setDistricts([])
+    }
+  }, [selectedState])
+
+  // Fetch subdistricts based on selected district
+  useEffect(() => {
+    if (selectedState && selectedDistrict) {
+      const fetchData = async () => {
+        const response = await fetchSubDistrict({
+          getAll: true,
+          stateCode: selectedState,
+          districtCode: selectedDistrict,
+        })
+        setSubdistricts(response.results)
+      }
+      fetchData()
+    } else {
+      setSubdistricts([])
+    }
+  }, [selectedDistrict])
+
+  // Fetch villages based on selected subdistrict
+  useEffect(() => {
+    if (selectedState && selectedDistrict && selectedSubdistrict) {
+      const fetchData = async () => {
+        const response = await fetchVillage({
+          getAll: true,
+          stateCode: selectedState,
+          districtCode: selectedDistrict,
+          subDistrictCode: selectedSubdistrict,
+        })
+        setVillages(response.results)
+      }
+      fetchData()
+    } else {
+      setVillages([])
+    }
+  }, [selectedSubdistrict])
+
+  // Fetch surveys whenever a location dropdown changes
+  useEffect(() => {
+    const fetchSurveyData = async () => {
+      // Construct the query object dynamically
+      const query = {
+        getAll: true,
+        projectBy: 'firstName lastName id',
+        ...(selectedState && {stateCode: selectedState}),
+        ...(selectedDistrict && {districtCode: selectedDistrict}),
+        ...(selectedSubdistrict && {subDistrictCode: selectedSubdistrict}),
+        ...(selectedVillage && {villageCode: selectedVillage}),
+      }
+
+      const response = await fetchSurveys(query)
+
+      if (response.status === 'success') {
+        console.log('this is response of fetchSurveys', response?.results?.results)
+        setLeftUsers(response?.results?.results)
+      }
+    }
+
+    fetchSurveyData()
+  }, [selectedState, selectedDistrict, selectedSubdistrict, selectedVillage])
 
   const handleUserSelection = (userId: string) => {
     setSelectedUserIds((prevSelected) =>
@@ -36,22 +147,92 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({
     setSelectedUserIds([])
   }
 
-  const handleSelectAll = (users: Survey[]) => {
-    setSelectedUserIds(users.map((user) => user.id))
-  }
-
   const handleAllocate = () => {
-    let selectedIds = rightUsers.map((user) => user.id)
+    const selectedIds = rightUsers.map((user) => user.id)
     onAllocate(selectedIds)
     onClose()
   }
 
+  const handleSelectAll = (users: Survey[]) => {
+    setSelectedUserIds(users.map((user) => user.id))
+  }
+
   return (
-    <div className='fixed inset-0 bg-gray-800 bg-opacity-60 flex justify-center items-center'>
-      <div className='bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl mx-4'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+      <div className='bg-white p-6 rounded-lg w-full max-w-2xl max-h-[95vh] overflow-y-auto'>
         <h2 className='text-2xl font-bold text-gray-800 mb-6 text-center'>Allocation</h2>
 
+        {/* Dropdowns */}
+        <div className='mb-4'>
+          <label className='block'>State</label>
+          <select
+            value={selectedState}
+            onChange={(e) => setSelectedState(Number(e.target.value))}
+            className='w-full p-2 border rounded'
+          >
+            <option value=''>Select State</option>
+            {states.map((state) => (
+              <option key={state.id} value={state.id}>
+                {state.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className='mb-4'>
+          <label className='block'>District</label>
+          <select
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(Number(e.target.value))}
+            className='w-full p-2 border rounded'
+            disabled={!selectedState}
+          >
+            <option value=''>Select District</option>
+            {districts.map((district) => (
+              <option key={district.id} value={district.id}>
+                {district.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className='mb-4'>
+          <label className='block'>Sub District</label>
+          <select
+            value={selectedSubdistrict}
+            onChange={(e) => setSelectedSubdistrict(Number(e.target.value))}
+            className='w-full p-2 border rounded'
+            disabled={!selectedDistrict}
+          >
+            <option value=''>Select Sub District</option>
+            {subdistricts.map((subdistrict) => (
+              <option key={subdistrict.id} value={subdistrict.id}>
+                {subdistrict.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className='mb-4'>
+          <label className='block'>Village</label>
+          <select
+            value={selectedVillage}
+            onChange={(e) => setSelectedVillage(Number(e.target.value))}
+            className='w-full p-2 border rounded'
+            disabled={!selectedSubdistrict}
+          >
+            <option value=''>Select Village</option>
+            {villages.map((village) => (
+              <option key={village.id} value={village.id}>
+                {village.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Existing UI for allocation */}
         <div className='flex justify-between items-start'>
+          {/* Left Users */}
           <div className='w-1/2 pr-2'>
             <button
               onClick={() => moveSelectedUsers(leftUsers, rightUsers, setLeftUsers, setRightUsers)}
@@ -84,6 +265,7 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({
             </button>
           </div>
 
+          {/* Right Users */}
           <div className='w-1/2 pl-2'>
             <button
               onClick={() => moveSelectedUsers(rightUsers, leftUsers, setRightUsers, setLeftUsers)}

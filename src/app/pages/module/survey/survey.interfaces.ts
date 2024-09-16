@@ -12,6 +12,10 @@ export interface FilterProps {
   projectBy?: string
   sortBy?: string
   populate?: string
+  stateCode?: number
+  districtCode?: number
+  subDistrictCode?: number
+  villageCode?: number
 }
 export interface Section {
   sectionId: string

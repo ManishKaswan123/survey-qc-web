@@ -285,21 +285,6 @@ const Custom: React.FC = () => {
     retry: false,
   })
 
-  const surveyData = useQuery({
-    queryKey: [
-      'surveys',
-      {
-        getAll: true,
-        projectBy: 'firstName lastName id',
-      },
-    ],
-    queryFn: async () =>
-      fetchSurveys({
-        getAll: true,
-        projectBy: 'firstName lastName id',
-      }),
-  })
-
   // console.log('surveyData', surveyData)
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -566,9 +551,8 @@ const Custom: React.FC = () => {
           onSubmit={handleUpdateUser}
         />
       )}
-      {isAllocateModalOpen && surveyData && (
+      {isAllocateModalOpen && (
         <UserAllocationModal
-          survey={surveyData?.data?.results.results}
           onAllocate={handleAllocate}
           onClose={() => setIsAllocateModalOpen(false)}
         />
