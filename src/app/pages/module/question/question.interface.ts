@@ -215,3 +215,13 @@ export interface QuestionCreatePayload {
   sectionId: string
   questionConfig: {}
 }
+export interface StaticQuestionsApiResponse {
+  status: string
+  results: {
+    results: Question[]
+    page?: number
+    limit?: number
+    totalPages?: number
+    totalResults?: number
+  }
+}
