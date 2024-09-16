@@ -30,9 +30,9 @@ export interface AnswerInterface {
   programId?: string
   sectionId?: string
   questionId: string
-  createdBy?: {}
-  faId?: {}
-  surveyId?: {}
+  createdBy?: string
+  faId?: string
+  surveyId?: string
   isActive?: boolean
   id: string
 }
@@ -110,6 +110,8 @@ export interface QuestionAnswer {
   toDateResponse?: string
   multipleChoiceResponse?: string[]
   numberResponse?: number
+  faId?: string
+  surveyId?: string
 }
 
 export interface QuestionTableProps {
@@ -214,6 +216,22 @@ export interface QuestionCreatePayload {
   programId: string
   sectionId: string
   questionConfig: {}
+}
+
+
+export interface FilterAnswerProps {
+  textResponse?: string
+  dateResponse?: string
+  toDateResponse?: string
+  multipleChoiceResponse?: string[]
+  numberResponse?: number
+  remarks: string
+  status: string
+  questionId: string
+  faId: string
+  surveyId: string
+  programId: string
+  sectionId: string
 }
 export interface StaticQuestionsApiResponse {
   status: string

@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react'
 import {QuestionTableProps} from '../question.interface'
 import {RiArrowDownSLine, RiArrowUpSLine} from 'react-icons/ri'
 import {getPreSignedURL} from 'sr/utils/api/media'
+import {UpdateAnswers} from '../question.helper'
+import {d} from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z'
+import {toast} from 'react-toastify'
 
 // QuestionCard component
 const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModalOpen}) => {
@@ -10,15 +13,42 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
   const [isRejected, setIsRejected] = useState(false)
   const [isFiles, setIsFiles] = useState<string[]>([])
   const handleExpand = () => setIsExpanded(!isExpanded)
-  const handleReject = () => setIsRejected(true)
-  const handleApprove = () => {
-    setIsRejected(false)
-    setRemark('')
-    // Handle approve logic here
-  }
-  const handleSaveRemark = () => {
+  // const handleReject = () => setIsRejected(true)
+  // const handleApprove = () => {
+  //   setIsRejected(false)
+  //   setRemark('')
+  //   // Handle approve logic here
+  // }
+  const handleSaveRemark = async (status: string) => {
     // Handle save remark logic here
+    console.log('this is status :- ', status)
+    console.log('this is data :- ', data)
     console.log('Remark saved:', remark)
+    let payload = {
+      ...(data?.textResponse && {textResponse: data?.textResponse}),
+      ...(data?.dateResponse && {dateResponse: data?.dateResponse}),
+      ...(data?.toDateResponse && {toDateResponse: data?.toDateResponse}),
+      ...(data?.multipleChoiceResponse && {multipleChoiceResponse: data?.multipleChoiceResponse}),
+      ...(data?.numberResponse && {numberResponse: data?.numberResponse}),
+      remarks: remark,
+      status: status,
+      questionId: data?.questionId,
+      faId: data?.faId,
+      surveyId: data?.surveyId,
+      programId: data?.programId,
+      sectionId: data?.sectionId,
+    }
+    handleExpand()
+    if (data?.answerId) {
+      const res = await UpdateAnswers(data?.answerId, payload)
+      if (res.status === 'success') {
+        toast.success('Remark saved successfully')
+      } else {
+        toast.error('Failed to save remark')
+      }
+    } else {
+      toast.error('Answer ID not found')
+    }
   }
 
   // Determine the response to display
@@ -139,13 +169,13 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
           <div className='flex mt-4 space-x-4'>
             <button
               className='px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600'
-              onClick={handleApprove}
+              onClick={() => handleSaveRemark('approved')}
             >
               Approve
             </button>
             <button
               className='px-4 py-2 bg-red-500 text-gray-50 rounded-md hover:bg-red-600'
-              onClick={handleReject}
+              onClick={() => handleSaveRemark('rejected')}
             >
               Reject
             </button>

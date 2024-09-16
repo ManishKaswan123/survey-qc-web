@@ -319,6 +319,8 @@ const Custom: React.FC = () => {
           toDateResponse: answer?.toDateResponse,
           multipleChoiceResponse: answer?.multipleChoiceResponse,
           numberResponse: answer?.numberResponse,
+          faId: answer?.faId,
+          surveyId: answer?.surveyId,
         }
       }) || []
     )
