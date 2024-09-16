@@ -4,6 +4,7 @@ import {
   FilterAnswerProps,
   FilterProps,
   QuestionResponse,
+  StaticQuestionsApiResponse,
 } from './question.interface'
 
 const filterPayload = (payload: FilterProps) => {
@@ -48,11 +49,13 @@ export const fetchAnswers = async (payload?: FilterProps): Promise<AnswerRespons
     throw new Error(`Failed to fetch : ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
-export const fetchStaticQuestions = async (payload?: FilterProps): Promise<any> => {
+export const fetchStaticQuestions = async (
+  payload?: FilterProps
+): Promise<StaticQuestionsApiResponse> => {
   const filteredPayload = filterPayload(payload ?? {})
 
   try {
-    const res = await get<any>(`/question`, {...filteredPayload})
+    const res = await get<StaticQuestionsApiResponse>(`/question`, {...filteredPayload})
 
     // console.log('res of answer is this :-', res)
     if (res && res.status == 'success') {

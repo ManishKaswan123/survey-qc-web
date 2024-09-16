@@ -1,11 +1,21 @@
-import React, {useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
 import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
 import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
-import {useForm} from 'react-hook-form'
+import {SubmitHandler, useForm} from 'react-hook-form'
 import {Button} from 'sr/helpers'
 import {MultiValue} from 'react-select'
 import MultiSelectField, {OptionType} from 'sr/partials/widgets/widgets-components/form/MultiSelect'
+import {useSelector} from 'react-redux'
+import {RootState} from 'sr/redux/store'
+import {useActions} from 'sr/utils/helpers/useActions'
+import {fetchSections} from '../../section/section.helper'
+import {questionTypeEnum} from 'sr/constants/question'
+import {OptionQuestion, Question, VisibleOnFieldId} from '../question.interface'
+import {createQuestion, fetchStaticQuestions} from '../question.helper'
+import {DEFAULT_LANG_NAME} from 'sr/constants/common'
+import TextArea from 'sr/helpers/ui-components/TextArea'
+import {toast} from 'react-toastify'
 
 interface CreateQuestionPopupProps {
   isOpen: boolean
@@ -17,28 +27,42 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     register,
     handleSubmit,
     watch,
+    reset,
     formState: {errors},
   } = useForm()
   const closeModal = () => setIsOpen(false)
   const [isVisibleOnField, setIsVisibleOnField] = useState(false)
-  const [options, setOptions] = useState([{fieldName: '', fieldValue: '', labelName: ''}])
+  const [visibleOnFieldIds, setVisibleOnFieldIds] = useState<VisibleOnFieldId[]>([
+    {questionId: '', optionValue: []},
+  ])
+  const [questionOptionsMap, setQuestionOptionsMap] = useState<{[key: string]: OptionQuestion[]}>(
+    {}
+  )
+  const [options, setOptions] = useState<OptionQuestion[]>([])
   const [questionOptions, setQuestionOptions] = useState<
     {questionId: string; optionValue: OptionType[]}[]
   >([{questionId: '', optionValue: []}])
+  const programReduxStore = useSelector((state: RootState) => state.program)
+  const sectionReduxStore = useSelector((state: RootState) => state.section)
+  const {fetchProgramAction, fetchSectionAction} = useActions()
+  const [sectionWiseQuestions, setSectionWiseQuestions] = useState<Question[]>([])
 
-  const questionType = [
-    {id: '1', name: 'Multiple Choice'},
-    {id: '2', name: 'True/False'},
-    {id: '3', name: 'Number'},
-    {id: '4', name: 'Text'},
-    {id: '5', name: 'Date'},
-    {id: '6', name: 'Checkbox'},
-  ]
+  const questionType = useMemo(
+    () =>
+      questionTypeEnum.map((value) => ({
+        name: value
+          .split('_')
+          .map((word) => word.charAt(0) + word.slice(1).toLowerCase()) // Capitalize each word
+          .join(' '),
+        id: value,
+      })),
+    [questionTypeEnum]
+  )
 
-  const programOptions = [
-    {id: 1, name: 'Program 1'},
-    {id: 2, name: 'Program 2'},
-  ]
+  // const programOptions = [
+  //   {id: 1, name: 'Program 1'},
+  //   {id: 2, name: 'Program 2'},
+  // ]
 
   // Define sectionOptions as a flat array of objects
   const sectionOptions = [
@@ -47,8 +71,8 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
   ]
 
   const mandatoryOptions = [
-    {id: 'yes', name: 'Yes'},
-    {id: 'no', name: 'No'},
+    {id: 'true', name: 'Yes'},
+    {id: 'false', name: 'No'},
   ]
 
   const questionIdOptions = [
@@ -71,27 +95,49 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     {id: '2', name: 'Source 2'},
   ]
 
+  useEffect(() => {
+    fetchUserDataIfNeeded()
+  }, [])
+
+  const fetchUserDataIfNeeded = useCallback(() => {
+    if (programReduxStore.status !== 'succeeded') {
+      fetchProgramAction({})
+    }
+    if (sectionReduxStore.status !== 'succeeded') {
+      fetchSectionAction({})
+    }
+  }, [programReduxStore, sectionReduxStore, fetchProgramAction, fetchSectionAction])
+
   const toggleSwitch = () => setIsVisibleOnField(!isVisibleOnField)
 
   const addQuestionOption = () => {
-    setQuestionOptions([...questionOptions, {questionId: '', optionValue: []}])
+    setVisibleOnFieldIds([...visibleOnFieldIds, {questionId: '', optionValue: []}])
   }
 
   const addOption = () => {
-    setOptions([...options, {fieldName: '', fieldValue: '', labelName: ''}])
+    setOptions([...options, {fieldName: '', fieldValue: '', labelName: {}}])
   }
 
-  const handleQuestionOptionChange = (
-    index: number,
-    field: 'questionId' | 'optionValue',
-    newValue: MultiValue<OptionType>
-  ) => {
-    const updatedOptions = [...questionOptions]
-    updatedOptions[index] = {
-      ...updatedOptions[index],
-      [field]: newValue as OptionType[],
+  const handleQuestionSelect = (index: number, questionId: string) => {
+    const selectedQuestion = sectionWiseQuestions.find((q) => q.id === questionId)
+
+    // If the selected question has options, map them to the dropdown
+    if (selectedQuestion) {
+      setQuestionOptionsMap((prev) => ({
+        ...prev,
+        [index]: selectedQuestion.options, // Set the options for this specific question
+      }))
+      const updatedVisibleOnFieldIds = [...visibleOnFieldIds]
+      updatedVisibleOnFieldIds[index].questionId = questionId
+      setVisibleOnFieldIds(updatedVisibleOnFieldIds)
     }
-    setQuestionOptions(updatedOptions)
+    // console.log('questin options map', questionOptionsMap)
+  }
+
+  const handleQuestionOptionChange = (index: number, selectedOptions: string[]) => {
+    const updatedVisibleOnFieldIds = [...visibleOnFieldIds]
+    updatedVisibleOnFieldIds[index].optionValue = selectedOptions
+    setVisibleOnFieldIds(updatedVisibleOnFieldIds)
   }
 
   const handleOptionChange = (index: number, field: string, value: string) => {
@@ -99,6 +145,65 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
       i === index ? {...option, [field]: value} : option
     )
     setOptions(updatedOptions)
+  }
+  const handleOptionLabelChange = (index: number, langCode: string, value: string) => {
+    const updatedOptions = [...options]
+    if (!updatedOptions[index].labelName) {
+      updatedOptions[index].labelName = {} // Initialize labelName if undefined
+    }
+    updatedOptions[index].labelName[langCode] = value
+    setOptions(updatedOptions) // Update the options state
+  }
+
+  const fetchQuestions = async () => {
+    // Ensure both sectionId and programId are present before proceeding
+    if (!watch('sectionId') || !watch('programId')) return
+
+    try {
+      const sectionId = watch('sectionId')
+      const programId = watch('programId')
+
+      // Fetch questions with sectionId and programId
+      const {results} = await fetchStaticQuestions({sectionId, programId, getAll: true})
+
+      // Filter out questions that match specific questionTypes
+      const filteredQuestions = results.results.filter((question: Question) =>
+        ['SINGLE_DROPDOWN', 'MULTI_DROPDOWN', 'RADIO', 'CHECKBOX'].includes(question.questionType)
+      )
+
+      // Update the state with filtered questions
+      setSectionWiseQuestions(filteredQuestions)
+    } catch (error) {
+      console.log('Error fetching questions:', error)
+    }
+  }
+
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    const payload = {
+      ...data,
+      visibleOnFieldIds,
+      options,
+      dataSource: {
+        config: {
+          dynamicParams: [],
+          fixedParams: [],
+        },
+        source: 'INLINE',
+        labelKey: 'fieldName',
+        valueKey: 'fieldValue',
+      },
+      questionConfig: JSON.parse(data.questionConfig),
+    }
+    const {questionId_0, ...updatedPayload} = payload
+    closeModal()
+    try {
+      const res = await createQuestion(updatedPayload)
+      if (res) toast.success('Question created successfully')
+    } catch (e: any) {
+      toast.error('failed to create question', e.message)
+    } finally {
+      reset()
+    }
   }
 
   return (
@@ -115,20 +220,20 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
             <div className='h-full overflow-y-auto p-6'>
               <h2 className='text-xl  leading-6 text-gray-900 font-bold'>Create New Question</h2>
 
-              <form className='mt-4 space-y-4'>
+              <form className='mt-4 space-y-4' onSubmit={handleSubmit(onSubmit)}>
                 {/* Existing form fields (Program, Section, etc.) */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
                     <DropdownField
                       key={1}
-                      data={programOptions}
+                      data={programReduxStore.totalPrograms}
                       labelKey='name'
                       label='Program'
                       placeholder='Select Program'
-                      valueKey='id'
-                      name='program'
+                      valueKey='_id'
+                      name='programId'
                       required={true}
-                      register={register('program', {required: true})}
+                      register={register('programId', {required: true})}
                       error={errors.program && !watch('program')}
                       errorText='Please select a program'
                     />
@@ -136,15 +241,18 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   <div>
                     <DropdownField
                       key={2}
-                      data={sectionOptions} // Ensure data is a flat array
-                      labelKey='name'
+                      data={sectionReduxStore.totalSections} // Ensure data is a flat array
+                      labelKey='sectionName'
                       label='Section'
                       placeholder='Select Section'
-                      valueKey='id'
-                      name='section'
+                      valueKey='_id'
+                      name='sectionId'
                       required={true}
-                      register={register('section', {required: true})}
-                      error={errors.section && !watch('section')}
+                      register={register('sectionId', {
+                        required: true,
+                        onChange: fetchQuestions, // Fetch questions on section change
+                      })}
+                      error={errors.section && !watch('sectionId')}
                       errorText='Please select a section'
                     />
                   </div>
@@ -173,12 +281,12 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                       type='text'
                       label='Question Name'
                       className='custom-input form-input p-2 border rounded mb-2'
-                      id='questionName'
+                      id='fieldName'
                       required={true}
-                      name='questionName'
+                      name='fieldName'
                       placeholder='Enter Question Name'
-                      register={register('questionName', {required: true})}
-                      error={errors.questionName && !watch('questionName')}
+                      register={register('fieldName', {required: true})}
+                      error={errors.questionName && !watch('fieldName')}
                       errorText='Please enter Question Name'
                     />
                   </div>
@@ -252,6 +360,22 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                     />
                   </div>
                 </div>
+                <TextArea
+                  // key={index}
+
+                  // type={field.type}
+
+                  label={'Question Config'}
+                  className='custom-input form-input p-2 border rounded mb-2'
+                  id='questionConfig'
+                  required={true}
+                  name='questionConfig'
+                  placeholder='Enter Question Config'
+                  register={register('questionConfig', {required: true})}
+                  error={errors.questionConfig && !watch('questionConfig')}
+                  errorText='Please enter Question Config'
+                  rows={10}
+                />
 
                 {/* Visible On Field */}
                 <div className='flex items-center space-x-4'>
@@ -275,30 +399,42 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 {isVisibleOnField && (
                   <div className='mt-4'>
                     {/* Question ID and Option Value */}
-                    {questionOptions.map((option, index) => (
+                    {visibleOnFieldIds.map((field, index) => (
                       <div key={index} className='grid grid-cols-2 gap-4'>
                         <div>
                           <DropdownField
-                            data={questionIdOptions} // Use your flat array of question IDs
-                            labelKey='name'
+                            data={sectionWiseQuestions}
+                            labelKey='fieldName' // Assuming you want to display fieldName
                             label='Question ID'
                             placeholder='Select Question ID'
                             valueKey='id'
                             name={`questionId_${index}`}
                             required={true}
-                            register={register(`questionId_${index}`, {required: true})}
+                            register={register(`questionId_${index}`, {
+                              required: true,
+                              onChange: (e) => handleQuestionSelect(index, e.target.value),
+                            })}
                             error={errors[`questionId_${index}`] && !watch(`questionId_${index}`)}
                             errorText='Please select a question ID'
+                            // Update options based on question selection
                           />
                         </div>
                         <div className='mt-2'>
                           <MultiSelectField
-                            options={optionValueOptions}
+                            options={
+                              questionOptionsMap[index]?.map((option) => ({
+                                label: option.fieldName, // or option.labelName if needed
+                                value: option.fieldValue,
+                              })) || []
+                            } // Show options specific to the selected question
                             label='Option Value'
                             name={`optionValue_${index}`}
-                            value={option.optionValue}
+                            value={field.optionValue.map((value) => ({label: value, value}))}
                             onChange={(selectedOptions) =>
-                              handleQuestionOptionChange(index, 'optionValue', selectedOptions)
+                              handleQuestionOptionChange(
+                                index,
+                                selectedOptions.map((option) => option.value)
+                              )
                             }
                             placeholder='Select Option Values'
                             error={errors[`optionValue_${index}`] && !watch(`optionValue_${index}`)}
@@ -317,42 +453,60 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 )}
 
                 {/* Option Heading */}
-                <div className='mt-4'>
-                  <h4 className='text-lg font-semibold mb-4'>Options</h4>
+                <div className='mt-6'>
+                  <h4 className='text-xl font-bold mb-6'>Options</h4>
 
                   {options.map((option, index) => (
-                    <div key={index} className='grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4'>
-                      <div>
-                        <TextField
-                          type='text'
-                          label='Field Name'
-                          value={option.fieldName}
-                          onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
-                          name={`fieldName_${index}`}
-                          placeholder='Enter field name'
-                        />
+                    <div key={index} className='border p-6 rounded-md mb-6 shadow-md'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4'>
+                        {/* Field Name */}
+                        <div>
+                          <TextField
+                            type='text'
+                            label='Field Name'
+                            value={option.fieldName}
+                            onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
+                            name={`fieldName_${index}`}
+                            placeholder='Enter field name'
+                          />
+                        </div>
+
+                        {/* Field Value */}
+                        <div>
+                          <TextField
+                            type='text'
+                            label='Field Value'
+                            value={option.fieldValue}
+                            onChange={(e) =>
+                              handleOptionChange(index, 'fieldValue', e.target.value)
+                            }
+                            name={`fieldValue_${index}`}
+                            placeholder='Enter field value'
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <TextField
-                          type='text'
-                          label='Field Value'
-                          value={option.fieldValue}
-                          onChange={(e) => handleOptionChange(index, 'fieldValue', e.target.value)}
-                          name={`fieldValue_${index}`}
-                          placeholder='Enter field value'
-                        />
-                      </div>
-                      <div>
-                        <DropdownField
-                          data={labelNameOptions}
-                          labelKey='name'
-                          label='Label Name'
-                          placeholder='Select Label'
-                          valueKey='id'
-                          name={`labelName_${index}`}
-                          value={option.labelName}
-                          onChange={(e) => handleOptionChange(index, 'labelName', e.target.value)}
-                        />
+
+                      {/* Language-specific Label Names */}
+                      <div className='mt-4'>
+                        <h4 className='text-lg font-semibold mb-4 text-center'>Label Names</h4>
+
+                        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+                          {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
+                            <div key={langCode} className='text-center'>
+                              <TextField
+                                type='text'
+                                label={`${langName} (${langCode})`}
+                                value={option.labelName?.[langCode] || ''}
+                                onChange={(e) =>
+                                  handleOptionLabelChange(index, langCode, e.target.value)
+                                }
+                                name={`labelName_${index}_${langCode}`}
+                                placeholder={`Enter ${langName} label`}
+                                className='text-center'
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -360,12 +514,12 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   <Button
                     onClick={addOption}
                     label='Add More'
-                    className='mt-4 bg-blue-500 text-gray-50 py-1 px-3 rounded hover:bg-blue-600'
+                    className='mt-6 bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600'
                   />
                 </div>
 
                 {/* DataSource Heading */}
-                <div className='mt-4'>
+                {/* <div className='mt-4'>
                   <h4 className='text-lg font-semibold mb-4'>DataSource</h4>
                   <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                     <div>
@@ -404,7 +558,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 {/* <div className='mt-4 flex justify-end'>
                   <button
                     type='button'

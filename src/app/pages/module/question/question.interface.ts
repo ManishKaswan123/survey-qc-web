@@ -218,6 +218,7 @@ export interface QuestionCreatePayload {
   questionConfig: {}
 }
 
+
 export interface FilterAnswerProps {
   textResponse?: string
   dateResponse?: string
@@ -231,4 +232,14 @@ export interface FilterAnswerProps {
   surveyId: string
   programId: string
   sectionId: string
+}
+export interface StaticQuestionsApiResponse {
+  status: string
+  results: {
+    results: Question[]
+    page?: number
+    limit?: number
+    totalPages?: number
+    totalResults?: number
+  }
 }
