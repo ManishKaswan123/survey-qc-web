@@ -5,7 +5,7 @@ import {Program} from '../programInterfaces'
 interface ProgramTableProps {
   programData: Program[]
   onEdit: (program: Program) => void
-  onDelete: (program: Program) => void
+  onDelete: (program: string) => void
   onView: (programId: string) => void
 }
 
@@ -40,6 +40,9 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                 Start Date
               </th>
               <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
+                Status
+              </th>
+              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
                 Actions
               </th>
             </tr>
@@ -66,7 +69,17 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p>{new Date(program.startDate).toLocaleDateString()}</p>
                 </td>
-
+                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
+                  <p
+                    className={
+                      program.isActive
+                        ? 'text-green-500 font-bold font-sans'
+                        : 'text-red-500 font-bold font-sans'
+                    }
+                  >
+                    {program.isActive ? 'Active' : 'In Active'}
+                  </p>
+                </td>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <div className='flex space-x-4'>
                     <button
@@ -77,7 +90,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                     </button>
                     <button
                       className='text-red-500 hover:text-red-700'
-                      onClick={() => onDelete(program)}
+                      onClick={() => onDelete(program._id)}
                     >
                       <FaTrash size={16} />
                     </button>

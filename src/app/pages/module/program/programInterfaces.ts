@@ -29,3 +29,11 @@ export interface PayloadType {
   sortBy?: string
   getAll?: boolean
 }
+
+export interface CreatePayloadType {
+  name: string
+  description?: string
+  startDate: string
+  companyId: string
+  createdBy: string
+}
