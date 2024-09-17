@@ -2,17 +2,13 @@ export interface Program {
   _id: string
   name: string
   description: string
-  details: string
   startDate: string
-  endDate: string
+  companyId: string
+  createdBy: string
+  isActive: boolean
 }
 
 export interface ProgramApiResponse {
-  // results: Program[]
-  // page: number
-  // limit: number
-  // totalPages: number
-  // totalResults: number
   status: string
   results: {
     results: Program[]
