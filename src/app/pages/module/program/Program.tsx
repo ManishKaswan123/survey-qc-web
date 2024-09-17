@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import ProgramCard from './components/ProgramCard'
-import {fetchPrograms} from './api'
+import {CreatePrograms, DeletePrograms, fetchPrograms} from './api'
 import {AiOutlinePlus, AiOutlineFilter} from 'react-icons/ai'
-import {Program, ProgramFilters} from './programInterfaces'
+import {CreatePayloadType, Program, ProgramFilters} from './programInterfaces'
 import {Button, Spinner} from 'sr/helpers'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
@@ -13,6 +13,9 @@ import {FaArrowLeft} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import ProgramTable from './components/ProgramTable'
 import ProgramTableSkeleton from './components/ProgramTableSkeleton'
+import FilterHeader from 'sr/helpers/ui-components/filterHeader'
+import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
+import {toast} from 'react-toastify'
 
 const ProgramList: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
@@ -30,11 +33,67 @@ const ProgramList: React.FC = () => {
   const [filters, setFilters] = useState<ProgramFilters>({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
   const navigate = useNavigate()
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [reRender, setReRender] = useState(false)
+
+  const handleToggleExpand = () => setIsExpanded(!isExpanded)
+
+  const createUpdateFields: FieldsArray = useMemo(
+    () => [
+      {
+        type: 'text',
+        label: 'Name',
+        name: 'name',
+        placeholder: 'Program Name',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Description',
+        name: 'description',
+        placeholder: 'Description',
+      },
+      {
+        type: 'datetime-local',
+        label: 'Start Date',
+        name: 'startDate',
+        placeholder: 'Start Date',
+        required: true,
+      },
+    ],
+    []
+  )
+
+  const handleCreateProgram = async (payload: CreatePayloadType) => {
+    try {
+      let response = await CreatePrograms(payload)
+      if (response?.status === 'success') {
+        toast.success('Program created successfully')
+        setReRender(!reRender)
+      }
+    } catch (error) {
+      toast.error('Failed to create program')
+    }
+    setIsCreateModalOpen(false)
+  }
+
+  const handleDeleteProgram = async (payload: string) => {
+    try {
+      let response = await DeletePrograms(payload)
+      if (response?.status === 'success') {
+        toast.success('Program deleted successfully')
+        setReRender(!reRender)
+      }
+    } catch (error) {
+      toast.error('Failed to delete program')
+    }
+    setIsCreateModalOpen(false)
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchPrograms({ limit: itemsPerPage, page: currentPage });
+        const response = await fetchPrograms({limit: itemsPerPage, page: currentPage})
 
         console.log('ProgramList', response.results.results)
         setPrograms(response?.results?.results)
@@ -52,7 +111,7 @@ const ProgramList: React.FC = () => {
     }
 
     fetchData()
-  }, [currentPage, itemsPerPage])
+  }, [currentPage, itemsPerPage, reRender])
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
@@ -72,10 +131,6 @@ const ProgramList: React.FC = () => {
     console.log('Edit program:', program)
   }
 
-  const handleDelete = (program: Program) => {
-    console.log('Delete program:', program)
-  }
-
   const handleView = (programId: string) => {
     navigate(`/section`, {
       state: {programId},
@@ -87,31 +142,17 @@ const ProgramList: React.FC = () => {
     <div className='container mx-auto px-4 sm:px-8 '>
       <div className='py-6'>
         <div className='flex justify-between items-center flex-wrap mb-4'>
-          <div className='flex flex-row items-center'>
-            <button
-              onClick={() => navigate('/')} // Navigate to home page
-              className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-2 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
-            >
-              <FaArrowLeft size={22} />
-            </button>
-            <h2 className='text-2xl font-semibold leading-tight mb-2 sm:mb-0 sm:mr-4'>Program</h2>
-          </div>
-          <div className='flex items-center'>
-            <Button
-              label='Create new'
-              Icon={AiOutlinePlus}
-              onClick={() => setIsCreateModalOpen(true)}
-              className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
-            ></Button>
-            <Button
-              label='Filter'
-              Icon={AiOutlineFilter}
-              onClick={() => setIsFilterVisible(!isFilterVisible)}
-              className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center'
-            ></Button>
-          </div>
+          <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
+          <Button
+            label='Create new'
+            Icon={AiOutlinePlus}
+            onClick={() => setIsCreateModalOpen(true)}
+            className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
+          ></Button>
         </div>
-        {isFilterVisible && (
+        <FilterHeader onToggle={handleToggleExpand} isExpanded={isExpanded} />
+
+        {isExpanded && (
           <div className='relative'>
             <Filter
               onApplyFilter={handleApplyFilter}
@@ -129,7 +170,7 @@ const ProgramList: React.FC = () => {
           <ProgramTable
             programData={programs}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteProgram}
             onView={handleView}
           />
         )}
@@ -148,6 +189,16 @@ const ProgramList: React.FC = () => {
           />
         )}
       </div>
+      {isCreateModalOpen && (
+        <DynamicModal
+          // imageType='imagePath'
+          label='Create Program'
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          fields={createUpdateFields}
+          onSubmit={handleCreateProgram}
+        />
+      )}
     </div>
   )
 }

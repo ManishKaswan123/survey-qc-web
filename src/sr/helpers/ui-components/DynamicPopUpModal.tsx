@@ -601,75 +601,75 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                     errorText={`Please enter ${field.placeholder}`}
                   />
                 )
-              // case 'number':
-              //   return (
-              //     <TextField
-              //       key={index}
-              //       type={field.type}
-              //       labelStyle='style1'
-              //       label={field.label}
-              //       className='custom-input form-input p-2 border rounded mb-2'
-              //       id={field.name}
-              //       required={field.required}
-              //       disabled={field.disabled}
-              //       name={field.name}
-              //       placeholder={field.placeholder}
-              //       register={register(field.name, {required: field.required})}
-              //       error={errors[field.name]}
-              //       errorText={`Please enter ${field.placeholder}`}
-              //     />
-              //   )
-              // case 'datetime-local':
-              //   return (
-              //     <TextField
-              //       key={index}
-              //       type={field.type}
-              //       labelStyle='style1'
-              //       label={field.label}
-              //       className='custom-input form-input p-2 border rounded mb-2'
-              //       id={field.name}
-              //       required={field.required}
-              //       name={field.name}
-              //       placeholder={field.placeholder}
-              //       register={register(field.name, {required: field.required})}
-              //       error={errors[field.name]}
-              //       errorText={`Please enter ${field.placeholder}`}
-              //     />
-              //   )
-              // case 'date':
-              //   return (
-              //     <TextField
-              //       key={index}
-              //       type={field.type}
-              //       labelStyle='style1'
-              //       label={field.label}
-              //       className='custom-input form-input p-2 border rounded mb-2'
-              //       id={field.name}
-              //       required={field.required}
-              //       name={field.name}
-              //       placeholder={field.placeholder}
-              //       register={register(field.name, {required: field.required})}
-              //       error={errors[field.name]}
-              //       errorText={`Please enter ${field.placeholder}`}
-              //     />
-              //   )
-              // case 'checkbox':
-              //   return (
-              //     <TextField
-              //       key={index}
-              //       type={field.type}
-              //       labelStyle='style1'
-              //       label={field.label}
-              //       className='custom-input form-input p-2 border rounded mb-2'
-              //       id={field.name}
-              //       required={field.required}
-              //       name={field.name}
-              //       placeholder={field.placeholder}
-              //       register={register(field.name, {required: field.required})}
-              //       error={errors[field.name]}
-              //       errorText={`Please enter ${field.placeholder}`}
-              //     />
-              //   )
+              case 'number':
+                return (
+                  <TextField
+                    key={index}
+                    type={field.type}
+                    labelStyle='style1'
+                    label={field.label}
+                    className='custom-input form-input p-2 border rounded mb-2'
+                    id={field.name}
+                    required={field.required}
+                    disabled={field.disabled}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    register={register(field.name, {required: field.required})}
+                    error={errors[field.name]}
+                    errorText={`Please enter ${field.placeholder}`}
+                  />
+                )
+              case 'datetime-local':
+                return (
+                  <TextField
+                    key={index}
+                    type={field.type}
+                    labelStyle='style1'
+                    label={field.label}
+                    className='custom-input form-input p-2 border rounded mb-2'
+                    id={field.name}
+                    required={field.required}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    register={register(field.name, {required: field.required})}
+                    error={errors[field.name]}
+                    errorText={`Please enter ${field.placeholder}`}
+                  />
+                )
+              case 'date':
+                return (
+                  <TextField
+                    key={index}
+                    type={field.type}
+                    labelStyle='style1'
+                    label={field.label}
+                    className='custom-input form-input p-2 border rounded mb-2'
+                    id={field.name}
+                    required={field.required}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    register={register(field.name, {required: field.required})}
+                    error={errors[field.name]}
+                    errorText={`Please enter ${field.placeholder}`}
+                  />
+                )
+              case 'checkbox':
+                return (
+                  <TextField
+                    key={index}
+                    type={field.type}
+                    labelStyle='style1'
+                    label={field.label}
+                    className='custom-input form-input p-2 border rounded mb-2'
+                    id={field.name}
+                    required={field.required}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    register={register(field.name, {required: field.required})}
+                    error={errors[field.name]}
+                    errorText={`Please enter ${field.placeholder}`}
+                  />
+                )
             }
           })}
           <div className='flex justify-around items-center mt-4'>
@@ -695,4 +695,3 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
 }
 
 export default DynamicModal
-
