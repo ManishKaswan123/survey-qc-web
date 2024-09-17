@@ -23,7 +23,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
       return newSet
     })
   }
-
+  console.log('ProgramTableProps', programData)
   return (
     <div className='overflow-x-auto my-5'>
       <div className='shadow rounded-lg overflow-hidden'>
@@ -34,16 +34,10 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                 Program Name
               </th>
               <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Details
+                Description
               </th>
               <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
                 Start Date
-              </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                End Date
-              </th>
-              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
-                Section
               </th>
               <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
                 Actions
@@ -51,16 +45,16 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
             </tr>
           </thead>
           <tbody>
-            {programData.map((program) => (
+            {programData?.map((program) => (
               <tr key={program._id} className='odd:bg-white even:bg-gray-50'>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <p className='text-gray-900 whitespace-no-wrap'>{program.name}</p>
+                  <p className='text-gray-900 whitespace-no-wrap'>{program?.name}</p>
                 </td>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p>
                     {expandedPrograms.has(program._id)
-                      ? program.details
-                      : `${program.details.substring(0, 50)}...`}
+                      ? program.description
+                      : `${program.description.substring(0, 50)}...`}
                     <button
                       className='text-blue-500 hover:text-blue-700 ml-2'
                       onClick={() => toggleDetails(program._id)}
@@ -72,19 +66,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p>{new Date(program.startDate).toLocaleDateString()}</p>
                 </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <p>{new Date(program.endDate).toLocaleDateString()}</p>
-                </td>
-                <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
-                  <div className='flex ml-[20%]'>
-                    <button
-                      className='text-green-500 hover:text-green-700 text-center'
-                      onClick={() => onView(program._id)}
-                    >
-                      <FaEye size={16} />
-                    </button>
-                  </div>
-                </td>
+
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <div className='flex space-x-4'>
                     <button

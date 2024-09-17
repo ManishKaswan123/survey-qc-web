@@ -2,15 +2,13 @@ import React from 'react'
 import {Program} from '../programInterfaces'
 import {FaEdit, FaTrash, FaEye} from 'react-icons/fa'
 
-const ProgramCard: React.FC<Program> = ({name, description, details, startDate, endDate}) => {
+const ProgramCard: React.FC<Program> = ({name, description, startDate}) => {
   return (
     <div className='bg-white shadow-lg rounded-lg p-6 relative transition-transform transform hover:scale-105 hover:shadow-xl hover:cursor-pointer'>
       <h2 className='text-2xl font-bold mb-3'>{name}</h2>
       <p className='text-gray-600 mb-3'>{description}</p>
-      <p className='text-gray-500 text-sm mb-1'>{details}</p>
       <div className='text-gray-500 text-sm mb-3'>
         <p>Start Date: {new Date(startDate).toLocaleDateString()}</p>
-        <p>End Date: {new Date(endDate).toLocaleDateString()}</p>
       </div>
 
       <div className='flex space-x-6 mt-4'>
