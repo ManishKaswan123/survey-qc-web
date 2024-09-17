@@ -115,6 +115,7 @@ export interface QuestionAnswer {
 }
 
 export interface QuestionTableProps {
+  setReRender: (reRender: boolean) => void
   key: string
   data: QuestionAnswer
   setIsUpdateModalOpen?: (isOpen: boolean) => void
@@ -217,7 +218,6 @@ export interface QuestionCreatePayload {
   sectionId: string
   questionConfig: {}
 }
-
 
 export interface FilterAnswerProps {
   textResponse?: string

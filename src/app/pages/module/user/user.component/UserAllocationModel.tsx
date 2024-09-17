@@ -8,6 +8,7 @@ import {fetchVillage} from 'sr/utils/api/fetchVillage'
 import {useSelector} from 'react-redux'
 import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
+import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
 interface UserAllocationModalProps {
   onAllocate: (selectedUserIds: string[]) => void
   onClose: () => void
@@ -44,14 +45,18 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, on
   //   fetchData()
   // }, [])
 
-  console.log('this is state data', stateData)
+  console.log('stateData :- ', stateData)
   const fetchDataIfNeeded = useCallback(() => {
     if (stateStatus != 'succeeded') fetchStateData()
   }, [stateStatus])
+
   useEffect(() => {
     fetchDataIfNeeded()
   }, [])
 
+  useEffect(() => {
+    if (stateData) setStates(stateData?.results)
+  }, [stateData])
   // Fetch districts based on selected state
   useEffect(() => {
     if (selectedState) {
@@ -63,44 +68,41 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, on
         setDistricts(response.results)
       }
       fetchData()
-    } else {
-      setDistricts([])
     }
+    setDistricts([])
+    setSubdistricts([])
+    setVillages([])
   }, [selectedState])
 
   // Fetch subdistricts based on selected district
   useEffect(() => {
-    if (selectedState && selectedDistrict) {
+    if (selectedDistrict) {
       const fetchData = async () => {
         const response = await fetchSubDistrict({
           getAll: true,
-          stateCode: selectedState,
           districtCode: selectedDistrict,
         })
         setSubdistricts(response.results)
       }
       fetchData()
-    } else {
-      setSubdistricts([])
     }
+    setSubdistricts([])
+    setVillages([])
   }, [selectedDistrict])
 
   // Fetch villages based on selected subdistrict
   useEffect(() => {
-    if (selectedState && selectedDistrict && selectedSubdistrict) {
+    if (selectedSubdistrict) {
       const fetchData = async () => {
         const response = await fetchVillage({
           getAll: true,
-          stateCode: selectedState,
-          districtCode: selectedDistrict,
           subDistrictCode: selectedSubdistrict,
         })
         setVillages(response.results)
       }
       fetchData()
-    } else {
-      setVillages([])
     }
+    setVillages([])
   }, [selectedSubdistrict])
 
   // Fetch surveys whenever a location dropdown changes
@@ -163,74 +165,84 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, on
         <h2 className='text-2xl font-bold text-gray-800 mb-6 text-center'>Allocation</h2>
 
         {/* Dropdowns */}
-        <div className='mb-4'>
-          <label className='block'>State</label>
-          <select
-            value={selectedState}
-            onChange={(e) => setSelectedState(Number(e.target.value))}
-            className='w-full p-2 border rounded'
-          >
-            <option value=''>Select State</option>
-            {states.map((state) => (
-              <option key={state.id} value={state.id}>
-                {state.name}
-              </option>
-            ))}
-          </select>
+        <hr className='w-full border-t border-gray-400 mt-4 mb-2' />
+        <div className='flex flex-row justify-between'>
+          {/* State Dropdown */}
+          <div className='w-[48%]'>
+            {' '}
+            {/* Ensure consistent width */}
+            <DropdownField
+              key='state'
+              data={states} // Data for state dropdown
+              labelKey='stateName' // Key for displaying the label
+              label='State' // Label for the dropdown
+              placeholder='Select State'
+              valueKey='stateCode' // Key for the value in the option
+              name='state'
+              value={selectedState} // Controlled value
+              onChange={(e) => setSelectedState(Number(e.target.value))} // Handle the state change
+            />
+          </div>
+
+          {/* District Dropdown */}
+          <div className='w-[48%]'>
+            {' '}
+            {/* Ensure consistent width */}
+            <DropdownField
+              key='district'
+              data={districts} // Data for district dropdown
+              labelKey='districtName'
+              label='District'
+              placeholder='Select District'
+              valueKey='districtCode'
+              name='district'
+              value={selectedDistrict} // Controlled value
+              onChange={(e) => setSelectedDistrict(Number(e.target.value))} // Handle district change
+              disabled={!selectedState} // Disable if no state is selected
+            />
+          </div>
         </div>
 
-        <div className='mb-4'>
-          <label className='block'>District</label>
-          <select
-            value={selectedDistrict}
-            onChange={(e) => setSelectedDistrict(Number(e.target.value))}
-            className='w-full p-2 border rounded'
-            disabled={!selectedState}
-          >
-            <option value=''>Select District</option>
-            {districts.map((district) => (
-              <option key={district.id} value={district.id}>
-                {district.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className='flex flex-row justify-between'>
+          {/* Sub District Dropdown */}
+          <div className='w-[48%]'>
+            {' '}
+            {/* Ensure consistent width */}
+            <DropdownField
+              key='subdistrict'
+              data={subdistricts} // Data for subdistrict dropdown
+              labelKey='subDistrictName'
+              label='Sub District'
+              placeholder='Select Sub District'
+              valueKey='subDistrictCode'
+              name='subdistrict'
+              value={selectedSubdistrict} // Controlled value
+              onChange={(e) => setSelectedSubdistrict(Number(e.target.value))} // Handle subdistrict change
+              disabled={!selectedDistrict} // Disable if no district is selected
+            />
+          </div>
 
-        <div className='mb-4'>
-          <label className='block'>Sub District</label>
-          <select
-            value={selectedSubdistrict}
-            onChange={(e) => setSelectedSubdistrict(Number(e.target.value))}
-            className='w-full p-2 border rounded'
-            disabled={!selectedDistrict}
-          >
-            <option value=''>Select Sub District</option>
-            {subdistricts.map((subdistrict) => (
-              <option key={subdistrict.id} value={subdistrict.id}>
-                {subdistrict.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className='mb-4'>
-          <label className='block'>Village</label>
-          <select
-            value={selectedVillage}
-            onChange={(e) => setSelectedVillage(Number(e.target.value))}
-            className='w-full p-2 border rounded'
-            disabled={!selectedSubdistrict}
-          >
-            <option value=''>Select Village</option>
-            {villages.map((village) => (
-              <option key={village.id} value={village.id}>
-                {village.name}
-              </option>
-            ))}
-          </select>
+          {/* Village Dropdown */}
+          <div className='w-[48%]'>
+            {' '}
+            {/* Ensure consistent width */}
+            <DropdownField
+              key='village'
+              data={villages} // Data for village dropdown
+              labelKey='villageName'
+              label='Village'
+              placeholder='Select Village'
+              valueKey='villageCode'
+              name='village'
+              value={selectedVillage} // Controlled value
+              onChange={(e) => setSelectedVillage(Number(e.target.value))} // Handle village change
+              disabled={!selectedSubdistrict} // Disable if no subdistrict is selected
+            />
+          </div>
         </div>
 
         {/* Existing UI for allocation */}
+        <hr className='w-full border-t border-gray-400 mt-4 mb-6' />
         <div className='flex justify-between items-start'>
           {/* Left Users */}
           <div className='w-1/2 pr-2'>

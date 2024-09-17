@@ -7,7 +7,12 @@ import {d} from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z'
 import {toast} from 'react-toastify'
 
 // QuestionCard component
-const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModalOpen}) => {
+const QuestionCard: React.FC<QuestionTableProps> = ({
+  setReRender,
+  key,
+  data,
+  setIsUpdateModalOpen,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [remark, setRemark] = useState('')
   const [isRejected, setIsRejected] = useState(false)
@@ -21,6 +26,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
   // }
   const handleSaveRemark = async (status: string) => {
     // Handle save remark logic here
+    console.log('this is question type : - ', data?.questionType)
     console.log('this is status :- ', status)
     console.log('this is data :- ', data)
     console.log('Remark saved:', remark)
@@ -42,6 +48,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
     if (data?.answerId) {
       const res = await UpdateAnswers(data?.answerId, payload)
       if (res.status === 'success') {
+        setReRender(true)
         toast.success('Remark saved successfully')
       } else {
         toast.error('Failed to save remark')
@@ -78,11 +85,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
     }
 
     if (data?.options?.length > 0) {
-      const responseValue =
-        data?.multipleChoiceResponse?.join(', ') ||
-        data?.textResponse ||
-        data?.dateResponse ||
-        data?.numberResponse
+      const responseValue = data?.textResponse || data?.dateResponse || data?.numberResponse
 
       const matchedOption = data?.options?.find((option) => option?.fieldValue === responseValue)
       return matchedOption ? matchedOption?.fieldName : responseValue
@@ -95,12 +98,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({key, data, setIsUpdateModal
         ? formatDate(data?.dateResponse)
         : ''
 
-    return (
-      data?.multipleChoiceResponse?.join(', ') ||
-      data?.textResponse ||
-      dateResponseDisplay ||
-      data?.numberResponse
-    )
+    return data?.textResponse || dateResponseDisplay || data?.numberResponse
   }
 
   return (
