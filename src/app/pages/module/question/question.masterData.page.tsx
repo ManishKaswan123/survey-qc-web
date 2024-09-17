@@ -27,6 +27,7 @@ import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
 import {is} from 'immer/dist/internal'
 import CreateQuestionPopup from './question.component/question.create'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
+import { useLocation } from 'react-router-dom'
 
 const CustomQuestions: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
@@ -37,13 +38,18 @@ const CustomQuestions: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [itemsPerPage, setItemsPerPage] = useState(8)
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const programId = queryParams.get('programId') || undefined
+  const sectionId = queryParams.get('sectionId') || undefined
 
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
-  //   const userStatus = useSelector((state: RootState) => state.user.status)
-  //   const {fetchUserData} = useActions()
 
   const [isExpanded, setIsExpanded] = useState(false)
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
+  useEffect(() => {
+    setFilters({programId, sectionId})
+  }, [queryParams])
 
   const createFields: FieldsArray = useMemo(
     () => [

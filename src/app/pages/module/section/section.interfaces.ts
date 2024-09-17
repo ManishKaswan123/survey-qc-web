@@ -11,11 +11,11 @@ export interface Section {
   _id: string
   programId: string
   sectionName: string
-  lableName: Record<string, any>
+  lableName: Record<string, string>
   sectionCode: string
   displayOrder: number
   description: string
-  __v: number
+  __v?: number
 }
 export interface SectionApiResponse {
   status: string
@@ -33,5 +33,15 @@ export interface SectionTableProps {
   surveyId: string
   programId: string
   totalAttemptedQuestionsMap: Record<string, number>
-    totalQuestionsMap: Record<string, number>
+  totalQuestionsMap: Record<string, number>
+}
+
+export interface SectionCreatePayload {
+  programId: string
+  sectionName: string
+  labelName?: Record<string, string>
+  description: string
+  displayOrder: string
+  sectionCode: string
+  isActive?: boolean
 }

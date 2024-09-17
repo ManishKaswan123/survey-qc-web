@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useLocation} from 'react-router-dom'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import Filter from 'sr/helpers/ui-components/Filter'
@@ -9,86 +9,18 @@ import SurveySkeleton from '../survey/components/survey.skeleton'
 import SectionTable from './section.component/section.table'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import SkeletonSectionTable from './section.component/section.skeletonTable'
-import {fetchSections} from './section.helper'
-import {Section} from './section.interfaces'
+import {createSection, fetchSections} from './section.helper'
 import {fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
 import {useQuery} from '@tanstack/react-query'
 import {Button} from 'sr/helpers'
 import {AiOutlinePlus} from 'react-icons/ai'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
+import {useSelector} from 'react-redux'
+import {RootState} from 'sr/redux/store'
+import {useActions} from 'sr/utils/helpers/useActions'
+import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 
 const Custom: React.FC = () => {
-  const filterFields: FieldsArray = useMemo(
-    () => [{type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'}],
-    []
-  )
-
-  const programData = [
-    {id: 1, title: 'Program 1'},
-    {id: 2, title: 'Program 2'},
-    {id: 3, title: 'Program 3'},
-  ]
-
-  const labelData = [
-    {id: 'en', title: 'English'},
-    {id: 'hi', title: 'Hindi'},
-    {id: 'pun', title: 'Punjabi'},
-  ]
-
-  const createUpdateFields: FieldsArray = useMemo(
-    () => [
-      {
-        type: 'text',
-        label: 'Section Code',
-        name: 'sectionCode',
-        placeholder: 'Section Code',
-        required: true,
-      },
-      {
-        type: 'text',
-        label: 'Section Name',
-        name: 'sectionName',
-        placeholder: 'Section Name',
-        required: true,
-      },
-      {
-        type: 'text',
-        label: 'Description',
-        name: 'description',
-        placeholder: 'Description',
-      },
-      {
-        type: 'dropdown',
-        label: 'labelName',
-        name: labelData,
-        topLabel: 'Label Name',
-        placeholder: 'Select Label Name',
-        required: true,
-        labelKey: 'title',
-        id: 'id',
-      },
-
-      {
-        type: 'dropdown',
-        label: 'programId',
-        name: programData,
-        topLabel: 'Program',
-        placeholder: 'Select Program',
-        required: true,
-        labelKey: 'title',
-        id: 'id',
-      },
-      {
-        type: 'text',
-        label: 'Display Order',
-        name: 'displayOrder',
-        placeholder: 'Display Order',
-        required: true,
-      },
-    ],
-    []
-  )
-
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const programId = queryParams.get('programId') || ''
@@ -102,11 +34,96 @@ const Custom: React.FC = () => {
   const [totalQuestionsMap, setTotalQuestionsMap] = useState({})
   const [totalAttemptedQuestionsMap, setTotalAttemptedQuestionsMap] = useState({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const programReduxStore = useSelector((state: RootState) => state.program)
+  const {fetchProgramAction} = useActions()
+
+  const filterFields: FieldsArray = useMemo(
+    () => [
+      // {type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'},
+      {type: 'text', label: 'Section Name', name: 'sectionName', placeholder: 'Enter Section Name'},
+    ],
+    []
+  )
+
+  const createUpdateFields: FieldsArray = useMemo(
+    () => [
+      {
+        type: 'dropdown',
+        label: 'programId',
+        name: programReduxStore.totalPrograms,
+        topLabel: 'Program',
+        placeholder: 'Select Program',
+        required: true,
+        labelKey: 'name',
+        id: '_id',
+      },
+      {
+        type: 'text',
+        label: 'Section Name',
+        name: 'sectionName',
+        placeholder: 'Section Name',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Description',
+        name: 'description',
+        placeholder: 'Description',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Display Order',
+        name: 'displayOrder',
+        placeholder: 'Display Order',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Section Code',
+        name: 'sectionCode',
+        placeholder: 'Section Code',
+        required: true,
+      },
+      // {
+      //   type: 'dropdown',
+      //   label: 'isActive',
+      //   name: [
+      //     {id: true, name: 'Active'},
+      //     {id: false, name: 'Inactive'},
+      //   ],
+      //   topLabel: 'Active',
+      //   placeholder: 'Select Active',
+      //   labelKey: 'name',
+      //   id: 'id',
+      //   required:false
+      // },
+      {
+        type: 'labelName',
+        label: 'Label Name',
+        name: 'labelName',
+        placeholder: 'Label Name',
+        required: false,
+      },
+    ],
+    [programReduxStore.totalPrograms]
+  )
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
+  useEffect(() => {
+    fetchUserDataIfNeeded()
+  }, [])
+
+  const fetchUserDataIfNeeded = useCallback(() => {
+    if (programReduxStore.status !== 'succeeded') {
+      fetchProgramAction({})
+    }
+  }, [programReduxStore, fetchProgramAction])
+
   // Fetch static questions and build the totalQuestionsMap
   useEffect(() => {
+    if (programId === '') return
     const buildTotalQuestionsMap = async () => {
       try {
         const {results} = await fetchStaticQuestions({programId, getAll: true})
@@ -125,6 +142,7 @@ const Custom: React.FC = () => {
 
   // Fetch survey questions and build the totalAttemptedQuestionsMap
   useEffect(() => {
+    if (surveyId === '') return
     const buildAttemptedQuestionsMap = async () => {
       try {
         const {results} = await fetchQuestions({surveyId, getAll: true})
@@ -150,7 +168,7 @@ const Custom: React.FC = () => {
   }, [receivedData])
 
   // Query to fetch sections with filters
-  const {data, error, isLoading} = useQuery({
+  const {data, error, isLoading, refetch} = useQuery({
     queryKey: ['sections', {limit: itemsPerPage, page: currentPage, ...filters}],
     queryFn: () =>
       fetchSections({
@@ -170,9 +188,27 @@ const Custom: React.FC = () => {
     setFilters(newFilters)
     setCurrentPage(1)
   }
-
   const handleCreateSection = async (values: any) => {
-    console.log('Create Section:', values)
+    // Construct the labelName object by filtering out empty strings
+    const labelName = Object.keys(DEFAULT_LANG_NAME).reduce((acc, langCode) => {
+      if (values[langCode] && values[langCode].trim() !== '') {
+        acc[langCode] = values[langCode]
+      }
+      return acc
+    }, {} as Record<string, string>)
+
+    const payload = {
+      programId: values.programId,
+      sectionName: values.sectionName,
+      labelName,
+      description: values.description,
+      displayOrder: values.displayOrder,
+      sectionCode: values.sectionCode,
+      isActive: values.isActive,
+    }
+    // console.log('Create Section Payload:', payload)
+    await createSection(payload)
+    refetch()
     setIsCreateModalOpen(false)
   }
 
@@ -181,12 +217,14 @@ const Custom: React.FC = () => {
       <div className='py-6'>
         <div className='flex flex-row justify-between mb-4'>
           <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
-          <Button
-            label='Create new'
-            Icon={AiOutlinePlus}
-            onClick={() => setIsCreateModalOpen(true)}
-            className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
-          ></Button>
+          {programId === '' && surveyId === '' && (
+            <Button
+              label='Create new'
+              Icon={AiOutlinePlus}
+              onClick={() => setIsCreateModalOpen(true)}
+              className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full shadow-md inline-flex items-center mb-2 sm:mb-0 sm:mr-3'
+            ></Button>
+          )}
         </div>
         <FilterHeader onToggle={handleToggleExpand} isExpanded={isExpanded} />
 
