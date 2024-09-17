@@ -16,6 +16,7 @@ import {createQuestion, fetchStaticQuestions} from '../question.helper'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 import TextArea from 'sr/helpers/ui-components/TextArea'
 import {toast} from 'react-toastify'
+import {useQueryClient} from '@tanstack/react-query'
 
 interface CreateQuestionPopupProps {
   isOpen: boolean
@@ -30,11 +31,10 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     reset,
     formState: {errors},
   } = useForm()
+  const queryClient = useQueryClient()
   const closeModal = () => setIsOpen(false)
   const [isVisibleOnField, setIsVisibleOnField] = useState(false)
-  const [visibleOnFieldIds, setVisibleOnFieldIds] = useState<VisibleOnFieldId[]>([
-    {questionId: '', optionValue: []},
-  ])
+  const [visibleOnFieldIds, setVisibleOnFieldIds] = useState<VisibleOnFieldId[]>([])
   const [questionOptionsMap, setQuestionOptionsMap] = useState<{[key: string]: OptionQuestion[]}>(
     {}
   )
@@ -46,6 +46,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
   const sectionReduxStore = useSelector((state: RootState) => state.section)
   const {fetchProgramAction, fetchSectionAction} = useActions()
   const [sectionWiseQuestions, setSectionWiseQuestions] = useState<Question[]>([])
+  const [globalLabelName, setGlobalLabelName] = useState<Record<string, string>>({})
 
   const questionType = useMemo(
     () =>
@@ -154,6 +155,12 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     updatedOptions[index].labelName[langCode] = value
     setOptions(updatedOptions) // Update the options state
   }
+  const handleGlobalLabelChange = (langCode: string, value: string) => {
+    setGlobalLabelName((prev) => ({
+      ...prev,
+      [langCode]: value,
+    }))
+  }
 
   const fetchQuestions = async () => {
     // Ensure both sectionId and programId are present before proceeding
@@ -179,10 +186,32 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
   }
 
   const onSubmit: SubmitHandler<any> = async (data) => {
+    // Validation: Check that `visibleOnFieldIds` has at least one value in `optionValue` for each `questionId`
+    if (isVisibleOnField) {
+      const hasInvalidVisibleOnFields = visibleOnFieldIds.some(
+        (field: VisibleOnFieldId) => field.optionValue.length === 0
+      )
+
+      if (hasInvalidVisibleOnFields) {
+        toast.error('Each visible field must have at least one option value.')
+        return // Stop submission if validation fails
+      }
+    }
+
+    // Create the payload
     const payload = {
-      ...data,
-      visibleOnFieldIds,
-      options,
+      questionCode: data.questionCode,
+      fieldName: data.fieldName,
+      questionType: data.questionType,
+      isMandatory: data.isMandatory || false,
+      fieldRegex: data.fieldRegex || '',
+      visibleOnFieldIds: isVisibleOnField ? visibleOnFieldIds : [],
+      options: ['SINGLE_DROPDOWN', 'MULTI_DROPDOWN', 'RADIO', 'CHECKBOX'].includes(
+        data.questionType
+      )
+        ? options
+        : [],
+      labelName: globalLabelName,
       dataSource: {
         config: {
           dynamicParams: [],
@@ -192,19 +221,26 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
         labelKey: 'fieldName',
         valueKey: 'fieldValue',
       },
-      questionConfig: JSON.parse(data.questionConfig),
+      displayOrder: data.displayOrder,
+      programId: data.programId,
+      sectionId: data.sectionId,
+      questionConfig: {},
     }
-    const {questionId_0, ...updatedPayload} = payload
-    closeModal()
+
     try {
-      const res = await createQuestion(updatedPayload)
+      const res = await createQuestion(payload)
       if (res) toast.success('Question created successfully')
     } catch (e: any) {
-      toast.error('failed to create question', e.message)
+      toast.error('Failed to create question', e.message)
     } finally {
       reset()
+      closeModal()
+      queryClient.invalidateQueries({queryKey: ['staticQuestions']})
     }
   }
+
+  // console.log('question id ', watch(`questionId_${0}`) != undefined)
+  // console.log('option value len is :', visibleOnFieldIds[0]?.optionValue.length === 0)
 
   return (
     <Transition appear show={isOpen} as={React.Fragment}>
@@ -319,10 +355,10 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                       placeholder='Select Mandatory'
                       valueKey='id'
                       name='isMandatory'
-                      required={true}
-                      register={register('isMandatory', {required: true})}
-                      error={errors.isMandatory && !watch('isMandatory')}
-                      errorText='Please select if mandatory'
+                      required={false}
+                      register={register('isMandatory', {required: false})}
+                      // error={errors.isMandatory && !watch('isMandatory')}
+                      // errorText='Please select if mandatory'
                     />
                   </div>
                 </div>
@@ -340,8 +376,8 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                       name='fieldRegex'
                       placeholder='Enter Field Regex'
                       register={register('fieldRegex', {required: false})}
-                      error={errors.fieldRegex && !watch('fieldRegex')}
-                      errorText='Please enter Field Regex'
+                      // error={errors.fieldRegex && !watch('fieldRegex')}
+                      // errorText='Please enter Field Regex'
                     />
                   </div>
                   <div>
@@ -360,7 +396,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                     />
                   </div>
                 </div>
-                <TextArea
+                {/* <TextArea
                   // key={index}
 
                   // type={field.type}
@@ -375,7 +411,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   error={errors.questionConfig && !watch('questionConfig')}
                   errorText='Please enter Question Config'
                   rows={10}
-                />
+                /> */}
 
                 {/* Visible On Field */}
                 <div className='flex items-center space-x-4'>
@@ -428,6 +464,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                               })) || []
                             } // Show options specific to the selected question
                             label='Option Value'
+                            required={true}
                             name={`optionValue_${index}`}
                             value={field.optionValue.map((value) => ({label: value, value}))}
                             onChange={(selectedOptions) =>
@@ -437,7 +474,11 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                               )
                             }
                             placeholder='Select Option Values'
-                            error={errors[`optionValue_${index}`] && !watch(`optionValue_${index}`)}
+                            // error={errors[`optionValue_${index}`] && !watch(`optionValue_${index}`)}
+                            error={
+                              visibleOnFieldIds[index].optionValue.length === 0 &&
+                              watch(`questionId_${index}`) != undefined
+                            }
                             errorText='Please select option values'
                           />
                         </div>
@@ -453,69 +494,114 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 )}
 
                 {/* Option Heading */}
-                <div className='mt-6'>
-                  <h4 className='text-xl font-bold mb-6'>Options</h4>
+                {['SINGLE_DROPDOWN', 'MULTI_DROPDOWN', 'RADIO', 'CHECKBOX'].includes(
+                  watch('questionType')
+                ) && (
+                  <div className='mt-6'>
+                    <h4 className='text-xl font-bold mb-6'>Options</h4>
 
-                  {options.map((option, index) => (
-                    <div key={index} className='border p-6 rounded-md mb-6 shadow-md'>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4'>
-                        {/* Field Name */}
-                        <div>
-                          <TextField
-                            type='text'
-                            label='Field Name'
-                            value={option.fieldName}
-                            onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
-                            name={`fieldName_${index}`}
-                            placeholder='Enter field name'
-                          />
+                    {options.map((option, index) => (
+                      <div key={index} className='border p-6 rounded-md mb-6 shadow-md'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4'>
+                          {/* Field Name */}
+                          <div>
+                            <TextField
+                              type='text'
+                              label='Field Name'
+                              value={option.fieldName}
+                              required={true}
+                              register={register(`optionFieldName_${index}`, {
+                                required: true,
+                                onChange: (e) =>
+                                  handleOptionChange(index, 'fieldName', e.target.value),
+                              })}
+                              // onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
+                              name={`optionFieldName_${index}`}
+                              placeholder='Enter field name'
+                              error={
+                                errors[`optionFieldName_${index}`] &&
+                                !watch(`optionFieldName_${index}`)
+                              }
+                              errorText='Please enter field name'
+                            />
+                          </div>
+
+                          {/* Field Value */}
+                          <div>
+                            <TextField
+                              type='text'
+                              label='Field Value'
+                              value={option.fieldValue}
+                              required={true}
+                              register={register(`optionFieldValue_${index}`, {
+                                required: true,
+                                onChange: (e) =>
+                                  handleOptionChange(index, 'fieldValue', e.target.value),
+                              })}
+                              // onChange={(e) => handleOptionChange(index, 'fieldName', e.target.value)}
+                              name={`optionFieldValue_${index}`}
+                              placeholder='Enter field Value'
+                              error={
+                                errors[`optionFieldValue_${index}`] &&
+                                !watch(`optionFieldValue_${index}`)
+                              }
+                              errorText='Please enter field Value'
+                            />
+                          </div>
                         </div>
 
-                        {/* Field Value */}
-                        <div>
-                          <TextField
-                            type='text'
-                            label='Field Value'
-                            value={option.fieldValue}
-                            onChange={(e) =>
-                              handleOptionChange(index, 'fieldValue', e.target.value)
-                            }
-                            name={`fieldValue_${index}`}
-                            placeholder='Enter field value'
-                          />
+                        {/* Language-specific Label Names */}
+                        <div className='mt-4'>
+                          <h4 className='text-lg font-semibold mb-4 text-center'>
+                            Option Label Names
+                          </h4>
+
+                          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+                            {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
+                              <div key={langCode} className='text-center'>
+                                <TextField
+                                  type='text'
+                                  label={`${langName} (${langCode})`}
+                                  value={option.labelName?.[langCode] || ''}
+                                  onChange={(e) =>
+                                    handleOptionLabelChange(index, langCode, e.target.value)
+                                  }
+                                  name={`labelName_${index}_${langCode}`}
+                                  placeholder={`Enter ${langName} label`}
+                                  className='text-center'
+                                />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
+                    ))}
 
-                      {/* Language-specific Label Names */}
-                      <div className='mt-4'>
-                        <h4 className='text-lg font-semibold mb-4 text-center'>Label Names</h4>
+                    <Button
+                      onClick={addOption}
+                      label='Add More'
+                      className='mt-6 bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600'
+                    />
+                  </div>
+                )}
+                <div className='mt-8'>
+                  <h4 className='text-xl font-bold mb-6 text-center'>Question Label Name</h4>
 
-                        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-                          {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
-                            <div key={langCode} className='text-center'>
-                              <TextField
-                                type='text'
-                                label={`${langName} (${langCode})`}
-                                value={option.labelName?.[langCode] || ''}
-                                onChange={(e) =>
-                                  handleOptionLabelChange(index, langCode, e.target.value)
-                                }
-                                name={`labelName_${index}_${langCode}`}
-                                placeholder={`Enter ${langName} label`}
-                                className='text-center'
-                              />
-                            </div>
-                          ))}
-                        </div>
+                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
+                    {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
+                      <div key={langCode} className='text-center'>
+                        <TextField
+                          type='text'
+                          label={`${langName} (${langCode})`}
+                          value={globalLabelName[langCode] || ''} // Handle undefined global label names
+                          onChange={(e) => handleGlobalLabelChange(langCode, e.target.value)}
+                          name={`globalLabelName_${langCode}`}
+                          placeholder={`Enter ${langName} label`}
+                          className='text-center'
+                        />
                       </div>
-                    </div>
-                  ))}
-
-                  <Button
-                    onClick={addOption}
-                    label='Add More'
-                    className='mt-6 bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600'
-                  />
+                    ))}
+                  </div>
                 </div>
 
                 {/* DataSource Heading */}

@@ -15,7 +15,7 @@ export const fetchProgramAction = createAsyncThunk(
     // Fetch all programs with the "getAll: true" option
 
     const {results: programResults} = await fetchPrograms({getAll: true})
-    console.log('programResults', programResults)
+    // console.log('programResults', programResults)
 
     const totalPrograms = programResults.results
     const programIdMap: ProgramMap = {}

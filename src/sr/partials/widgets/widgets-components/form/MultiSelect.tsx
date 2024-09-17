@@ -15,9 +15,13 @@ export interface MultiSelectFieldProps {
   placeholder?: string
   error?: boolean
   errorText?: string
+  required?: boolean
+  // register?: any
 }
 
 const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
+  // register,
+  required = false,
   options,
   label,
   name,
@@ -29,7 +33,10 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
 }) => {
   return (
     <div className='w-full'>
-      <label className='block text-sm font-medium text-gray-700 mb-1'>{label}</label>
+      <label className='block text-sm font-medium text-gray-700 mb-1'>
+        {label}
+        {required && <span className='text-red-500'>*</span>}
+      </label>
       <Select
         isMulti
         name={name}
