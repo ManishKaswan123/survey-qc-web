@@ -135,13 +135,13 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
                 <p className='text-sm font-semibold text-gray-600'>Field Regex:</p>
                 <p className='text-sm text-gray-800'>{fieldRegex || ''}</p>
                 <p className='text-sm font-semibold text-gray-600'>Label Name:</p>
-                {renderLabelNames(labelName)}
+                {labelName && renderLabelNames(labelName)}
               </div>
 
               <div className='col-span-1'>
                 <p className='text-sm font-semibold text-gray-600'>Options:</p>
                 <ul className='text-sm text-gray-800'>
-                  {options.length ? (
+                  {options.length > 0 ? (
                     options.map((option, index) => (
                       <li key={index}>
                         {renderLabelNames(option.labelName)}: {option.fieldValue}
