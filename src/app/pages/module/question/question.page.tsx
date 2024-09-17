@@ -58,6 +58,7 @@ const Custom: React.FC = () => {
   const programId = queryParams.get('programId') || ''
   const surveyId = queryParams.get('surveyId') || ''
   const sectionId = queryParams.get('sectionId') || ''
+  const [reRender, setReRender] = useState<boolean>(false)
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -258,7 +259,7 @@ const Custom: React.FC = () => {
       }
     }
     handleAnswer()
-  }, [filters])
+  }, [filters, reRender])
 
   useEffect(() => {
     if (questionData && answerData) {
@@ -375,6 +376,7 @@ const Custom: React.FC = () => {
           <div className='mt-5'>
             {mappedData?.map((data: QuestionAnswer) => (
               <QuestionCard
+                setReRender={setReRender}
                 key={data?.questionId}
                 data={data}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
