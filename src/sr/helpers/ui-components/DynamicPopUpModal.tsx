@@ -367,6 +367,8 @@ import {toast} from 'react-toastify'
 import {uploadMedia} from 'sr/utils/api/media'
 import {ExtractFieldNames, FieldsArray} from 'sr/constants/fields'
 import TextArea from './TextArea'
+import {DEFAULT_LANG_NAME} from 'sr/constants/common'
+import {lang} from 'moment'
 // import {formatDateForInput} from 'sr/utils/helpers/formateDateForInput'
 
 interface DynamicModalProps {
@@ -513,7 +515,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
     // console.log('Submitting form data: ', data)
     onSubmit(data)
     reset()
-    // onClose()
+    onClose()
   }
   // useEffect(() => {
   //   console.log(defaultValues)
@@ -537,7 +539,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                     name={field.label}
                     required={field.required && field.required}
                     register={register(field.label, {
-                      required: true,
+                      required: field.required,
                       onChange: field.onChange ? field.onChange : () => {},
                       // onChange: (e) => {
                       //   console.log('inside onchange')
@@ -583,6 +585,31 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                     rows={10}
                   />
                 )
+              case 'labelName':
+                return (
+                  <div className='mt-8'>
+                    <h4 className='text-xl font-bold mb-6 text-center'>Label Name</h4>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
+                      {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
+                        <div key={langCode} className='text-center'>
+                          <TextField
+                            type='text'
+                            key={index}
+                            label={langName}
+                            id={langCode}
+                            required={false}
+                            name={langCode}
+                            placeholder={langName}
+                            register={register(langCode)}
+                            // error={errors[langCode]}
+                            // errorText={`Please enter ${langName}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+
               default:
                 return (
                   <TextField

@@ -26,12 +26,17 @@ const SectionTable: React.FC<SectionTableProps> = ({
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
                 Section Name
               </th>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Count (Attempted / Total)
-              </th>
-              <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
-                Status
-              </th>
+              {programId != '' && surveyId != '' && (
+                <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                  Count (Attempted / Total)
+                </th>
+              )}
+              {programId != '' && surveyId != '' && (
+                <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider border-r'>
+                  Status
+                </th>
+              )}
+
               <th className='py-5 bg-[#265B91] text-center text-xs font-semibold text-gray-50 uppercase tracking-wider'>
                 View Questions
               </th>
@@ -51,28 +56,39 @@ const SectionTable: React.FC<SectionTableProps> = ({
                   <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                     <p>{section.sectionName}</p>
                   </td>
-                  <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                    <p>{`${attemptedQuestions} / ${totalQuestions}`}</p>{' '}
-                    {/* Count in "Attempted / Total" format */}
-                  </td>
-                  <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
-                    <span
-                      className={`font-bold text-md ${
-                        statusColors[receivedData[section._id] || 'yetToStart']
-                      }`}
-                    >
-                      {statusMap.get(receivedData[section._id] || 'yetToStart')}
-                    </span>
-                  </td>
+                  {programId != '' && surveyId != '' && (
+                    <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                      <p>{`${attemptedQuestions} / ${totalQuestions}`}</p>{' '}
+                      {/* Count in "Attempted / Total" format */}
+                    </td>
+                  )}
+
+                  {programId != '' && surveyId != '' && (
+                    <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                      <span
+                        className={`font-bold text-md ${
+                          statusColors[receivedData[section._id] || 'yetToStart']
+                        }`}
+                      >
+                        {statusMap.get(receivedData[section._id] || 'yetToStart')}
+                      </span>
+                    </td>
+                  )}
+
                   <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                     <div className='flex justify-center items-center'>
                       <FaRocket
                         className='text-blue-800 hover:cursor-pointer'
                         size={20}
                         onClick={() => {
-                          navigate(
-                            `/question?programId=${programId}&sectionId=${section._id}&surveyId=${surveyId} `
-                          )
+                          if (programId === '' || surveyId === '') {
+                            navigate(
+                              `/all-questions?programId=${programId}&sectionId=${section._id}`
+                            )
+                          } else
+                            navigate(
+                              `/question?programId=${programId}&sectionId=${section._id}&surveyId=${surveyId} `
+                            )
                         }}
                       />
                     </div>
