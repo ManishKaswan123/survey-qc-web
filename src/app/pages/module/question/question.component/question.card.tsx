@@ -25,11 +25,6 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   //   // Handle approve logic here
   // }
   const handleSaveRemark = async (status: string) => {
-    // Handle save remark logic here
-    console.log('this is question type : - ', data?.questionType)
-    console.log('this is status :- ', status)
-    console.log('this is data :- ', data)
-    console.log('Remark saved:', remark)
     let payload = {
       ...(data?.textResponse && {textResponse: data?.textResponse}),
       ...(data?.dateResponse && {dateResponse: data?.dateResponse}),
@@ -62,19 +57,31 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   useEffect(() => {
     const handleFiles = async () => {
       if (data.questionType === 'FILE_UPLOAD') {
+        let allUrls = new Set<string>() // Use Set to store unique URLs
+
+        // Add multipleChoiceResponse values to the Set
         if (data?.multipleChoiceResponse && data?.multipleChoiceResponse?.length > 0) {
-          const urls = await Promise.all(
-            data?.multipleChoiceResponse?.map(async (response) => {
-              const payload = {fileName: response} // Adjust payload as needed
-              const urlResponse = await getPreSignedURL(payload)
-              return urlResponse ? urlResponse.url : 'Error'
-            })
-          )
-          setIsFiles(urls)
+          data?.multipleChoiceResponse.forEach((url: string) => allUrls.add(url))
+        }
+
+        // Add textResponse to the Set if it exists
+        if (data?.textResponse) {
+          allUrls.add(data?.textResponse)
+        }
+
+        // Convert the Set to an array and iterate over it
+        const uniqueUrls = Array.from(allUrls)
+
+        for (let url of uniqueUrls) {
+          let urlData = await getPreSignedURL({fileName: url})
+          setIsFiles((prevFiles) => [...prevFiles, urlData?.results?.url])
         }
       }
     }
-    handleFiles()
+    if (data) {
+      setIsFiles([])
+      handleFiles()
+    }
   }, [data])
 
   const getResponseDisplay = () => {
@@ -84,21 +91,45 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       return parsedDate.toLocaleDateString('en-GB') // dd/mm/yyyy format
     }
 
-    if (data?.options?.length > 0) {
-      const responseValue = data?.textResponse || data?.dateResponse || data?.numberResponse
+    if (data?.multipleChoiceResponse && data?.multipleChoiceResponse?.length > 0) {
+      const responseValues = data?.multipleChoiceResponse.map((responseValue) => {
+        const matchedOption = data?.options?.find((option) => option?.fieldValue === responseValue)
+        return matchedOption ? matchedOption?.fieldName : responseValue
+      })
 
-      const matchedOption = data?.options?.find((option) => option?.fieldValue === responseValue)
-      return matchedOption ? matchedOption?.fieldName : responseValue
+      return responseValues.join(', ')
     }
 
-    const dateResponseDisplay =
-      data?.toDateResponse && data?.dateResponse
-        ? `${formatDate(data?.dateResponse)} to ${formatDate(data?.toDateResponse)}`
-        : data?.dateResponse
-        ? formatDate(data?.dateResponse)
-        : ''
+    if (data?.questionType !== 'FILE_UPLOAD') {
+      if (data?.options?.length > 0) {
+        const responseValue = data?.textResponse || data?.dateResponse || data?.numberResponse
 
-    return data?.textResponse || dateResponseDisplay || data?.numberResponse
+        const matchedOption = data?.options?.find((option) => option?.fieldValue === responseValue)
+        return matchedOption ? matchedOption?.fieldName : responseValue
+      }
+
+      const dateResponseDisplay =
+        data?.toDateResponse && data?.dateResponse
+          ? `${formatDate(data?.dateResponse)} to ${formatDate(data?.toDateResponse)}`
+          : data?.dateResponse
+          ? formatDate(data?.dateResponse)
+          : ''
+
+      return data?.textResponse || dateResponseDisplay || data?.numberResponse
+    }
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const handleImageClick = (url: string) => {
+    setSelectedImage(url)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedImage(null)
   }
 
   return (
@@ -140,14 +171,15 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       {isExpanded && (
         <div className='mt-4'>
           <span className='font-bold text-xl'>Ans.</span>
-          {isFiles.length > 0 ? (
-            isFiles.map((url, index) =>
+          {isFiles?.length > 0 ? (
+            isFiles?.map((url, index) =>
               url ? (
                 <img
                   key={index}
                   src={url}
                   alt={`Uploaded file ${index + 1}`}
-                  className='w-full h-auto mb-2'
+                  className='w-10  object-contain cursor-pointer' // Maintain aspect ratio
+                  onClick={() => handleImageClick(url)} // Handle click to enlarge
                 />
               ) : (
                 'Error'
@@ -176,6 +208,19 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
               onClick={() => handleSaveRemark('rejected')}
             >
               Reject
+            </button>
+          </div>
+        </div>
+      )}
+      {isModalOpen && (
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50'>
+          <div className='relative'>
+            <img src={selectedImage as string} alt='Large view' className='max-w-full max-h-full' />
+            <button
+              onClick={closeModal}
+              className='absolute top-0 right-0 p-2 text-white bg-black rounded-full'
+            >
+              &times;
             </button>
           </div>
         </div>
