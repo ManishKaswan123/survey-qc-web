@@ -589,15 +589,16 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
 
                   <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
                     {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
-                      <div key={langCode} className='text-center'>
+                      <div key={langCode}>
                         <TextField
+                          labelStyle='style1'
+                          className='custom-input form-input p-2 border rounded mb-2'
                           type='text'
                           label={`${langName} (${langCode})`}
                           value={globalLabelName[langCode] || ''} // Handle undefined global label names
                           onChange={(e) => handleGlobalLabelChange(langCode, e.target.value)}
                           name={`globalLabelName_${langCode}`}
                           placeholder={`Enter ${langName} label`}
-                          className='text-center'
                         />
                       </div>
                     ))}

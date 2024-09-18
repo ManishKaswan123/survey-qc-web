@@ -7,14 +7,15 @@ export type statusType =
   | 'rejected'
   | 'inProgress'
 export const statusColors: Record<string, string> = {
-  submitted: 'text-[#265B91]',
-  approved: 'text-green-500',
-  flagged: 'text-red-500',
-  resubmitted: 'text-orange-500',
-  yetToStart: 'text-gray-500',
-  rejected: 'text-purple-500',
-  inProgress: 'text-yellow-500',
+  submitted: 'text-[#265B91]', // existing color
+  approved: 'text-green-500', // existing color
+  flagged: 'text-red-300', // light red
+  resubmitted: 'text-orange-500', // existing color
+  yetToStart: 'text-gray-500', // existing color
+  rejected: 'text-red-700', // dark red
+  inProgress: 'text-yellow-500', // existing color
 }
+
 export const statusMap = new Map<statusType, string>([
   ['submitted', 'Submitted'],
   ['approved', 'Approved'],

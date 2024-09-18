@@ -4,7 +4,7 @@ import {AiOutlineFilter, AiOutlinePlus} from 'react-icons/ai'
 import {Button} from 'sr/helpers'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {useSelector} from 'react-redux'
-import {useActions} from 'sr/utils/helpers/useActions'
+// import {useActions} from 'sr/utils/helpers/useActions'
 import {RootState} from 'sr/redux/store'
 import {useQuery} from '@tanstack/react-query'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
@@ -19,15 +19,14 @@ import {
   fetchStaticQuestions,
   updateQuestion,
 } from './question.helper'
-import {remove} from 'sr/utils/axios'
+
 import QuestionSkeleton from './question.component/question.skeleton'
-import QuestionCard from './question.component/question.card'
+// import QuestionCard from './question.component/question.card'
 import QuestionMasterCard from './question.component/question.master.card'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
-import {is} from 'immer/dist/internal'
 import CreateQuestionPopup from './question.component/question.create'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
-import { useLocation } from 'react-router-dom'
+import {useLocation} from 'react-router-dom'
 
 const CustomQuestions: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
@@ -40,16 +39,16 @@ const CustomQuestions: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(8)
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const programId = queryParams.get('programId') || undefined
-  const sectionId = queryParams.get('sectionId') || undefined
 
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
 
   const [isExpanded, setIsExpanded] = useState(false)
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
+  const programId = useMemo(() => queryParams.get('programId') || undefined, [queryParams])
+  const sectionId = useMemo(() => queryParams.get('sectionId') || undefined, [queryParams])
   useEffect(() => {
     setFilters({programId, sectionId})
-  }, [queryParams])
+  }, [programId, sectionId])
 
   const createFields: FieldsArray = useMemo(
     () => [

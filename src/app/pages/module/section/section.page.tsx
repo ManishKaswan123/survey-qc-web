@@ -10,7 +10,7 @@ import SectionTable from './section.component/section.table'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import SkeletonSectionTable from './section.component/section.skeletonTable'
 import {createSection, fetchSections} from './section.helper'
-import {fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
+import {fetchAnswers, fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
 import {useQuery} from '@tanstack/react-query'
 import {Button} from 'sr/helpers'
 import {AiOutlinePlus} from 'react-icons/ai'
@@ -52,7 +52,7 @@ const Custom: React.FC = () => {
         label: 'programId',
         name: programReduxStore.totalPrograms,
         topLabel: 'Program',
-        placeholder: 'Select Program',
+        placeholder: 'Program',
         required: true,
         labelKey: 'name',
         id: '_id',
@@ -121,43 +121,76 @@ const Custom: React.FC = () => {
     }
   }, [programReduxStore, fetchProgramAction])
 
+  const {data: staticQuestionData} = useQuery({
+    queryKey: ['staticQuestions', {programId, getAll: true}],
+    queryFn: async () => fetchStaticQuestions({programId, getAll: true}),
+    staleTime: Infinity,
+  })
+  const {data: answers} = useQuery({
+    queryKey: ['answer', {surveyId, getAll: true}],
+    queryFn: async () => fetchAnswers({surveyId, getAll: true}),
+    staleTime: Infinity,
+  })
+
   // Fetch static questions and build the totalQuestionsMap
   useEffect(() => {
     if (programId === '') return
-    const buildTotalQuestionsMap = async () => {
-      try {
-        const {results} = await fetchStaticQuestions({programId, getAll: true})
-        const map = results.results.reduce((acc: any, curr: any) => {
+    const buildTotalQuestionsMap = () => {
+      const map =
+        staticQuestionData?.results.results.reduce((acc: any, curr: any) => {
           acc[curr.sectionId] = (acc[curr.sectionId] || 0) + 1
           return acc
-        }, {})
-        setTotalQuestionsMap(map)
-      } catch (error) {
-        console.error('Error fetching static questions:', error)
-      }
+        }, {}) || {}
+      setTotalQuestionsMap(map)
     }
 
     buildTotalQuestionsMap()
-  }, [programId])
+  }, [programId, staticQuestionData])
 
   // Fetch survey questions and build the totalAttemptedQuestionsMap
+
   useEffect(() => {
     if (surveyId === '') return
-    const buildAttemptedQuestionsMap = async () => {
-      try {
-        const {results} = await fetchQuestions({surveyId, getAll: true})
-        const map = results.results.reduce((acc: any, curr: any) => {
-          acc[curr.sectionId] = (acc[curr.sectionId] || 0) + 1
-          return acc
-        }, {})
-        setTotalAttemptedQuestionsMap(map)
-      } catch (error) {
-        console.error('Error fetching survey questions:', error)
-      }
+
+    const buildAttemptedQuestionsMap = () => {
+      console.log('answers', answers)
+      const map = answers?.results.results.reduce((acc: any, curr: any) => {
+        const sectionId = curr.sectionId
+
+        // Initialize section if it doesn't exist
+        if (!acc[sectionId]) {
+          acc[sectionId] = {
+            count: 0,
+            status: 'yetToStart', // default status is 'yetToStart'
+          }
+        }
+
+        // Increment the count for the section
+        acc[sectionId].count += 1
+
+        // Check the status of the current answer and update the section status
+        const answerStatus = curr.status
+
+        if (['rejected', 'resubmitted', 'flagged'].includes(answerStatus)) {
+          acc[sectionId].status = answerStatus
+        } else if (
+          acc[sectionId].status !== 'rejected' &&
+          acc[sectionId].status !== 'resubmitted' &&
+          acc[sectionId].status !== 'flagged'
+        ) {
+          // Set to 'inProgress' if no high-priority status is found
+          acc[sectionId].status = 'inProgress'
+        }
+
+        return acc
+      }, {})
+
+      // For sections with no answers, status should remain 'yetToStart'
+      setTotalAttemptedQuestionsMap(map)
     }
 
     buildAttemptedQuestionsMap()
-  }, [surveyId])
+  }, [surveyId, answers])
 
   // Memoized data to avoid re-computation on every render
   const mappedReceivedData = useMemo(() => {

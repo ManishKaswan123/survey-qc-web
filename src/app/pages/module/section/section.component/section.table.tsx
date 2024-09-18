@@ -2,7 +2,7 @@ import React from 'react'
 import {useNavigate} from 'react-router-dom'
 import {FaRocket} from 'react-icons/fa'
 import {SectionTableProps} from '../section.interfaces'
-import {statusColors, statusMap} from 'sr/constants/status'
+import {statusColors, statusMap, statusType} from 'sr/constants/status'
 
 const SectionTable: React.FC<SectionTableProps> = ({
   sectionData,
@@ -13,6 +13,7 @@ const SectionTable: React.FC<SectionTableProps> = ({
   totalQuestionsMap,
 }) => {
   const navigate = useNavigate()
+  console.log('totalAttemptedQuestionsMap', totalAttemptedQuestionsMap)
 
   return (
     <div className='overflow-x-auto my-5 bg-white'>
@@ -46,7 +47,9 @@ const SectionTable: React.FC<SectionTableProps> = ({
             {sectionData.map((section) => {
               // Get the total questions and attempted questions for the section
               const totalQuestions = totalQuestionsMap[section._id] || 0
-              const attemptedQuestions = totalAttemptedQuestionsMap[section._id] || 0
+              const attemptedQuestions = totalAttemptedQuestionsMap?.[section._id]?.count || 0
+              const sectionStatus: statusType =
+                (totalAttemptedQuestionsMap?.[section._id]?.status as statusType) || 'yetToStart'
 
               return (
                 <tr key={section._id} className='odd:bg-white even:bg-blue-50'>
@@ -67,10 +70,10 @@ const SectionTable: React.FC<SectionTableProps> = ({
                     <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
                       <span
                         className={`font-bold text-md ${
-                          statusColors[receivedData[section._id] || 'yetToStart']
+                          statusColors[sectionStatus || 'yetToStart']
                         }`}
                       >
-                        {statusMap.get(receivedData[section._id] || 'yetToStart')}
+                        {statusMap.get(sectionStatus || 'yetToStart')}
                       </span>
                     </td>
                   )}
