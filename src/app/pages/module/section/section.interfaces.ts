@@ -32,7 +32,13 @@ export interface SectionTableProps {
   receivedData: Record<string, any>
   surveyId: string
   programId: string
-  totalAttemptedQuestionsMap: Record<string, number>
+  totalAttemptedQuestionsMap: Record<
+    string,
+    {
+      count: number
+      status: string
+    }
+  >
   totalQuestionsMap: Record<string, number>
 }
 

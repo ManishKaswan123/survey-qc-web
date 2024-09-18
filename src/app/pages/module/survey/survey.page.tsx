@@ -23,9 +23,9 @@ const Custom: React.FC = () => {
   const [totalResults, setTotalResults] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<FilterProps>()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const {programId} = location.state || {}
+  // const navigate = useNavigate()
+  // const location = useLocation()
+  // const {programId} = location.state || {}
   const [isExpanded, setIsExpanded] = useState(false)
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
   const userStatus = useSelector((state: RootState) => state.user.status)

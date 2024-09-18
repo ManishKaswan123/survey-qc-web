@@ -83,6 +83,7 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
       </p>
     ))
   }
+  // console.log('program redux data is : ', programReduxData.totalPrograms)
 
   return (
     <div ref={cardRef} className='bg-white rounded-lg shadow-md overflow-hidden p-6 mb-4 relative'>

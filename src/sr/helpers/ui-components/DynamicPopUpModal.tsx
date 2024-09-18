@@ -546,7 +546,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                       // },
                     })}
                     error={errors[field.label]}
-                    errorText={`Please enter ${field.placeholder}`}
+                    errorText={`Please Select ${field.placeholder}`}
                   />
                 )
               case 'file':
@@ -591,8 +591,10 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                     <h4 className='text-xl font-bold mb-6 text-center'>Label Name</h4>
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
                       {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
-                        <div key={langCode} className='text-center'>
+                        <div key={langCode}>
                           <TextField
+                            labelStyle='style1'
+                            className='custom-input form-input p-2 border rounded mb-2'
                             type='text'
                             key={index}
                             label={langName}
