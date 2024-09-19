@@ -16,25 +16,24 @@ import ProgramTableSkeleton from './components/ProgramTableSkeleton'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
 import {toast} from 'react-toastify'
+import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {useActions} from 'sr/utils/helpers/useActions'
+import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 
-const ProgramList: React.FC = () => {
+const Custom: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
     () => [{type: 'text', label: 'Program Name', name: 'name', placeholder: 'Program Name'}],
     []
   )
-  const [programs, setPrograms] = useState<Program[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
-  const [totalResults, setTotalResults] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<ProgramFilters>({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false)
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
-  const [reRender, setReRender] = useState(false)
+  const queryClient = useQueryClient()
+  const {fetchProgramAction} = useActions()
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
@@ -69,7 +68,8 @@ const ProgramList: React.FC = () => {
       let response = await CreatePrograms(payload)
       if (response?.status === 'success') {
         toast.success('Program created successfully')
-        setReRender(!reRender)
+        queryClient.invalidateQueries({queryKey: ['program']})
+        fetchProgramAction({})
       }
     } catch (error) {
       toast.error('Failed to create program')
@@ -82,7 +82,8 @@ const ProgramList: React.FC = () => {
       let response = await DeletePrograms(payload)
       if (response?.status === 'success') {
         toast.success('Program deleted successfully')
-        setReRender(!reRender)
+        queryClient.invalidateQueries({queryKey: ['program']})
+        fetchProgramAction({})
       }
     } catch (error) {
       toast.error('Failed to delete program')
@@ -90,28 +91,15 @@ const ProgramList: React.FC = () => {
     setIsCreateModalOpen(false)
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchPrograms({limit: itemsPerPage, page: currentPage})
-
-        console.log('ProgramList', response.results.results)
-        setPrograms(response?.results?.results)
-        setTotalPages(response?.results?.totalPages)
-        setTotalResults(response?.results?.totalResults)
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message)
-        } else {
-          setError('An unexpected error occurred')
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [currentPage, itemsPerPage, reRender])
+  const {data, error, isLoading, refetch} = useQuery({
+    queryKey: ['program', {limit: itemsPerPage, page: currentPage, ...filters}],
+    queryFn: () =>
+      fetchPrograms({
+        limit: itemsPerPage,
+        page: currentPage,
+        ...filters,
+      }),
+  })
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
@@ -135,7 +123,6 @@ const ProgramList: React.FC = () => {
     navigate(`/section`, {
       state: {programId},
     }) // Navigate to program details page
-    console.log('View sections for program:', programId)
   }
 
   return (
@@ -162,30 +149,30 @@ const ProgramList: React.FC = () => {
             />
           </div>
         )}
-        {loading ? (
+        {isLoading ? (
           <ProgramTableSkeleton />
         ) : error ? (
-          <p className='text-red-500'>{error}</p>
+          <p className='text-red-500'>{error.message}</p>
         ) : (
           <ProgramTable
-            programData={programs}
+            programData={data?.results.results || []}
             onEdit={handleEdit}
             onDelete={handleDeleteProgram}
             onView={handleView}
           />
         )}
-        {loading ? (
+        {isLoading ? (
           <PaginationSkeleton />
         ) : (
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
-            totalResults={totalResults}
+            totalPages={data?.results.totalPages || 1}
+            totalResults={data?.results.totalResults || 0}
             onPageChange={onPageChange}
             itemsPerPage={itemsPerPage}
             name='Program'
             onLimitChange={onLimitChange}
-            disabled={loading}
+            disabled={isLoading}
           />
         )}
       </div>
@@ -200,6 +187,13 @@ const ProgramList: React.FC = () => {
         />
       )}
     </div>
+  )
+}
+const ProgramList: React.FC = () => {
+  return (
+    <>
+      <DashboardWrapper customComponent={Custom} selectedItem={'/program'}></DashboardWrapper>
+    </>
   )
 }
 

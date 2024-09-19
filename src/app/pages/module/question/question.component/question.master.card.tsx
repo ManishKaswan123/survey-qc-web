@@ -20,6 +20,7 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
   const programReduxData = useSelector((state: RootState) => state.program)
   const sectionReduxData = useSelector((state: RootState) => state.section)
   const {fetchProgramAction, fetchSectionAction} = useActions()
+  // console.log('program redux data is : ', programReduxData.programIdMap)
 
   const {
     questionCode,
@@ -41,8 +42,22 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
   } = question
 
   // Get program and section names using programIdMap and sectionIdMap
-  const programName = programReduxData.programIdMap[programId]?.name || 'Unknown Program'
-  const sectionName = sectionReduxData.sectionIdMap[sectionId]?.sectionName || 'Unknown Section'
+
+  const findProgramName = useCallback(
+    (programId: string) => {
+      return programReduxData.programIdMap[programId]?.name || 'Unknown Program'
+    },
+    [programReduxData]
+  )
+
+  console.log('program id is : ', programId)
+
+  const findSectionName = useCallback(
+    (sectionId: string) => {
+      return sectionReduxData.sectionIdMap[sectionId]?.sectionName || 'Unknown Section'
+    },
+    [sectionReduxData]
+  )
 
   useEffect(() => {
     fetchUserDataIfNeeded()
@@ -51,7 +66,7 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
   const fetchUserDataIfNeeded = useCallback(() => {
     if (programReduxData.status !== 'succeeded') fetchProgramAction({})
     if (sectionReduxData.status !== 'succeeded') fetchSectionAction({})
-  }, [programReduxData.status, sectionReduxData.status, fetchProgramAction, fetchSectionAction])
+  }, [programReduxData, sectionReduxData, fetchProgramAction, fetchSectionAction])
 
   useEffect(() => {
     setIsExpanded(expandedId === id)
@@ -106,8 +121,12 @@ const QuestionMasterCard: React.FC<QuestionCardProps> = ({
                 <p className='text-sm text-gray-600'>Display Order: {displayOrder || ''}</p>
               </div>
               <div className='flex-1'>
-                <p className='text-sm text-gray-600'>Program: {programName}</p>
-                <p className='text-sm text-gray-600'>Section: {sectionName}</p>
+                <p className='text-sm text-gray-600'>
+                  Program: {findProgramName(question.programId)}
+                </p>
+                <p className='text-sm text-gray-600'>
+                  Section: {findSectionName(question.sectionId)}
+                </p>
                 <p className='text-sm text-gray-600'>Active: {isActive ? 'Yes' : 'No'}</p>
               </div>
             </div>

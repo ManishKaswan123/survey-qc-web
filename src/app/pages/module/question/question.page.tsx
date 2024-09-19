@@ -240,7 +240,7 @@ const Custom: React.FC = () => {
 const QuestionPage: React.FC = () => {
   return (
     <>
-      <DashboardWrapper customComponent={Custom} selectedItem={'/survey'}></DashboardWrapper>
+      <DashboardWrapper customComponent={Custom} selectedItem={'/question'}></DashboardWrapper>
     </>
   )
 }

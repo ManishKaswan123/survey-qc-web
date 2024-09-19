@@ -28,7 +28,7 @@ import CreateQuestionPopup from './question.component/question.create'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useLocation} from 'react-router-dom'
 
-const CustomQuestions: React.FC = () => {
+const Custom: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [filters, setFilters] = useState<FilterProps>({})
@@ -316,6 +316,13 @@ const CustomQuestions: React.FC = () => {
           onSubmit={handleEditQuestion}
         />
       )}
+    </>
+  )
+}
+const CustomQuestions: React.FC = () => {
+  return (
+    <>
+      <DashboardWrapper customComponent={Custom} selectedItem={'/all-questions'}></DashboardWrapper>
     </>
   )
 }

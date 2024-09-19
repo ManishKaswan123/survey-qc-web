@@ -11,7 +11,7 @@ import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import SkeletonSectionTable from './section.component/section.skeletonTable'
 import {createSection, fetchSections} from './section.helper'
 import {fetchAnswers, fetchQuestions, fetchStaticQuestions} from '../question/question.helper'
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {Button} from 'sr/helpers'
 import {AiOutlinePlus} from 'react-icons/ai'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
@@ -23,8 +23,8 @@ import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 const Custom: React.FC = () => {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const programId = queryParams.get('programId') || ''
-  const surveyId = queryParams.get('surveyId') || ''
+  const programId = queryParams.get('programId') || undefined
+  const surveyId = queryParams.get('surveyId') || undefined
   const receivedData = location.state || []
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -35,7 +35,12 @@ const Custom: React.FC = () => {
   const [totalAttemptedQuestionsMap, setTotalAttemptedQuestionsMap] = useState({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const programReduxStore = useSelector((state: RootState) => state.program)
-  const {fetchProgramAction} = useActions()
+  const {fetchProgramAction, fetchSectionAction} = useActions()
+  const queryClient = useQueryClient()
+  // useEffect(() => {
+  //   setFilters({programId})
+  // }, [programId])
+  // console.log('filters are : ', filters)
 
   const filterFields: FieldsArray = useMemo(
     () => [
@@ -85,19 +90,7 @@ const Custom: React.FC = () => {
         placeholder: 'Section Code',
         required: true,
       },
-      // {
-      //   type: 'dropdown',
-      //   label: 'isActive',
-      //   name: [
-      //     {id: true, name: 'Active'},
-      //     {id: false, name: 'Inactive'},
-      //   ],
-      //   topLabel: 'Active',
-      //   placeholder: 'Select Active',
-      //   labelKey: 'name',
-      //   id: 'id',
-      //   required:false
-      // },
+
       {
         type: 'labelName',
         label: 'Label Name',
@@ -202,7 +195,7 @@ const Custom: React.FC = () => {
 
   // Query to fetch sections with filters
   const {data, error, isLoading, refetch} = useQuery({
-    queryKey: ['sections', {limit: itemsPerPage, page: currentPage, ...filters}],
+    queryKey: ['section', {limit: itemsPerPage, page: currentPage, ...filters}],
     queryFn: () =>
       fetchSections({
         limit: itemsPerPage,
@@ -241,7 +234,8 @@ const Custom: React.FC = () => {
     }
     // console.log('Create Section Payload:', payload)
     await createSection(payload)
-    refetch()
+    queryClient.invalidateQueries({queryKey: ['section']})
+    fetchSectionAction({})
     setIsCreateModalOpen(false)
   }
 
@@ -250,7 +244,7 @@ const Custom: React.FC = () => {
       <div className='py-6'>
         <div className='flex flex-row justify-between mb-4'>
           <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
-          {programId === '' && surveyId === '' && (
+          {!programId && !surveyId && (
             <Button
               label='Create new'
               Icon={AiOutlinePlus}
@@ -278,8 +272,8 @@ const Custom: React.FC = () => {
             <SectionTable
               sectionData={data.results.results}
               receivedData={mappedReceivedData}
-              surveyId={surveyId}
-              programId={programId}
+              surveyId={surveyId || ''}
+              programId={programId || ''}
               totalQuestionsMap={totalQuestionsMap}
               totalAttemptedQuestionsMap={totalAttemptedQuestionsMap}
             />
