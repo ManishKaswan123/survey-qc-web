@@ -13,7 +13,6 @@ const SectionTable: React.FC<SectionTableProps> = ({
   totalQuestionsMap,
 }) => {
   const navigate = useNavigate()
-  console.log('totalAttemptedQuestionsMap', totalAttemptedQuestionsMap)
 
   return (
     <div className='overflow-x-auto my-5 bg-white'>
@@ -86,11 +85,11 @@ const SectionTable: React.FC<SectionTableProps> = ({
                         onClick={() => {
                           if (programId === '' || surveyId === '') {
                             navigate(
-                              `/all-questions?programId=${programId}&sectionId=${section._id}`
+                              `/all-questions?programId=${section.programId}&sectionId=${section._id}`
                             )
                           } else
                             navigate(
-                              `/question?programId=${programId}&sectionId=${section._id}&surveyId=${surveyId} `
+                              `/question?programId=${section.programId}&sectionId=${section._id}&surveyId=${surveyId} `
                             )
                         }}
                       />

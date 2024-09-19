@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
-import {FaEdit, FaTrash, FaEye} from 'react-icons/fa'
+import {FaEdit, FaTrash, FaEye, FaRocket} from 'react-icons/fa'
 import {Program} from '../programInterfaces'
+import {useNavigate} from 'react-router-dom'
 
 interface ProgramTableProps {
   programData: Program[]
@@ -23,7 +24,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
       return newSet
     })
   }
-  console.log('ProgramTableProps', programData)
+  const navigate = useNavigate()
   return (
     <div className='overflow-x-auto my-5'>
       <div className='shadow rounded-lg overflow-hidden'>
@@ -44,6 +45,9 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
               </th>
               <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
                 Actions
+              </th>
+              <th className='px-5 py-3 bg-gray-200 text-left text-xs font-semibold text-gray-800 uppercase tracking-wider'>
+                View Sections
               </th>
             </tr>
           </thead>
@@ -94,6 +98,17 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                     >
                       <FaTrash size={16} />
                     </button>
+                  </div>
+                </td>
+                <td className='py-5 text-center border-b border-gray-200 text-sm border-r'>
+                  <div className='flex justify-start'>
+                    <FaRocket
+                      className='text-blue-800 hover:cursor-pointer'
+                      size={20}
+                      onClick={() => {
+                        navigate(`/section?programId=${program._id}`)
+                      }}
+                    />
                   </div>
                 </td>
               </tr>
