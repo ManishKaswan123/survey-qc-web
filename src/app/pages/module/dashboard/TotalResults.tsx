@@ -32,18 +32,6 @@ const getIcon = (title: string) => {
 const TotalCard: React.FC<TotalCardProps> = ({totalUsers, title}) => {
   const displayUsers = totalUsers !== undefined && totalUsers !== null ? totalUsers : '...'
   const Icon = getIcon(title)
-  if (!title || !totalUsers)
-    return (
-      <div className='bg-white shadow rounded-lg p-6 flex items-center hover:bg-gray-50 animate-pulse'>
-        {/* <div className='flex-shrink-0 bg-gray-200 p-4 rounded-full'> */}
-        <div className='skeleton-icon w-12 h-12 rounded-full'></div>
-        {/* </div> */}
-        <div className='ml-4'>
-          <div className='skeleton-row w-24 h-6 mb-2'></div>
-          <div className='skeleton-row w-16 h-4'></div>
-        </div>
-      </div>
-    )
 
   return (
     <div className='bg-white shadow rounded-lg p-6 flex items-center hover:bg-gray-50'>
