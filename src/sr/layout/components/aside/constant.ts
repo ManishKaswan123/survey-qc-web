@@ -53,7 +53,7 @@ export const masterMenuItems = [
 ]
 export const normalMenuItems = [
   {
-    label: 'Home',
+    label: 'Dashboard',
     path: '/dashboard',
     iconPath:
       'M9 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2m-4 0v4m0-4H9m0 0H7',

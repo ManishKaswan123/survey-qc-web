@@ -8,167 +8,59 @@ import StatisticsCard from 'sr/helpers/ui-components/dashboardComponents/Statist
 import {DummyData, StatisticsData} from 'sr/constants/dashboard'
 import {fetchDashboard} from './helpers/dashboard.helper'
 import {dashboardCardInterface} from './dashboard.interface'
-
-// const dummyData: DummyData = {
-//   users: [
-//     {type: 'Seller', amount: '...', percentage: '0%', barColor: 'bg-blue-500'},
-//     {type: 'Retail User', amount: '...', percentage: '0%', barColor: 'bg-green-500'},
-//     {type: 'Business User', amount: '...', percentage: '0%', barColor: 'bg-pink-500'},
-//   ],
-//   orders: [
-//     {type: 'New', amount: '...', percentage: '0%', barColor: 'bg-blue-500'},
-//     {type: 'Pending', amount: '...', percentage: '0%', barColor: 'bg-green-500'},
-//     {type: 'Others', amount: '...', percentage: '0%', barColor: 'bg-pink-500'},
-//   ],
-//   products: [
-//     {type: 'Published', amount: 6, percentage: '50%', barColor: 'bg-blue-500'},
-//     {type: 'Unpublished', amount: 2, percentage: '70%', barColor: 'bg-green-500'},
-//     {type: 'Others', amount: 3, percentage: '80%', barColor: 'bg-pink-500'},
-//   ],
-//   transactions: [
-//     {type: 'Deposits', amount: 0, percentage: '', barColor: 'bg-blue-500'},
-//     {type: 'Transfer', amount: 0, percentage: '', barColor: 'bg-green-500'},
-//     {type: 'Received', amount: 0, percentage: '', barColor: 'bg-pink-500'},
-//     {type: 'Stripe', amount: 0, percentage: '', barColor: 'bg-yellow-500'},
-//     {type: 'Wallet', amount: 0, percentage: '', barColor: 'bg-purple-500'},
-//   ],
-// }
+import {useQuery, useQueryClient} from '@tanstack/react-query'
+import SkeletonCard from './SkeletonDashboardCard'
+import {Button} from 'sr/helpers'
+import {FiRefreshCw} from 'react-icons/fi'
+import {toast} from 'react-toastify'
 
 const Custom: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<any>([])
   const [totalCards, setTotalCards] = useState<dashboardCardInterface[]>([])
-  // const {
-  //   users,
-  //   userStatus,
-  //   orders,
-  //   orderStatus,
-  //   transactions,
-  //   transactionStatus,
-  //   products,
-  //   productStatus,
-  //   businessTypes,
-  //   businessTypesStatus,
-  //   categories,
-  //   categoryStatus,
-  //   subCat,
-  //   subCatStatus,
-  // } = useSelector((state: RootState) => ({
-  //   users: state.user.statistics,
-  //   userStatus: state.user.status,
-  //   orders: state.order.statistics,
-  //   orderStatus: state.order.status,
-  //   transactions: state.transaction.statistics,
-  //   transactionStatus: state.transaction.status,
-  //   products: state.product.statistics,
-  //   productStatus: state.product.status,
-  //   businessTypes: state.businessType.totalBusinessTypes,
-  //   businessTypesStatus: state.businessType.status,
-  //   categories: state.categoryType.totalCategories,
-  //   categoryStatus: state.categoryType.status,
-  //   subCat: state.subCat.totalSubCat,
-  //   subCatStatus: state.subCat.status,
-  // }))
+  const queryClient = useQueryClient()
 
-  // const {
-  //   fetchUserData,
-  //   fetchOrderData,
-  //   fetchTransactionData,
-  //   fetchProductData,
-  //   fetchBusinessType,
-  //   fetchCategoryType,
-  //   fetchSubCatData,
-  // } = useActions()
-
-  // const fetchDataIfNeeded = useCallback(() => {
-  //   if (userStatus !== 'succeeded') fetchUserData({})
-  //   if (orderStatus !== 'succeeded') fetchOrderData({})
-  //   if (transactionStatus !== 'succeeded') fetchTransactionData({})
-  //   if (productStatus !== 'succeeded') fetchProductData({})
-  //   if (businessTypesStatus !== 'succeeded') fetchBusinessType({})
-  //   if (categoryStatus !== 'succeeded') fetchCategoryType({})
-  //   if (subCatStatus !== 'succeeded') fetchSubCatData({})
-  // }, [
-  //   userStatus,
-  //   orderStatus,
-  //   transactionStatus,
-  //   productStatus,
-  //   businessTypesStatus,
-  //   categoryStatus,
-  //   subCatStatus,
-  //   fetchUserData,
-  //   fetchOrderData,
-  //   fetchTransactionData,
-  //   fetchProductData,
-  //   fetchBusinessType,
-  //   fetchCategoryType,
-  //   fetchSubCatData,
-  // ])
-
-  const fetchDataIfNeeded = async () => {
-    const response = await fetchDashboard()
-    if (response?.status === 'success') {
-      console.log('respnose is ', response)
-      const cards = response?.results?.statusWiseSurveyCount?.map((item: any) => ({
-        title: item._id,
-        total: item.count,
-      }))
-      setTotalCards(cards)
-      setDashboardData(response?.results)
-    }
-  }
+  const {data, isLoading, refetch} = useQuery({
+    queryKey: ['dashboard-summary', {}],
+    queryFn: async () => fetchDashboard(),
+    staleTime: Infinity,
+    // placeholderData: keepPreviousData,
+  })
 
   useEffect(() => {
-    fetchDataIfNeeded()
-  }, [])
+    if (!data) return
+    const cards = data.results.statusWiseSurveyCount.map((item) => ({
+      title: item._id,
+      total: item.count,
+    }))
+    setTotalCards(cards)
+    setDashboardData(data.results)
+  }, [data])
 
-  const calculatePercentage = (amount: number, total: number): string =>
-    `${((amount / total) * 100).toFixed(1)}%`
-
-  // const masterData: StatisticsData[] | undefined = useMemo(() => {
-  //   if (!businessTypes || !categories || !subCat) return undefined
-  //   return [
-  //     {
-  //       type: 'Business',
-  //       amount: businessTypes,
-  //       percentage: calculatePercentage(businessTypes, businessTypes + categories + subCat),
-  //       barColor: 'bg-blue-500',
-  //     },
-  //     {
-  //       type: 'Category',
-  //       amount: categories,
-  //       percentage: calculatePercentage(categories, businessTypes + categories + subCat),
-  //       barColor: 'bg-green-500',
-  //     },
-  //     {
-  //       type: 'Sub Category',
-  //       amount: subCat,
-  //       percentage: calculatePercentage(subCat, businessTypes + categories + subCat),
-  //       barColor: 'bg-pink-500',
-  //     },
-  //   ]
-  // }, [businessTypes, categories, subCat])
-
-  // const statisticsSections = [
-  //   {title: 'Users', data: users?.data},
-  //   {title: 'Master Data', data: masterData},
-  //   {title: 'Orders', data: orders?.data},
-  //   {title: 'Transactions', data: transactions?.data},
-  //   {title: 'Products', data: products?.data},
-  // ]
-
-  // const totalCards = [
-  //   {title: 'submitted', total: users?.totalUsers},
-  //   {title: 'Sellers', total: users?.data?.[0]?.amount},
-  // ]
+  // const calculatePercentage = (amount: number, total: number): string =>
+  //   `${((amount / total) * 100).toFixed(1)}%`
 
   return (
     <div className='p-4'>
-      <h1 className='text-2xl font-bold mb-4'>Dashboard</h1>
+      <div className='flex '>
+        <h1 className='text-2xl font-bold  items-center'>Dashboard</h1>
+        <Button
+          Icon={FiRefreshCw}
+          label={''}
+          onClick={async () => {
+            await queryClient.invalidateQueries({queryKey: ['dashboard-summary']})
+            toast.success('Dashboard refreshed successfully')
+          }}
+          className='items-center ml-2'
+        ></Button>
+      </div>
+
       <h1 className='text-xl font-semibold mb-2'>Total</h1>
       <div className='mb-6 grid grid-cols-4 gap-3 w-full'>
-        {totalCards.map((card, index) => (
-          <TotalCard key={index} totalUsers={card.total} title={card.title} />
-        ))}
+        {isLoading
+          ? Array.from({length: 2}).map((_, index) => <SkeletonCard key={index} />)
+          : totalCards.map((card, index) => (
+              <TotalCard key={index} totalUsers={card.total} title={card.title} />
+            ))}
       </div>
       {/* <h1 className='text-xl font-semibold mb-2'>Statistics</h1>
       <div className='mb-4 grid grid-cols-3 gap-3'>

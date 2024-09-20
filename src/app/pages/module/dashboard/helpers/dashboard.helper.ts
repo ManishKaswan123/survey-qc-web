@@ -1,8 +1,18 @@
 import {get} from 'sr/utils/axios'
 
-export const fetchDashboard = async (): Promise<any> => {
+interface DashboardSummaryApiResponse {
+  status: string
+  results: {
+    statusWiseSurveyCount: {
+      _id: string
+      count: number
+    }[]
+  }
+}
+
+export const fetchDashboard = async (): Promise<DashboardSummaryApiResponse> => {
   try {
-    const res = await get<any>(`/dashboard/summary`)
+    const res = await get<DashboardSummaryApiResponse>(`/dashboard/summary`)
 
     if (res && res.status == 'success') {
       return res // Return the fetched data

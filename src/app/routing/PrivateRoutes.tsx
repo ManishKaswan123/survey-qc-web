@@ -5,7 +5,7 @@ import {MasterLayout} from 'sr/layout/MasterLayout'
 import {privateRoutes, SuspensedView} from './routing.constant'
 
 const PrivateRoutes: FC = () => {
-  const {auth} = useAuth()
+  // const {auth} = useAuth()
   return (
     <Routes>
       <Route element={<MasterLayout />}>
