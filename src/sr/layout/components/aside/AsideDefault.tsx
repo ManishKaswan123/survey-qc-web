@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react'
-import {Link, useLocation, useNavigate} from 'react-router-dom'
+import {useEffect, useState} from 'react'
+import {Link, useLocation} from 'react-router-dom'
+import {masterMenuItems, normalMenuItems} from './constant'
 
 type Props = {
   getScenarios?: any
   AdjustWidth?: any
 }
-// import { useRouter } from "next/router";
 
 export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
   const scenarios = getScenarios ? JSON.parse(getScenarios) : []
@@ -166,72 +166,6 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                     className={` pl-[0.2rem] md:min-w-full text-rose-800 text-sm uppercase font-bold block pt-4 pb-2 no-underline`}
                   ></h6>
                   <ul className='md:flex-col md:min-w-full flex flex-col list-none'>
-                    <li className='items-center'>
-                      <Link to='/dashboard' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'dashboard' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M3 9.75L12 4l9 5.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z'
-                            />
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M9 21V11.25a1 1 0 011-1h4a1 1 0 011 1V21'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Home</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
-                    <li className='items-center'>
-                      <Link to='/survey' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'survey' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M3 7h18M3 11h18M3 15h18M3 19h18'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Field Assesment</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
                     <li
                       onClick={() => setShow(!show)}
                       className='uppercase flex items-center cursor-pointer text-gray-900 font-semibold hover:text-rose-600'
@@ -280,527 +214,76 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
                     </li>
                     {show === true && (
                       <ul className='pl-6'>
-                        {' '}
-                        {/* Added padding-left for indentation */}
-                        <li className='items-center'>
-                          <Link to='/program' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'program' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
+                        {masterMenuItems.map((item) => (
+                          <li className='items-center' key={item.label}>
+                            <Link to={item.path} replace>
+                              <button
+                                className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                  path === item.path.replace('/', '') && subPath === undefined
+                                    ? 'text-rose-600'
+                                    : ''
+                                }`}
                               >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
+                                <svg
+                                  xmlns='http://www.w3.org/2000/svg'
+                                  className='h-5 w-5 mr-2'
+                                  fill='none'
+                                  viewBox='0 0 24 24'
+                                  stroke='currentColor'
                                   strokeWidth={2}
-                                  d='M9 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2h-2m-4 0v4m0-4H9m0 0H7'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Program</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/section' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'section' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  strokeWidth={2}
-                                  d='M3 7h18M3 11h18M3 15h18M3 19h18'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Section</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/all-questions' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'all-questions' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M9 12h6m2 4H7m12-8H5m16 8a9 9 0 11-18 0 9 9 0 0118 0z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Questions</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/state' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'state' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M3 10l1.5 1.5L5 11l1 1 1.5-1.5L8 9l1-1h3l2 1 1 1 1.5 1.5L17 11h1l1 1v2l-1 1-1.5 1.5L16 18l-1 1h-2l-1.5-1.5L10 17l-1-1H7l-1 1-1.5 1.5L3 19l-1-1v-5l1-1 1-1V9l1-1 1-1L7 6h1l1-1V4l1-1h3l1 1v1l1 1h1l1 1 1 1v1h-1l-1-1h-1l-1 1h-1l-1 1h-1l-1-1H8L6 9H5l-1 1-1-1z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>State</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/district' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
-                                path === 'district' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M4 7h1l1-1h2l1 1h8l1-1h2l1 1h1v10h-1l-1 1h-2l-1-1H8l-1 1H5l-1-1H3V7zM4 8v7h1v-6h14v6h1V8H4z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>District</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/subDistrict' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'subDistrict' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M4 9v7h2v2h12v-2h2V9H4zm4 0h8v7H8V9z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Sub District</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/village' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'village' && subPath === undefined ? 'text-rose-600' : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M12 2l-7 7v8a2 2 0 002 2h10a2 2 0 002-2v-8l-7-7zM9 12v6H7v-6h2zm2-4l3 3h-2v7h-2v-7H8l3-3z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Village</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/mobile-app-config-history' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'mobile-app-config-history' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M9 12h6m2 4H7m12-8H5m16 8a9 9 0 11-18 0 9 9 0 0118 0z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Mobile App Config History</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
-                        <li className='items-center'>
-                          <Link to='/mobile-app-version-history' replace>
-                            <button
-                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                                path === 'mobile-app-version-history' && subPath === undefined
-                                  ? 'text-rose-600'
-                                  : ''
-                              }`}
-                            >
-                              <svg
-                                xmlns='http://www.w3.org/2000/svg'
-                                className='h-5 w-5 mr-2'
-                                fill='none'
-                                viewBox='0 0 24 24'
-                                stroke='currentColor'
-                                strokeWidth='2'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  d='M12 8v4l3 3M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z'
-                                />
-                              </svg>
-
-                              {sideCollapseItem === 'show' ? (
-                                <span className='text-left'>Mobile App Version History</span>
-                              ) : (
-                                ''
-                              )}
-                            </button>
-                          </Link>
-                        </li>
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    d={item.iconPath}
+                                  />
+                                </svg>
+                                {sideCollapseItem === 'show' ? (
+                                  <span className='text-left'>{item.label}</span>
+                                ) : (
+                                  ''
+                                )}
+                              </button>
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
                     )}
-                    <li className='items-center'>
-                      <Link to='/user' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
-                            path === 'user' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M12 14c-3.866 0-7 3.134-7 7m14 0c0-3.866-3.134-7-7-7m0-6a3 3 0 100-6 3 3 0 000 6z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>User Management</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
-                    <li className='items-center'>
-                      <Link to='/complaints' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500  ${
-                            path === 'contact-us' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M16.5 3h-9A2.5 2.5 0 005 5.5v13A2.5 2.5 0 007.5 21h9a2.5 2.5 0 002.5-2.5v-13A2.5 2.5 0 0016.5 3zM4 8.8l8 4.6 8-4.6M4 8.8l8 4.6 8-4.6'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Complaints</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li>
-                    {/* <li className='items-center'>
-                      <Link to='/product' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'product' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M3 8h18M3 12h18M3 16h18M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Product</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li> */}
-                    {/* <li className='items-center'>
-                      <Link to='/order' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'order' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M12 4a3 3 0 00-3 3v2H4v12h16V9h-5V7a3 3 0 00-3-3zM8 8h8V7H8v1zM6 12h12v2H6v-2zm0 4h12v2H6v-2z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Order</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li> */}
-                    {/* <li className='items-center'>
-                      <Link to='/transactions' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'transactions' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M5 11h14M5 15h14M5 19h14M3 5h18a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1z'
-                            />
-                            <circle cx='8' cy='13' r='2' stroke='currentColor' strokeWidth='2' />
-                            <circle cx='12' cy='13' r='2' stroke='currentColor' strokeWidth='2' />
-                            <circle cx='16' cy='13' r='2' stroke='currentColor' strokeWidth='2' />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Transaction</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li> */}
-                    {/* <li className='items-center'>
-                      <Link to='/86' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === '86' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M9 12a3 3 0 100-6 3 3 0 000 6zM15 12a3 3 0 100-6 3 3 0 000 6zM9 12a3 3 0 100 6 3 3 0 000-6zM15 12a3 3 0 100 6 3 3 0 000-6z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? <span className='text-left'>86</span> : ''}
-                        </button>
-                      </Link>
-                    </li> */}
-                    {/* <li className='items-center'>
-                      <Link to='/86-response' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === '86-response' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M9 12a3 3 0 100-6 3 3 0 000 6zM15 12a3 3 0 100-6 3 3 0 000 6zM9 12a3 3 0 100 6 3 3 0 000-6zM15 12a3 3 0 100 6 3 3 0 000-6z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>86 Response</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li> */}
-                    {/* <li className='items-center'>
-                      <Link to='/chats' replace>
-                        <button
-                          className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
-                            path === 'chats' && subPath === undefined ? 'text-rose-600' : ''
-                          }`}
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5 mr-2'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z'
-                            />
-                          </svg>
-
-                          {sideCollapseItem === 'show' ? (
-                            <span className='text-left'>Chats</span>
-                          ) : (
-                            ''
-                          )}
-                        </button>
-                      </Link>
-                    </li> */}
+                    <ul>
+                      {normalMenuItems.map((item) => (
+                        <li className='items-center' key={item.label}>
+                          <Link to={item.path} replace>
+                            <button
+                              className={`flex md:text-xs lg:text-sm uppercase py-3 font-semibold hover:text-rose-600 text-left text-gray-500 ${
+                                path === item.path.replace('/', '') && subPath === undefined
+                                  ? 'text-rose-600'
+                                  : ''
+                              }`}
+                            >
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-5 w-5 mr-2'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                stroke='currentColor'
+                                strokeWidth={2}
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  d={item.iconPath}
+                                />
+                              </svg>
+                              {sideCollapseItem === 'show' ? (
+                                <span className='text-left'>{item.label}</span>
+                              ) : (
+                                ''
+                              )}
+                            </button>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
                   </ul>
                 </div>
               </div>

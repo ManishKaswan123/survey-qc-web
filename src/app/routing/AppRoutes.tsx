@@ -4,15 +4,10 @@ import {useAuth} from 'sr/context/AuthProvider'
 import {LayoutSplashScreen} from 'sr/layout/master-layout'
 import ScrollToTop from 'app/ScrollToTop'
 import {App} from 'app/App'
+import PrivateRoutes from './PrivateRoutes'
+import {publicRoutes} from './routing.constant'
 
-// Lazy load the components
-const AuthPage = lazy(async () => import('app/pages/module/auth/Login'))
-const RegisterPage = lazy(async () => import('app/pages/module/auth/Register'))
-const ErrorsPage = lazy(async () => import('app/pages/module/errors/ErrorsPage'))
-const OtpPage = lazy(async () => import('app/pages/module/auth/OTP'))
-const SellerOnBoarding = lazy(async () => import('app/pages/module/seller/SellerOnBoarding'))
-const PrivateRoutes = lazy(async () => import('./PrivateRoutes'))
-
+const ErrorsPage = lazy(() => import('app/pages/module/errors/ErrorsPage'))
 const {PUBLIC_URL} = process.env
 
 const AppRoutes: FC = () => {
@@ -27,7 +22,7 @@ const AppRoutes: FC = () => {
       <ScrollToTop />
       <Routes>
         <Route element={<App />}>
-          <Route path='error/*' element={<ErrorsPage />} />
+          <Route path='error/*' element={<ErrorsPage error={'Something went wrong'} />} />
           {isAuthenticated ? (
             <Route
               path='/*'
@@ -38,41 +33,13 @@ const AppRoutes: FC = () => {
               }
             />
           ) : (
-            <>
+            publicRoutes.map(({path, element}) => (
               <Route
-                path='auth/*'
-                element={
-                  <Suspense fallback={<LayoutSplashScreen />}>
-                    <AuthPage />
-                  </Suspense>
-                }
+                key={path}
+                path={path}
+                element={<Suspense fallback={<LayoutSplashScreen />}> {element}</Suspense>}
               />
-              <Route
-                path='register'
-                element={
-                  <Suspense fallback={<LayoutSplashScreen />}>
-                    <RegisterPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path='otp-verification'
-                element={
-                  <Suspense fallback={<LayoutSplashScreen />}>
-                    <OtpPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path='seller-onboarding/'
-                element={
-                  <Suspense fallback={<LayoutSplashScreen />}>
-                    <SellerOnBoarding />
-                  </Suspense>
-                }
-              />
-              <Route path='*' element={<Navigate to='/auth' />} />
-            </>
+            ))
           )}
         </Route>
       </Routes>
