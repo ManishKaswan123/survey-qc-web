@@ -170,24 +170,24 @@ const Custom: React.FC = () => {
         labelKey: 'name',
         id: 'id',
       },
-      {
-        type: 'dropdown',
-        label: 'isEmailVerified',
-        name: isEmailVerified,
-        topLabel: 'Email Verified',
-        placeholder: 'Select Email Verified',
-        labelKey: 'name',
-        id: 'id',
-      },
-      {
-        type: 'dropdown',
-        label: 'isMobileVerified',
-        name: isMobileVerified,
-        topLabel: 'Email Verified',
-        placeholder: 'Select Email Verified',
-        labelKey: 'name',
-        id: 'id',
-      },
+      // {
+      //   type: 'dropdown',
+      //   label: 'isEmailVerified',
+      //   name: isEmailVerified,
+      //   topLabel: 'Email Verified',
+      //   placeholder: 'Select Email Verified',
+      //   labelKey: 'name',
+      //   id: 'id',
+      // },
+      // {
+      //   type: 'dropdown',
+      //   label: 'isMobileVerified',
+      //   name: isMobileVerified,
+      //   topLabel: 'Email Verified',
+      //   placeholder: 'Select Email Verified',
+      //   labelKey: 'name',
+      //   id: 'id',
+      // },
       {
         type: 'text',
         label: 'First Name',
@@ -222,6 +222,13 @@ const Custom: React.FC = () => {
         label: 'Email',
         name: 'email',
         placeholder: 'Email',
+        required: true,
+      },
+      {
+        type: 'text',
+        label: 'Password',
+        name: 'password',
+        placeholder: 'Password',
         required: true,
       },
       {
@@ -273,7 +280,6 @@ const Custom: React.FC = () => {
         label: 'Last Name',
         name: 'lastName',
         placeholder: 'Last Name',
-        required: true,
       },
     ],
     []
@@ -338,7 +344,6 @@ const Custom: React.FC = () => {
         mobile: payload.mobile,
         password: payload.password,
         firstName: payload.firstName,
-        lastName: payload.lastName,
         programId,
         companyId,
       }
@@ -350,6 +355,7 @@ const Custom: React.FC = () => {
         'districtCode',
         'subDistrictCode',
         'villageCode',
+        'lastName',
       ]
 
       optionalFields.forEach((field) => {
@@ -364,9 +370,10 @@ const Custom: React.FC = () => {
       })
 
       // console.log('Create User Data:', UserData)
-      await createUser(UserData)
-      refetch()
+      let res = await createUser(UserData)
       toast.success('User created successfully')
+      if(res.status === 'success')
+      refetch()
     } catch (e) {
       console.error('Failed to create User', e)
     } finally {
@@ -383,7 +390,7 @@ const Custom: React.FC = () => {
         mobile: payload.mobile,
         firstName: payload.firstName,
         email: payload.email,
-        lastName: payload.lastName,
+        password: payload.password,
         programId,
         companyId,
       }
@@ -391,7 +398,7 @@ const Custom: React.FC = () => {
       // Dynamically add properties to VleData if they have a value
       const optionalFields = [
         'dob',
-        // 'lastName',
+        'lastName',
         'pinCode',
         'languagePreference',
         'stateCode',
@@ -404,17 +411,18 @@ const Custom: React.FC = () => {
         if (payload[field]) {
           UserData[field] =
             field === 'languagePreference'
-              ? [payload[field]]
-              : field === 'stateCode' || 'districtCode' || 'subDistrictCode' || 'villageCode'
-              ? parseInt(payload[field])
-              : payload[field]
+              ? [payload[field]]  // Wrap languagePreference in an array
+              : ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
+              ? parseInt(payload[field])  // Parse state and district codes as integers
+              : payload[field];  // Direct assignment for other fields
         }
-      })
-      console.log('user data is', UserData)
-      await updateUser(UserData, selectedUser.id)
+      });
+
+      let res = await updateUser(UserData, selectedUser.id)
       // setRerender((prev) => !prev)
+      if(res.status === 'success')
+        toast.success('User updated successfully')
       refetch()
-      toast.success('User updated successfully')
     } catch (e) {
       console.error('Failed to update User', e)
     } finally {
@@ -423,9 +431,14 @@ const Custom: React.FC = () => {
   }
 
   const handleDelete = async (id: string) => {
-    await deleteUser(id)
-    setRerender((prev) => !prev)
-    toast.success(`User deleted successfully`)
+    try {
+      let res = await deleteUser(id)
+      if(res.status === 'success')
+        toast.success(`User deleted successfully`)
+      refetch();
+    } catch (e) {
+      console.error('Failed to delete User', e)
+    }
   }
 
   const defaultData: UserInterface | undefined = useMemo(() => {
