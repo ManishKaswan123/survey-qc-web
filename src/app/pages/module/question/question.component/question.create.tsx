@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef, useState, RefObject, LegacyRef} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
 import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
 import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
@@ -46,7 +46,15 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
   const sectionReduxStore = useSelector((state: RootState) => state.section)
   const {fetchProgramAction, fetchSectionAction} = useActions()
   const [sectionWiseQuestions, setSectionWiseQuestions] = useState<Question[]>([])
-  const [globalLabelName, setGlobalLabelName] = useState<Record<string, string>>({})
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([] as string[])
+  const [selectedLanguagesForOption, setSelectedLanguagesForOption] = useState<string[]>(
+    [] as string[]
+  )
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [showDropdownForOption, setShowDropdownForOption] = useState(false)
+  const [globalLabelName, setGlobalLabelName] = useState<{[key: string]: string}>({})
+  const dropdownRef = useRef<any>(null) // Ref to focus on the dropdown
+  const dropdownRefForOption = useRef<any>(null) // Ref to focus on the dropdown
 
   const questionType = useMemo(
     () =>
@@ -155,12 +163,53 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     updatedOptions[index].labelName[langCode] = value
     setOptions(updatedOptions) // Update the options state
   }
+
   const handleGlobalLabelChange = (langCode: string, value: string) => {
-    setGlobalLabelName((prev) => ({
-      ...prev,
+    setGlobalLabelName((prevState) => ({
+      ...prevState,
       [langCode]: value,
     }))
   }
+  const handleAddLanguage = (langCode: string) => {
+    if (langCode) {
+      setSelectedLanguages((prevState) => [...prevState, langCode])
+      setShowDropdown(false)
+    }
+  }
+  const handleAddLanguageForOption = (langCode: string) => {
+    if (langCode) {
+      setSelectedLanguagesForOption((prevState) => [...prevState, langCode])
+      setShowDropdownForOption(false)
+    }
+  }
+  // Remove a selected language and its corresponding input field
+  const handleRemoveLanguage = (langCode: string) => {
+    setSelectedLanguages(selectedLanguages.filter((code) => code !== langCode))
+    setGlobalLabelName((prevState) => {
+      const newLabels = {...prevState}
+      delete newLabels[langCode] // Remove the input value of that language
+      return newLabels
+    })
+  }
+  // Remove a selected language and its corresponding input field
+  const handleRemoveLanguageForOption = (langCode: string, index: number) => {
+    setSelectedLanguagesForOption(selectedLanguagesForOption.filter((code) => code !== langCode))
+    const updatedOptions = [...options]
+    delete updatedOptions[index].labelName[langCode]
+    setOptions(updatedOptions)
+  }
+  // Focus on the dropdown when it becomes visible
+  useEffect(() => {
+    if (showDropdown && dropdownRef.current) {
+      dropdownRef.current.focus()
+    }
+  }, [showDropdown])
+  // Focus on the dropdown when it becomes visible
+  useEffect(() => {
+    if (showDropdownForOption && dropdownRefForOption.current) {
+      dropdownRefForOption.current.focus()
+    }
+  }, [showDropdownForOption])
 
   const fetchQuestions = async () => {
     // Ensure both sectionId and programId are present before proceeding
@@ -237,6 +286,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
       closeModal()
       queryClient.invalidateQueries({queryKey: ['staticQuestions']})
     }
+    // console.log('payload', payload)
   }
 
   // console.log('question id ', watch(`questionId_${0}`) != undefined)
@@ -551,7 +601,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                         </div>
 
                         {/* Language-specific Label Names */}
-                        <div className='mt-4'>
+                        {/* <div className='mt-4'>
                           <h4 className='text-lg font-semibold mb-4 text-center'>
                             Option Label Names
                           </h4>
@@ -573,6 +623,78 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                               </div>
                             ))}
                           </div>
+                        </div> */}
+                        <div className='mt-4'>
+                          <h4 className='text-xl font-bold mb-4 text-center'>Option Label Name</h4>
+
+                          {/* Render all selected language inputs */}
+                          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6'>
+                            {selectedLanguagesForOption.map((langCode) => (
+                              <div key={langCode} className='flex'>
+                                <TextField
+                                  type='text'
+                                  label={
+                                    DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]
+                                  }
+                                  value={option.labelName?.[langCode] || ''}
+                                  onChange={(e) =>
+                                    handleOptionLabelChange(index, langCode, e.target.value)
+                                  }
+                                  name={`labelName_${index}_${langCode}`}
+                                  placeholder={`Enter ${
+                                    DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]
+                                  } label`}
+                                  className='text-center'
+                                />
+                                {/* Delete button */}
+                                <button
+                                  className='  pt-4 rounded-full'
+                                  onClick={() => handleRemoveLanguageForOption(langCode, index)}
+                                >
+                                  X
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Add More Button and Dropdown */}
+                          <div className='flex flex-col items-center mb-6'>
+                            <button
+                              className='bg-blue-500 text-gray-50 py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                              onClick={(e) => {
+                                e.preventDefault() // Prevent default form action
+                                setShowDropdownForOption(!showDropdownForOption)
+                              }}
+                            >
+                              Add More
+                            </button>
+
+                            {/* Dropdown for selecting languages, positioned just below the button */}
+                            {showDropdownForOption && (
+                              <div className='relative w-full flex justify-center mt-2'>
+                                <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto'>
+                                  <select
+                                    ref={dropdownRefForOption}
+                                    className='p-2 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
+                                    onChange={(e) => handleAddLanguageForOption(e.target.value)}
+                                    defaultValue=''
+                                  >
+                                    <option value='' disabled>
+                                      Select Language
+                                    </option>
+                                    {Object.entries(DEFAULT_LANG_NAME).map(
+                                      ([langCode, langName]) =>
+                                        !selectedLanguagesForOption.includes(langCode) && (
+                                          <option key={langCode} value={langCode}>
+                                            {langName} ({langCode})
+                                          </option>
+                                        )
+                                    )}
+                                  </select>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -584,27 +706,75 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                     />
                   </div>
                 )}
-                <div className='mt-8'>
-                  <h4 className='text-xl font-bold mb-6 text-center'>Question Label Name</h4>
 
-                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'>
-                    {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
-                      <div key={langCode}>
+                <div className='mt-4'>
+                  <h4 className='text-xl font-bold mb-4 text-center'>Question Label Name</h4>
+
+                  {/* Render all selected language inputs */}
+                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6'>
+                    {selectedLanguages.map((langCode) => (
+                      <div key={langCode} className='flex'>
                         <TextField
-                          labelStyle='style1'
-                          className='custom-input form-input p-2 border rounded mb-2'
                           type='text'
-                          label={`${langName} (${langCode})`}
-                          value={globalLabelName[langCode] || ''} // Handle undefined global label names
+                          label={DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]}
+                          value={globalLabelName[langCode] || ''}
                           onChange={(e) => handleGlobalLabelChange(langCode, e.target.value)}
                           name={`globalLabelName_${langCode}`}
-                          placeholder={`Enter ${langName} label`}
+                          placeholder={`Enter ${
+                            DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]
+                          } label`}
+                          className='text-center'
                         />
+                        {/* Delete button */}
+                        <button
+                          className='  pt-4 rounded-full'
+                          onClick={() => handleRemoveLanguage(langCode)}
+                        >
+                          X
+                        </button>
                       </div>
                     ))}
                   </div>
-                </div>
 
+                  {/* Add More Button and Dropdown */}
+                  <div className='flex flex-col items-center mb-6'>
+                    <button
+                      className='bg-blue-500 text-gray-50 py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      onClick={(e) => {
+                        e.preventDefault() // Prevent default form action
+                        setShowDropdown(!showDropdown)
+                      }}
+                    >
+                      Add More
+                    </button>
+
+                    {/* Dropdown for selecting languages, positioned just below the button */}
+                    {showDropdown && (
+                      <div className='relative w-full flex justify-center mt-2'>
+                        <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto'>
+                          <select
+                            ref={dropdownRef}
+                            className='p-2 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            onChange={(e) => handleAddLanguage(e.target.value)}
+                            defaultValue=''
+                          >
+                            <option value='' disabled>
+                              Select Language
+                            </option>
+                            {Object.entries(DEFAULT_LANG_NAME).map(
+                              ([langCode, langName]) =>
+                                !selectedLanguages.includes(langCode) && (
+                                  <option key={langCode} value={langCode}>
+                                    {langName} ({langCode})
+                                  </option>
+                                )
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 {/* DataSource Heading */}
                 {/* <div className='mt-4'>
                   <h4 className='text-lg font-semibold mb-4'>DataSource</h4>
