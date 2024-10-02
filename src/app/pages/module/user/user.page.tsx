@@ -224,13 +224,13 @@ const Custom: React.FC = () => {
         placeholder: 'Email',
         required: true,
       },
-      {
-        type: 'text',
-        label: 'Password',
-        name: 'password',
-        placeholder: 'Password',
-        required: true,
-      },
+      // {
+      //   type: 'text',
+      //   label: 'Password',
+      //   name: 'password',
+      //   placeholder: 'Password',
+      //   required: true,
+      // },
       {
         type: 'number',
         label: 'Mobile',
@@ -390,7 +390,7 @@ const Custom: React.FC = () => {
         mobile: payload.mobile,
         firstName: payload.firstName,
         email: payload.email,
-        password: payload.password,
+        // password: payload.password,
         programId,
         companyId,
       }
