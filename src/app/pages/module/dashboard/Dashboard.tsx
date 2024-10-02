@@ -19,7 +19,7 @@ const Custom: React.FC = () => {
   const [totalCards, setTotalCards] = useState<dashboardCardInterface[]>([])
   const queryClient = useQueryClient()
 
-  const {data, isLoading, refetch} = useQuery({
+  const {data, isLoading, refetch, isFetching} = useQuery({
     queryKey: ['dashboard-summary', {}],
     queryFn: async () => fetchDashboard(),
     staleTime: Infinity,
@@ -44,19 +44,25 @@ const Custom: React.FC = () => {
       <div className='flex '>
         <h1 className='text-2xl font-bold  items-center'>Dashboard</h1>
         <Button
-          Icon={FiRefreshCw}
+          Icon={() => (
+            <FiRefreshCw
+              className={`w-6 h-6 transition-transform duration-500 ${
+                isFetching ? 'animate-spin' : ''
+              }`}
+            />
+          )}
           label={''}
           onClick={async () => {
             await queryClient.invalidateQueries({queryKey: ['dashboard-summary']})
             toast.success('Dashboard refreshed successfully')
           }}
-          className='items-center ml-2'
-        ></Button>
+          className='ml-2'
+        />
       </div>
 
       <h1 className='text-xl font-semibold mb-2'>Total</h1>
       <div className='mb-6 grid grid-cols-4 gap-3 w-full'>
-        {isLoading
+        {isLoading || isFetching
           ? Array.from({length: 2}).map((_, index) => <SkeletonCard key={index} />)
           : totalCards.map((card, index) => (
               <TotalCard key={index} totalUsers={card.total} title={card.title} />
