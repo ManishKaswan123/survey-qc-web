@@ -230,9 +230,10 @@ const Custom: React.FC = () => {
       description: values.description,
       displayOrder: values.displayOrder,
       sectionCode: values.sectionCode,
-      isActive: values.isActive,
+      // isActive: values.isActive,
+      isActive: true,
     }
-    // console.log('Create Section Payload:', payload)
+    // // console.log('Create Section Payload:', payload)
     await createSection(payload)
     queryClient.invalidateQueries({queryKey: ['section']})
     fetchSectionAction({})
