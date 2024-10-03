@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react'
+import React, {useState, useMemo, useEffect, useCallback} from 'react'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
@@ -21,6 +21,12 @@ import {updateUser} from './user.helpers/updateUser'
 import {deleteUser} from './user.helpers/deleteUser'
 import {set} from 'react-hook-form'
 import {allocateUser} from './user.helpers/userAllocate'
+import { useSelector } from 'react-redux'
+import { RootState } from 'sr/redux/store'
+import { fetchDistrict } from 'sr/utils/api/fetchDistrict'
+import { fetchSubDistrict } from 'sr/utils/api/fetchSubDistrict'
+import { fetchVillage } from 'sr/utils/api/fetchVillage'
+import { useActions } from 'sr/utils/helpers/useActions'
 
 const Custom: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -38,7 +44,19 @@ const Custom: React.FC = () => {
   // Step 1: Retrieve and parse the user object from localStorage
   const userString = localStorage.getItem('user')
   const user = userString ? JSON.parse(userString) : null
+  const [isRoleFA , setIsRoleFA] = useState<boolean>(false)
 
+  const [district, setDistrict] = useState<any>([])
+  const [subDistrict, setSubDistrict] = useState<any>([])
+  const [village, setVillage] = useState<any>([])
+  const [selectedState, setSelectedState] = useState<any>(null)
+  const [selectedDistrict, setSelectedDistrict] = useState<any>(null)
+  const [selectedSubDistrict, setSelectedSubDistrict] = useState<any>(null)
+  const stateData = useSelector((state: RootState) => state.state.data)
+  const {fetchStateData} = useActions()
+  const stateStatus = useSelector((state: RootState) => state.state.status)
+
+  console.log('stateData', stateData)
   // Step 2: Access companyId and programId from the user object
   const companyId = user?.companyId
   const programId = user?.programId
@@ -49,6 +67,7 @@ const Custom: React.FC = () => {
       {name: 'Quality Analyst', id: 'QA'},
       {name: 'Field Agent', id: 'FA'},
       {name: 'Project Admin', id: 'ProjectAdmin'},
+      {name: 'State Manager', id: 'StateManager'},
     ],
     []
   )
@@ -115,19 +134,12 @@ const Custom: React.FC = () => {
         placeholder: 'Enter Password',
         required: true,
       },
-      // {
-      //   type: 'text',
-      //   label: 'Confirm Password',
-      //   name: 'confirmPassword',
-      //   placeholder: 'Confirm Password',
-      //   required: true,
-      // },
     ],
     []
   )
 
-  const createFields: FieldsArray = useMemo(
-    () => [
+  const createFields: FieldsArray = useMemo(() => {
+    const fields: FieldsArray = [
       {
         type: 'dropdown',
         label: 'languagePreference',
@@ -137,21 +149,6 @@ const Custom: React.FC = () => {
         labelKey: 'name',
         id: 'id',
       },
-
-      {
-        type: 'text',
-        label: 'Email',
-        name: 'email',
-        placeholder: 'Email',
-        required: true,
-      },
-      {
-        type: 'text',
-        label: 'Password',
-        name: 'password',
-        placeholder: 'Password',
-        required: true,
-      },
       {
         type: 'number',
         label: 'Mobile',
@@ -159,35 +156,17 @@ const Custom: React.FC = () => {
         placeholder: 'Mobile',
         required: true,
       },
-
       {
         type: 'dropdown',
         label: 'role',
         name: role,
+        onChange: (e) => setIsRoleFA(e.target.value === 'FA'),
         topLabel: 'Role',
         placeholder: 'Select Role',
         required: true,
         labelKey: 'name',
         id: 'id',
       },
-      // {
-      //   type: 'dropdown',
-      //   label: 'isEmailVerified',
-      //   name: isEmailVerified,
-      //   topLabel: 'Email Verified',
-      //   placeholder: 'Select Email Verified',
-      //   labelKey: 'name',
-      //   id: 'id',
-      // },
-      // {
-      //   type: 'dropdown',
-      //   label: 'isMobileVerified',
-      //   name: isMobileVerified,
-      //   topLabel: 'Email Verified',
-      //   placeholder: 'Select Email Verified',
-      //   labelKey: 'name',
-      //   id: 'id',
-      // },
       {
         type: 'text',
         label: 'First Name',
@@ -201,12 +180,77 @@ const Custom: React.FC = () => {
         name: 'lastName',
         placeholder: 'Last Name',
       },
-    ],
-    []
-  )
+      {
+        type: 'dropdown',
+        label: 'stateCode',
+        name: stateData?.results,
+        topLabel: 'State',
+        placeholder: 'Select State',
+        labelKey: 'stateName',
+        id: 'stateCode',
+        required: isRoleFA,
+      },
+      {
+        type: 'dropdown',
+        label: 'districtCode',
+        name: district,
+        topLabel: 'District',
+        placeholder: 'Select District',
+        labelKey: 'districtName',
+        id: 'districtCode',
+        required: isRoleFA,
+      },
+      {
+        type: 'dropdown',
+        label: 'subDistrictCode',
+        name: subDistrict,
+        topLabel: 'Sub District',
+        placeholder: 'Select Sub District',
+        labelKey: 'subDistrictName',
+        id: 'subDistrictCode',
+        required: isRoleFA,
+      },
+      {
+        type: 'dropdown',
+        label: 'villageCode',
+        name: village,
+        topLabel: 'Village Code',
+        placeholder: 'Select Village',
+        labelKey: 'villageName',
+        id: 'villageCode',
+        required: isRoleFA,
+      }
+    ];
+  
+    // Conditionally add email and password at the start if isRoleFA is false
+    if (!isRoleFA) {
+      fields.unshift(
+        {
+          type: 'text',
+          label: 'Email',
+          name: 'email',
+          placeholder: 'Email',
+          required: true,
+        },
+        {
+          type: 'text',
+          label: 'Password',
+          name: 'password',
+          placeholder: 'Password',
+          required: true,
+        }
+      );
+    }
+  
+    return fields;
+  }, [isRoleFA, language, role, stateData, district, subDistrict, village]);
+  
 
-  const updateFields: FieldsArray = useMemo(
-    () => [
+  console.log('isRoleFA', isRoleFA)
+  
+  
+  const updateFields: FieldsArray = useMemo(() => {
+    const fields: FieldsArray = [
       {
         type: 'dropdown',
         label: 'languagePreference',
@@ -217,20 +261,6 @@ const Custom: React.FC = () => {
         id: 'id',
         required: true,
       },
-      {
-        type: 'text',
-        label: 'Email',
-        name: 'email',
-        placeholder: 'Email',
-        required: true,
-      },
-      // {
-      //   type: 'text',
-      //   label: 'Password',
-      //   name: 'password',
-      //   placeholder: 'Password',
-      //   required: true,
-      // },
       {
         type: 'number',
         label: 'Mobile',
@@ -248,26 +278,6 @@ const Custom: React.FC = () => {
         labelKey: 'name',
         id: 'id',
       },
-      // {
-      //   type: 'dropdown',
-      //   label: 'isEmailVerified',
-      //   name: isEmailVerified,
-      //   topLabel: 'Email Verified',
-      //   placeholder: 'Select Email Verified',
-      //   labelKey: 'name',
-      //   id: 'id',
-      //   required: true,
-      // },
-      // {
-      //   type: 'dropdown',
-      //   label: 'isMobileVerified',
-      //   name: isMobileVerified,
-      //   topLabel: 'Mobile Verified',
-      //   placeholder: 'Select Mobile Verified',
-      //   labelKey: 'name',
-      //   id: 'id',
-      //   required: true,
-      // },
       {
         type: 'text',
         label: 'First Name',
@@ -281,9 +291,71 @@ const Custom: React.FC = () => {
         name: 'lastName',
         placeholder: 'Last Name',
       },
-    ],
-    []
-  )
+      {
+        type: 'dropdown',
+        label: 'stateCode',
+        name: stateData?.results,
+        topLabel: 'State',
+        placeholder: 'Select State',
+        labelKey: 'stateName',
+        id: 'stateCode',
+        required: selectedUser ? selectedUser.role === 'FA' : false,
+      },
+      {
+        type: 'dropdown',
+        label: 'districtCode',
+        name: district,
+        topLabel: 'District',
+        placeholder: 'Select District',
+        labelKey: 'districtName',
+        id: 'districtCode',
+        required: selectedUser ? selectedUser.role === 'FA' : false
+      },
+      {
+        type: 'dropdown',
+        label: 'subDistrictCode',
+        name: subDistrict,
+        topLabel: 'Sub District',
+        placeholder: 'Select Sub District',
+        labelKey: 'subDistrictName',
+        id: 'subDistrictCode',
+        required: selectedUser ? selectedUser.role === 'FA' : false
+      },
+      {
+        type: 'dropdown',
+        label: 'villageCode',
+        name: village,
+        topLabel: 'Village Code',
+        placeholder: 'Select Village',
+        labelKey: 'villageName',
+        id: 'villageCode',
+        required: selectedUser ? selectedUser.role === 'FA' : false
+      }
+    ];
+  
+    // Conditionally add email and password fields only if isRoleFA is false
+    if (!selectedUser || selectedUser.role !== 'FA') {
+      fields.unshift(
+        {
+          type: 'text',
+          label: 'Email',
+          name: 'email',
+          placeholder: 'Email',
+          required: true,
+        }
+      );
+    }
+  
+    return fields;
+  }, [isRoleFA, language, role, stateData, district, subDistrict, village]);
+  
+  const fetchDataIfNeeded = useCallback(() => {
+    if (stateStatus != 'succeeded') fetchStateData()
+  }, [stateStatus])
+
+  useEffect(() => {
+    fetchDataIfNeeded()
+  }, [])
 
   const {data, error, isLoading, isError, refetch} = useQuery({
     queryKey: ['users', {limit: itemsPerPage, page: currentPage, ...filters}],
@@ -312,28 +384,7 @@ const Custom: React.FC = () => {
   }
 
   const handleUpdatePassword = async (payload: any) => {
-    // Implement update password functionality
-    // console.log('payload is :- ', payload)
-    // console.log('selectedUser is :- ', selectedUser)
-    // try {
-    //   if (!selectedUser) return
-    //   const userData = {
-    //     // ...selectedUser,
-    //     password: payload?.password,
-    //   }
-    //   await updateUser(userData, selectedUser.id)
-    //   setRerender((prev) => !prev)
-    //   toast.success('User created successfully')
-    // } catch (e) {
-    //   console.error('Failed to update password', e)
-    // } finally {
-    //   setIsChangePasswordModalOpen(false)
-    // }
   }
-
-  // const handleCreateUser = async (payload: UserInterface) => {
-  //   // Implement create user functionality
-  // }
 
   const handleCreateUser = async (payload: any) => {
     try {
@@ -347,7 +398,7 @@ const Custom: React.FC = () => {
         programId,
         companyId,
       }
-
+  
       // Dynamically add optional fields if they have a value
       const optionalFields = [
         'languagePreference',
@@ -357,29 +408,31 @@ const Custom: React.FC = () => {
         'villageCode',
         'lastName',
       ]
-
+  
       optionalFields.forEach((field) => {
         if (payload[field]) {
           UserData[field] =
             field === 'languagePreference'
-              ? [payload[field]]
-              : field === 'stateCode' || 'districtCode' || 'subDistrictCode' || 'villageCode'
-              ? parseInt(payload[field])
-              : payload[field].toString()
+              ? [payload[field]]  // Wrap languagePreference in an array
+              : ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
+              ? parseInt(payload[field])  // Parse state and district codes as integers
+              : payload[field].toString()  // Convert other fields to string if needed
         }
       })
-
+  
       // console.log('Create User Data:', UserData)
       let res = await createUser(UserData)
-      toast.success('User created successfully')
-      if(res.status === 'success')
-      refetch()
+      if (res.status === 'success') {
+        toast.success('User created successfully')
+        refetch()
+      }
     } catch (e) {
       console.error('Failed to create User', e)
     } finally {
       setIsCreateModalOpen(false)
     }
   }
+  
 
   const handleUpdateUser = async (payload: any) => {
     // console.log('Update User Payload', payload)
@@ -462,6 +515,42 @@ const Custom: React.FC = () => {
       setIsUpdateModalOpen(false)
     }
   }
+
+  useEffect(() => {
+    if (selectedState) {
+      fetchDistrict({
+        getAll: true,
+        stateCode: parseInt(selectedState),
+        projectBy: 'districtCode,districtName',
+      }).then((response) => {
+        setDistrict(response.results)
+      })
+    }
+  }, [selectedState])
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      fetchSubDistrict({
+        getAll: true,
+        districtCode: parseInt(selectedDistrict),
+        projectBy: 'subDistrictCode,subDistrictName',
+      }).then((response) => {
+        setSubDistrict(response.results)
+      })
+    }
+  }, [selectedDistrict])
+
+  useEffect(() => {
+    if (selectedSubDistrict) {
+      fetchVillage({
+        getAll: true,
+        subDistrictCode: parseInt(selectedSubDistrict),
+        projectBy: 'villageCode,villageName',
+      }).then((response) => {
+        setVillage(response.results)
+      })
+    }
+  }, [selectedSubDistrict])
 
   return (
     <>
@@ -552,6 +641,9 @@ const Custom: React.FC = () => {
           onClose={() => setIsCreateModalOpen(false)}
           fields={createFields}
           onSubmit={handleCreateUser}
+          setSelectedState={setSelectedState}
+          setSelectedDistrict={setSelectedDistrict}
+          setSelectedSubDistrict={setSelectedSubDistrict}
         />
       )}
       {isUpdateModalOpen && (
@@ -562,6 +654,9 @@ const Custom: React.FC = () => {
           fields={updateFields}
           defaultValues={defaultData}
           onSubmit={handleUpdateUser}
+          setSelectedState={setSelectedState}
+          setSelectedDistrict={setSelectedDistrict}
+          setSelectedSubDistrict={setSelectedSubDistrict}
         />
       )}
       {isAllocateModalOpen && (

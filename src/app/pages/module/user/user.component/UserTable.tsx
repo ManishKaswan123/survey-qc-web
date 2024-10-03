@@ -97,6 +97,8 @@ const UserTable: React.FC<UserTableProps> = ({
                   <div className='flex items-center space-x-2 justify-center'>
                     <button
                       onClick={() => handleChangePassword(user)}
+                      // disabled={user?.role === 'FA'}
+                      disabled= {true}
                       className='bg-blue-500 hover:bg-blue-600 text-slate-50 p-2 rounded-full'
                     >
                       <MdCloudSync />
