@@ -4,17 +4,17 @@ import TextField from 'sr/partials/widgets/widgets-components/form/TextField'
 import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownField'
 import {SubmitHandler, useForm} from 'react-hook-form'
 import {Button} from 'sr/helpers'
-import {MultiValue} from 'react-select'
+// import {MultiValue} from 'react-select'
 import MultiSelectField, {OptionType} from 'sr/partials/widgets/widgets-components/form/MultiSelect'
 import {useSelector} from 'react-redux'
 import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
-import {fetchSections} from '../../section/section.helper'
+// import {fetchSections} from '../../section/section.helper'
 import {questionTypeEnum} from 'sr/constants/question'
 import {OptionQuestion, Question, VisibleOnFieldId} from '../question.interface'
 import {createQuestion, fetchStaticQuestions} from '../question.helper'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
-import TextArea from 'sr/helpers/ui-components/TextArea'
+// import TextArea from 'sr/helpers/ui-components/TextArea'
 import {toast} from 'react-toastify'
 import {useQueryClient} from '@tanstack/react-query'
 
@@ -39,9 +39,9 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
     {}
   )
   const [options, setOptions] = useState<OptionQuestion[]>([])
-  const [questionOptions, setQuestionOptions] = useState<
-    {questionId: string; optionValue: OptionType[]}[]
-  >([{questionId: '', optionValue: []}])
+  // const [questionOptions, setQuestionOptions] = useState<
+  //   {questionId: string; optionValue: OptionType[]}[]
+  // >([{questionId: '', optionValue: []}])
   const programReduxStore = useSelector((state: RootState) => state.program)
   const sectionReduxStore = useSelector((state: RootState) => state.section)
   const {fetchProgramAction, fetchSectionAction} = useActions()
@@ -599,31 +599,6 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                             />
                           </div>
                         </div>
-
-                        {/* Language-specific Label Names */}
-                        {/* <div className='mt-4'>
-                          <h4 className='text-lg font-semibold mb-4 text-center'>
-                            Option Label Names
-                          </h4>
-
-                          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-                            {Object.entries(DEFAULT_LANG_NAME).map(([langCode, langName]) => (
-                              <div key={langCode} className='text-center'>
-                                <TextField
-                                  type='text'
-                                  label={`${langName} (${langCode})`}
-                                  value={option.labelName?.[langCode] || ''}
-                                  onChange={(e) =>
-                                    handleOptionLabelChange(index, langCode, e.target.value)
-                                  }
-                                  name={`labelName_${index}_${langCode}`}
-                                  placeholder={`Enter ${langName} label`}
-                                  className='text-center'
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div> */}
                         <div className='mt-4'>
                           <h4 className='text-xl font-bold mb-4 text-center'>Option Label Name</h4>
 
