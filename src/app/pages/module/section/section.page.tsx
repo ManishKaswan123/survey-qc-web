@@ -93,7 +93,7 @@ const Custom: React.FC = () => {
 
       {
         type: 'labelName',
-        label: 'Label Name',
+        label: 'Section Label Name',
         name: 'labelName',
         placeholder: 'Label Name',
         required: false,
@@ -245,7 +245,7 @@ const Custom: React.FC = () => {
       <div className='py-6'>
         <div className='flex flex-row justify-between mb-4'>
           <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
-          {!programId && !surveyId && (
+          {!surveyId && (
             <Button
               label='Create new'
               Icon={AiOutlinePlus}
@@ -303,6 +303,7 @@ const Custom: React.FC = () => {
           onClose={() => setIsCreateModalOpen(false)}
           fields={createUpdateFields}
           onSubmit={handleCreateSection}
+          defaultValues={{programId: programId || ''}}
         />
       )}
     </div>

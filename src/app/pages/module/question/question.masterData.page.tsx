@@ -304,7 +304,11 @@ const Custom: React.FC = () => {
         />
       )} */}
       {isCreateModalOpen && (
-        <CreateQuestionPopup isOpen={isCreateModalOpen} setIsOpen={setIsCreateModalOpen} />
+        <CreateQuestionPopup
+          isOpen={isCreateModalOpen}
+          setIsOpen={setIsCreateModalOpen}
+          defaultValues={{programId: programId, sectionId: sectionId}}
+        />
       )}
       {isUpdateModalOpen && (
         <DynamicModal
