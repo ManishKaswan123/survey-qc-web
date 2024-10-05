@@ -17,6 +17,7 @@ import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 // import TextArea from 'sr/helpers/ui-components/TextArea'
 import {toast} from 'react-toastify'
 import {useQueryClient} from '@tanstack/react-query'
+import {FaTrash} from 'react-icons/fa'
 
 interface CreateQuestionPopupProps {
   isOpen: boolean
@@ -33,7 +34,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
   } = useForm()
   const queryClient = useQueryClient()
   const closeModal = () => setIsOpen(false)
-  const [isVisibleOnField, setIsVisibleOnField] = useState(false)
+  const [isVisibleOnField, setIsVisibleOnField] = useState<boolean>(false)
   const [visibleOnFieldIds, setVisibleOnFieldIds] = useState<VisibleOnFieldId[]>([])
   const [questionOptionsMap, setQuestionOptionsMap] = useState<{[key: string]: OptionQuestion[]}>(
     {}
@@ -303,8 +304,15 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
           </span>
 
           <div className='inline-block w-full max-w-3xl h-[95vh] text-left align-middle transition-all transform bg-white shadow-xl rounded-lg'>
-            <div className='h-full overflow-y-auto p-6'>
-              <h2 className='text-xl  leading-6 text-gray-900 font-bold'>Create New Question</h2>
+            <div className='h-full overflow-y-auto px-6 pb-6'>
+              <div className='sticky top-0 z-10 py-4 bg-white flex justify-between items-center'>
+                <h2 className='text-xl   text-gray-900 font-bold'>Create New Question</h2>
+                <Button
+                  onClick={closeModal}
+                  label='Close X'
+                  className='bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded  inline-flex items-center ml-2'
+                />
+              </div>
 
               <form className='mt-4 space-y-4' onSubmit={handleSubmit(onSubmit)}>
                 {/* Existing form fields (Program, Section, etc.) */}
@@ -464,7 +472,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 /> */}
 
                 {/* Visible On Field */}
-                <div className='flex items-center space-x-4'>
+                {/* <div className='flex items-center space-x-4'>
                   <label className=''>
                     <h4 className='text-lg font-semibold my-3'>Visible On Field</h4>
                   </label>
@@ -480,7 +488,27 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                       }`}
                     />
                   </div>
-                </div>
+                </div> */}
+                <DropdownField
+                  // key={6}
+                  data={[
+                    {name: 'Yes', id: true},
+                    {
+                      name: 'No',
+                      id: false,
+                    },
+                  ]}
+                  labelKey='name'
+                  label='Is Visible of Fields'
+                  placeholder='Select Visible of Fields'
+                  valueKey='id'
+                  name='Is Visible of Fields'
+                  required={false}
+                  onChange={(e) => setIsVisibleOnField(e.target.value === 'true')}
+                  // register={register('isMandatory', {required: false})}
+                  // error={errors.isMandatory && !watch('isMandatory')}
+                  // errorText='Please select if mandatory'
+                />
 
                 {isVisibleOnField && (
                   <div className='mt-4'>
@@ -538,7 +566,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                     <Button
                       onClick={addQuestionOption}
                       label='Add More'
-                      className='mt-4 bg-blue-500 text-gray-50 py-1 px-3 rounded hover:bg-blue-600'
+                      className='mt-4 bg-blue-500 text-gray-50 py-1 px-3 ml-4 rounded hover:bg-blue-600'
                     />
                   </div>
                 )}
@@ -548,10 +576,12 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                   watch('questionType')
                 ) && (
                   <div className='mt-6'>
-                    <h4 className='text-xl font-bold mb-6'>Options</h4>
+                    {/* <h4 className='text-xl font-bold mb-6'>Options</h4>
+                     */}
+                    <div className='block text-sm font-medium text-gray-700 mx-4'>Options</div>
 
                     {options.map((option, index) => (
-                      <div key={index} className='border p-6 rounded-md mb-6 shadow-md'>
+                      <div key={index} className='mb-2 '>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4'>
                           {/* Field Name */}
                           <div>
@@ -600,12 +630,14 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                           </div>
                         </div>
                         <div className='mt-4'>
-                          <h4 className='text-xl font-bold mb-4 text-center'>Option Label Name</h4>
+                          <div className='block text-sm font-medium text-gray-700 mx-4'>
+                            Option Label Name
+                          </div>
 
                           {/* Render all selected language inputs */}
-                          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6'>
+                          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  mb-2 mr-4'>
                             {selectedLanguagesForOption.map((langCode) => (
-                              <div key={langCode} className='flex'>
+                              <div key={langCode} className='flex '>
                                 <TextField
                                   type='text'
                                   label={
@@ -622,52 +654,48 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                                   className='text-center'
                                 />
                                 {/* Delete button */}
-                                <button
-                                  className='  pt-4 rounded-full'
+                                <FaTrash
+                                  className='text-red-500 h-full hover:cursor-pointer pt-6'
                                   onClick={() => handleRemoveLanguageForOption(langCode, index)}
-                                >
-                                  X
-                                </button>
+                                />
                               </div>
                             ))}
                           </div>
 
                           {/* Add More Button and Dropdown */}
-                          <div className='flex flex-col items-center mb-6'>
-                            <button
-                              className='bg-blue-500 text-gray-50 py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                              onClick={(e) => {
-                                e.preventDefault() // Prevent default form action
+                          <div className='flex items-center mb-4'>
+                            <Button
+                              onClick={() => {
                                 setShowDropdownForOption(!showDropdownForOption)
                               }}
-                            >
-                              Add More
-                            </button>
+                              label='Add More Labels'
+                              className=' bg-blue-500 text-gray-50 py-1 px-3 ml-4 rounded hover:bg-blue-600'
+                            />
 
                             {/* Dropdown for selecting languages, positioned just below the button */}
                             {showDropdownForOption && (
-                              <div className='relative w-full flex justify-center mt-2'>
-                                <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto'>
-                                  <select
-                                    ref={dropdownRefForOption}
-                                    className='p-2 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
-                                    onChange={(e) => handleAddLanguageForOption(e.target.value)}
-                                    defaultValue=''
-                                  >
-                                    <option value='' disabled>
-                                      Select Language
-                                    </option>
-                                    {Object.entries(DEFAULT_LANG_NAME).map(
-                                      ([langCode, langName]) =>
-                                        !selectedLanguagesForOption.includes(langCode) && (
-                                          <option key={langCode} value={langCode}>
-                                            {langName} ({langCode})
-                                          </option>
-                                        )
-                                    )}
-                                  </select>
-                                </div>
+                              // <div className=' w-full flex justify-start mt-2 ml-2 items-center'>
+                              <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto flex justify-start items-center ml-2'>
+                                <select
+                                  ref={dropdownRefForOption}
+                                  className='p-1 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
+                                  onChange={(e) => handleAddLanguageForOption(e.target.value)}
+                                  defaultValue=''
+                                >
+                                  <option value='' disabled>
+                                    Select Language
+                                  </option>
+                                  {Object.entries(DEFAULT_LANG_NAME).map(
+                                    ([langCode, langName]) =>
+                                      !selectedLanguagesForOption.includes(langCode) && (
+                                        <option key={langCode} value={langCode}>
+                                          {langName} ({langCode})
+                                        </option>
+                                      )
+                                  )}
+                                </select>
                               </div>
+                              // </div>
                             )}
                           </div>
                         </div>
@@ -676,17 +704,19 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
 
                     <Button
                       onClick={addOption}
-                      label='Add More'
-                      className='mt-6 bg-blue-500 text-gray-50 py-2 px-4 rounded-md hover:bg-blue-600'
+                      label='Add More Options'
+                      className='mt-2 bg-blue-500 text-gray-50 py-1 px-3 ml-4 rounded hover:bg-blue-600'
                     />
                   </div>
                 )}
 
                 <div className='mt-4'>
-                  <h4 className='text-xl font-bold mb-4 text-center'>Question Label Name</h4>
+                  <div className='block text-sm font-medium text-gray-700 mx-4'>
+                    Question Label Name
+                  </div>
 
                   {/* Render all selected language inputs */}
-                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6'>
+                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-2'>
                     {selectedLanguages.map((langCode) => (
                       <div key={langCode} className='flex'>
                         <TextField
@@ -701,52 +731,49 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                           className='text-center'
                         />
                         {/* Delete button */}
-                        <button
-                          className='  pt-4 rounded-full'
+
+                        <FaTrash
+                          className='text-red-500 h-full hover:cursor-pointer pt-6'
                           onClick={() => handleRemoveLanguage(langCode)}
-                        >
-                          X
-                        </button>
+                        />
                       </div>
                     ))}
                   </div>
 
                   {/* Add More Button and Dropdown */}
-                  <div className='flex flex-col items-center mb-6'>
-                    <button
-                      className='bg-blue-500 text-gray-50 py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                      onClick={(e) => {
-                        e.preventDefault() // Prevent default form action
+                  <div className='flex items-center mb-4'>
+                    <Button
+                      onClick={() => {
                         setShowDropdown(!showDropdown)
                       }}
-                    >
-                      Add More
-                    </button>
+                      label='Add More'
+                      className=' bg-blue-500 text-gray-50 py-1 px-3 ml-4 rounded hover:bg-blue-600'
+                    />
 
                     {/* Dropdown for selecting languages, positioned just below the button */}
                     {showDropdown && (
-                      <div className='relative w-full flex justify-center mt-2'>
-                        <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto'>
-                          <select
-                            ref={dropdownRef}
-                            className='p-2 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
-                            onChange={(e) => handleAddLanguage(e.target.value)}
-                            defaultValue=''
-                          >
-                            <option value='' disabled>
-                              Select Language
-                            </option>
-                            {Object.entries(DEFAULT_LANG_NAME).map(
-                              ([langCode, langName]) =>
-                                !selectedLanguages.includes(langCode) && (
-                                  <option key={langCode} value={langCode}>
-                                    {langName} ({langCode})
-                                  </option>
-                                )
-                            )}
-                          </select>
-                        </div>
+                      // <div className='relative w-full flex justify-center mt-2'>
+                      <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto flex justify-start items-center ml-2'>
+                        <select
+                          ref={dropdownRef}
+                          className='p-1 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          onChange={(e) => handleAddLanguage(e.target.value)}
+                          defaultValue=''
+                        >
+                          <option value='' disabled>
+                            Select Language
+                          </option>
+                          {Object.entries(DEFAULT_LANG_NAME).map(
+                            ([langCode, langName]) =>
+                              !selectedLanguages.includes(langCode) && (
+                                <option key={langCode} value={langCode}>
+                                  {langName} ({langCode})
+                                </option>
+                              )
+                          )}
+                        </select>
                       </div>
+                      // </div>
                     )}
                   </div>
                 </div>
@@ -808,18 +835,18 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({isOpen, setIsO
                 </div> */}
 
                 {/* Submit and Cancel Buttons */}
-                <div className='flex justify-end mt-4'>
+                <div className='flex justify-center mt-4 ml-4'>
                   <Button
                     // onClick={handleSubmit(onSubmit)}
                     type='submit'
                     label='Submit'
                     className='bg-blue-500 hover:bg-blue-600 text-gray-50 font-bold py-2 px-4 rounded shadow-md inline-flex items-center'
                   />
-                  <Button
+                  {/* <Button
                     onClick={closeModal}
-                    label='Cancel'
+                    label='Close X'
                     className='bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded shadow-md inline-flex items-center ml-2'
-                  />
+                  /> */}
                 </div>
               </form>
             </div>
