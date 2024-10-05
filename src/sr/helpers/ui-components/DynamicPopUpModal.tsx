@@ -8,8 +8,8 @@ import {toast} from 'react-toastify'
 import {uploadMedia} from 'sr/utils/api/media'
 import {ExtractFieldNames, FieldsArray} from 'sr/constants/fields'
 import TextArea from './TextArea'
-import {DEFAULT_LANG_NAME} from 'sr/constants/common'
-import {lang} from 'moment'
+
+import MultiLanguageLabelInput from './MultiLangLabel'
 // import {formatDateForInput} from 'sr/utils/helpers/formateDateForInput'
 
 interface DynamicModalProps {
@@ -44,6 +44,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
   const dropdownRef = useRef<any>(null) // Ref to focus on the dropdown
+  const [labelName, setLabelName] = useState<{[key: string]: string}>({})
   const {
     register,
     handleSubmit,
@@ -167,7 +168,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
   }
 
   // Remove a selected language and its corresponding input field
-  const handleRemoveLanguage = (langCode: string) => {
+  const handleRemoveLanguage = (langCode: string, index: number) => {
     setSelectedLanguages(selectedLanguages.filter((code) => code !== langCode))
     setValue(langCode, '') // Clear the input field value
   }
@@ -184,8 +185,15 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
   // }, [defaultValues])
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
-      <div className='bg-white p-6 rounded-lg w-full max-w-2xl max-h-[95vh] overflow-y-auto'>
-        <h2 className='text-2xl font-bold mb-4'>{label}</h2>
+      <div className='bg-white px-6 pb-6 rounded-lg w-full max-w-2xl max-h-[95vh] overflow-y-auto'>
+        <div className='sticky top-0 z-10 py-2 bg-white flex justify-between items-center mx-4 '>
+          <h2 className='text-xl   text-gray-900 font-bold'>{label}</h2>
+          <Button
+            onClick={onClose}
+            label='Close X'
+            className='bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded  inline-flex items-center ml-2'
+          />
+        </div>
         <form onSubmit={handleSubmit(onSubmitForm)}>
           {fields.map((field, index) => {
             switch (field.type) {
@@ -250,77 +258,27 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
               case 'labelName':
                 return (
                   <div className='mt-4'>
-                    <h4 className='text-xl font-bold mb-4 text-center'>Label Name</h4>
-
-                    {/* Render all selected language inputs */}
-                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6'>
-                      {selectedLanguages.map((langCode) => (
-                        <div key={langCode} className='flex'>
-                          <TextField
-                            labelStyle='style1'
-                            className='custom-input form-input p-2 border rounded mb-2'
-                            type='text'
-                            key={index}
-                            label={DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]}
-                            id={langCode}
-                            required={false}
-                            name={langCode}
-                            placeholder={`Enter ${
-                              DEFAULT_LANG_NAME[langCode as keyof typeof DEFAULT_LANG_NAME]
-                            } label`}
-                            register={register(langCode)}
-                            // error={errors[langCode]}
-                            // errorText={`Please enter ${langName}`}
-                          />
-                          {/* Delete button */}
-                          <button
-                            className='  pt-4 rounded-full'
-                            onClick={() => handleRemoveLanguage(langCode)}
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
+                    <div className='block text-sm font-medium text-gray-700 mx-4'>
+                      {field.label}
                     </div>
 
-                    {/* Add More Button and Dropdown */}
-                    <div className='flex flex-col items-center mb-6'>
-                      <button
-                        className='bg-blue-500 text-gray-50 py-2 px-4 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                        onClick={(e) => {
-                          e.preventDefault() // Prevent default form action
-                          setShowDropdown(!showDropdown)
-                        }}
-                      >
-                        Add More
-                      </button>
-
-                      {/* Dropdown for selecting languages, positioned just below the button */}
-                      {showDropdown && (
-                        <div className='relative w-full flex justify-center mt-2'>
-                          <div className='bg-white border border-gray-300 rounded-lg shadow-md z-10 w-auto'>
-                            <select
-                              ref={dropdownRef}
-                              className='p-2 border-none rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500'
-                              onChange={(e) => handleAddLanguage(e.target.value)}
-                              defaultValue=''
-                            >
-                              <option value='' disabled>
-                                Select Language
-                              </option>
-                              {Object.entries(DEFAULT_LANG_NAME).map(
-                                ([langCode, langName]) =>
-                                  !selectedLanguages.includes(langCode) && (
-                                    <option key={langCode} value={langCode}>
-                                      {langName} ({langCode})
-                                    </option>
-                                  )
-                              )}
-                            </select>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <MultiLanguageLabelInput
+                      index={0}
+                      selectedLanguages={selectedLanguages}
+                      labelName={labelName}
+                      handleLabelChange={(index: number, langCode: string, value: string) => {
+                        setValue(langCode, value)
+                        setLabelName((prevState) => ({
+                          ...prevState,
+                          [langCode]: value,
+                        }))
+                      }}
+                      handleAddLanguage={handleAddLanguage}
+                      handleRemoveLanguage={handleRemoveLanguage}
+                      showDropdown={showDropdown}
+                      setShowDropdown={setShowDropdown}
+                      dropdownRef={dropdownRef}
+                    />
                   </div>
                 )
 
