@@ -13,13 +13,14 @@ import SkeletonCard from './SkeletonDashboardCard'
 import {Button} from 'sr/helpers'
 import {FiRefreshCw} from 'react-icons/fi'
 import {toast} from 'react-toastify'
+import {statusMap} from 'sr/constants/status'
 
 const Custom: React.FC = () => {
-  const [dashboardData, setDashboardData] = useState<any>([])
+  // const [dashboardData, setDashboardData] = useState<any>([])
   const [totalCards, setTotalCards] = useState<dashboardCardInterface[]>([])
   const queryClient = useQueryClient()
 
-  const {data, isLoading, refetch, isFetching} = useQuery({
+  const {data, isLoading, isFetching} = useQuery({
     queryKey: ['dashboard-summary', {}],
     queryFn: async () => fetchDashboard(),
     staleTime: Infinity,
@@ -28,16 +29,20 @@ const Custom: React.FC = () => {
 
   useEffect(() => {
     if (!data) return
-    const cards = data.results.statusWiseSurveyCount.map((item) => ({
-      title: item._id,
-      total: item.count,
-    }))
-    setTotalCards(cards)
-    setDashboardData(data.results)
-  }, [data])
+    const cards = Array.from(statusMap).map(([key, title]) => {
+      const matchedItem = data.results.statusWiseSurveyCount.find((item) => item._id === key)
 
-  // const calculatePercentage = (amount: number, total: number): string =>
-  //   `${((amount / total) * 100).toFixed(1)}%`
+      return {
+        title,
+        total: matchedItem ? matchedItem.count : 0, // Set count to 0 if the status is not present
+      }
+    })
+
+    // Sort the cards array in ascending order based on the total
+
+    setTotalCards(cards.sort((a, b) => b.total - a.total))
+    // setDashboardData(data.results)
+  }, [data])
 
   return (
     <div className='p-4'>
@@ -61,13 +66,14 @@ const Custom: React.FC = () => {
       </div>
 
       <h1 className='text-xl font-semibold mb-2'>Total</h1>
-      <div className='mb-6 grid grid-cols-4 gap-3 w-full'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {isLoading || isFetching
-          ? Array.from({length: 2}).map((_, index) => <SkeletonCard key={index} />)
+          ? Array.from({length: 4}).map((_, index) => <SkeletonCard key={index} />)
           : totalCards.map((card, index) => (
               <TotalCard key={index} totalUsers={card.total} title={card.title} />
             ))}
       </div>
+
       {/* <h1 className='text-xl font-semibold mb-2'>Statistics</h1>
       <div className='mb-4 grid grid-cols-3 gap-3'>
         {statisticsSections.map((section, index) => (

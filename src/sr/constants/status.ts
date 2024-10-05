@@ -16,7 +16,7 @@ export const statusColors: Record<string, string> = {
   inProgress: 'text-yellow-500', // existing color
 }
 
-export const statusMap = new Map<statusType, string>([
+export const statusMap = new Map<string, string>([
   ['submitted', 'Submitted'],
   ['approved', 'Approved'],
   ['flagged', 'Flagged'],

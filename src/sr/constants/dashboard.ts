@@ -1,3 +1,4 @@
+
 export interface StatisticsData {
     type: string
     amount: number | string
@@ -35,3 +36,4 @@ export const dummyData: DummyData = {
       {type: 'Wallet', amount: 0, percentage: '', barColor: 'bg-purple-500'},
     ],
   }
+  
