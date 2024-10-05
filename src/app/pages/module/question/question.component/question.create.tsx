@@ -17,7 +17,6 @@ import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 // import TextArea from 'sr/helpers/ui-components/TextArea'
 import {toast} from 'react-toastify'
 import {useQueryClient} from '@tanstack/react-query'
-import {FaTrash} from 'react-icons/fa'
 import MultiLanguageLabelInput from 'sr/helpers/ui-components/MultiLangLabel'
 
 interface CreateQuestionPopupProps {
@@ -80,35 +79,9 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
   //   {id: 2, name: 'Program 2'},
   // ]
 
-  // Define sectionOptions as a flat array of objects
-  const sectionOptions = [
-    {id: 'section1', name: 'Section 1'},
-    {id: 'section2', name: 'Section 2'},
-  ]
-
   const mandatoryOptions = [
     {id: 'true', name: 'Yes'},
     {id: 'false', name: 'No'},
-  ]
-
-  const questionIdOptions = [
-    {id: '1', name: 'Question 1'},
-    {id: '2', name: 'Question 2'},
-  ]
-
-  const optionValueOptions: OptionType[] = [
-    {value: 'value1', label: 'Value 1'},
-    {value: 'value2', label: 'Value 2'},
-  ]
-
-  const labelNameOptions = [
-    {id: '1', name: 'Label 1'},
-    {id: '2', name: 'Label 2'},
-  ]
-
-  const sourceOptions = [
-    {id: '1', name: 'Source 1'},
-    {id: '2', name: 'Source 2'},
   ]
 
   useEffect(() => {
@@ -218,6 +191,7 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
 
   const fetchQuestions = async () => {
     // Ensure both sectionId and programId are present before proceeding
+
     if (!watch('sectionId') || !watch('programId')) return
 
     try {
@@ -238,6 +212,10 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
       console.log('Error fetching questions:', error)
     }
   }
+
+  useEffect(() => {
+    fetchQuestions()
+  })
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     // Validation: Check that `visibleOnFieldIds` has at least one value in `optionValue` for each `questionId`
@@ -431,12 +409,12 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
                     <TextField
                       key={7}
                       type='text'
-                      label='Field Regex'
+                      label='Field Validation'
                       className='custom-input form-input p-2 border rounded mb-2'
                       id='fieldRegex'
                       required={false}
                       name='fieldRegex'
-                      placeholder='Enter Field Regex'
+                      placeholder='Enter Field Validation'
                       register={register('fieldRegex', {required: false})}
                       // error={errors.fieldRegex && !watch('fieldRegex')}
                       // errorText='Please enter Field Regex'
