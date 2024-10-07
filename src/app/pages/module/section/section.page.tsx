@@ -129,7 +129,6 @@ const Custom: React.FC = () => {
 
   // Fetch static questions and build the totalQuestionsMap
   useEffect(() => {
-    console.log('static questions data  is ', staticQuestionData)
     if (programId === '') return
     const buildTotalQuestionsMap = () => {
       const map =

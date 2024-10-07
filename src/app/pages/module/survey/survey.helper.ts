@@ -1,5 +1,6 @@
-import {get} from 'sr/utils/axios'
+import {get, post} from 'sr/utils/axios'
 import {FilterProps, SurveyApiResponse, SurveySectionMappingApiResponse} from './survey.interfaces'
+import {toast} from 'react-toastify'
 
 const filterPayload = (payload: FilterProps) => {
   return Object.fromEntries(
@@ -24,7 +25,11 @@ export const fetchSurveys = async (payload?: FilterProps): Promise<SurveyApiResp
     throw new Error(`Failed to fetch : ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
-export const getSurveySectionMapping = async ({ surveyId }: { surveyId: string }): Promise<SurveySectionMappingApiResponse> => {
+export const getSurveySectionMapping = async ({
+  surveyId,
+}: {
+  surveyId: string
+}): Promise<SurveySectionMappingApiResponse> => {
   try {
     const res = await get<SurveySectionMappingApiResponse>(`/survey-section-mapping`, {
       surveyId,
@@ -40,5 +45,17 @@ export const getSurveySectionMapping = async ({ surveyId }: { surveyId: string }
   } catch (error) {
     // Throw the error to be handled by the caller
     throw new Error(`Failed to fetch : ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+export const updateSurveyStatus = async (id: string) => {
+  try {
+    const res = await post<any>(`/survey/updateStatus`, {id})
+    if (res) {
+      toast.success('Survey Approved')
+      return true
+    }
+  } catch (e: any) {
+    toast.error(e.message)
+    return false
   }
 }
