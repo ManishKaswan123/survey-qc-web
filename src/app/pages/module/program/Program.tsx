@@ -129,7 +129,7 @@ const Custom: React.FC = () => {
     <div className='container mx-auto px-4 sm:px-8 '>
       <div className='py-6'>
         <div className='flex justify-between items-center flex-wrap mb-4'>
-          <h2 className='text-lg font-bold text-gray-700 mb-4'>PROGRAMS</h2>
+          <h2 className='text-lg font-bold text-gray-700'>PROGRAMS</h2>
           <Button
             label='Create new'
             Icon={AiOutlinePlus}

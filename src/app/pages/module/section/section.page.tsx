@@ -19,6 +19,7 @@ import {useSelector} from 'react-redux'
 import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
+import BackButton from 'sr/helpers/ui-components/BackButton'
 
 const Custom: React.FC = () => {
   const location = useLocation()
@@ -245,8 +246,13 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <div className='flex flex-row justify-between mb-4'>
-          <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
+        <div className='flex flex-row justify-between mb-4 items-center'>
+          <div className='flex space-x-4'>
+            {programId && <BackButton />}
+
+            <h2 className='text-lg font-bold text-gray-700 '>SECTIONS</h2>
+          </div>
+
           {!surveyId && (
             <Button
               label='Create new'
