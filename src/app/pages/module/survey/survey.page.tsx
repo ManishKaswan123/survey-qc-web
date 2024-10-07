@@ -29,15 +29,26 @@ const Custom: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
   const userStatus = useSelector((state: RootState) => state.user.status)
-  const {fetchUserData} = useActions()
-  const filterFields: FieldsArray = useMemo(() => {
-    // Retrieve the user data from local storage
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
-    const userRole = user.role || ''
+  const programReduxStore = useSelector((state: RootState) => state.program)
+  const {fetchUserData, fetchProgramAction} = useActions()
 
-    // Construct the filter fields
-    const fields: FieldsArray = [
+  // Retrieve the user data from local storage
+  const user = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), [])
+  const userRole = user.role || ''
+
+  // Construct the filter fields
+  const fields: FieldsArray = useMemo(
+    () => [
       // {type: 'text', label: 'Program Id', name: 'programId', placeholder: 'Enter Program Id'},
+      {
+        type: 'dropdown',
+        label: 'programId',
+        name: programReduxStore.totalPrograms,
+        topLabel: 'Program',
+        placeholder: 'Select Program',
+        labelKey: 'name',
+        id: '_id',
+      },
       {
         type: 'dropdown',
         label: 'status',
@@ -65,23 +76,22 @@ const Custom: React.FC = () => {
         labelKey: 'firstName',
         // id: 'id',
       },
-    ]
+    ],
+    [userRoleMap, statusObject, programReduxStore]
+  )
 
-    // Conditionally include 'createdBy' field if the user is not QA
-    if (userRole !== 'QA') {
-      fields.splice(2, 0, {
-        type: 'dropdown',
-        label: 'createdBy',
-        name: userRoleMap['QA'],
-        topLabel: 'Created By',
-        placeholder: 'Select Created By',
-        labelKey: 'firstName',
-        // id: 'id',
-      })
-    }
-
-    return fields
-  }, [userRoleMap])
+  // // Conditionally include 'createdBy' field if the user is not QA
+  // if (userRole !== 'QA') {
+  //   fields.splice(2, 0, {
+  //     type: 'dropdown',
+  //     label: 'createdBy',
+  //     name: userRoleMap['QA'],
+  //     topLabel: 'Created By',
+  //     placeholder: 'Select Created By',
+  //     labelKey: 'firstName',
+  //     // id: 'id',
+  //   })
+  // }
 
   useEffect(() => {
     fetchUserDataIfNeeded()
@@ -91,7 +101,8 @@ const Custom: React.FC = () => {
     if (userStatus !== 'succeeded') {
       fetchUserData({})
     }
-  }, [userStatus, fetchUserData])
+    if (programReduxStore.status !== 'succeeded') fetchProgramAction({})
+  }, [userStatus, fetchUserData, programReduxStore, fetchProgramAction])
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -122,6 +133,7 @@ const Custom: React.FC = () => {
   }
 
   const handleApplyFilter = (newFilters: FilterProps) => {
+    console.log('applied filter is : ', newFilters)
     setFilters(newFilters)
     setCurrentPage(1)
   }
@@ -149,11 +161,7 @@ const Custom: React.FC = () => {
 
         {isExpanded && (
           <div className='relative'>
-            <Filter
-              onApplyFilter={handleApplyFilter}
-              preFilters={filters || {}}
-              fields={filterFields}
-            />
+            <Filter onApplyFilter={handleApplyFilter} preFilters={filters || {}} fields={fields} />
           </div>
         )}
         {isLoading ? <SurveySkeleton /> : data && <SurveyTable surveyData={data.results.results} />}

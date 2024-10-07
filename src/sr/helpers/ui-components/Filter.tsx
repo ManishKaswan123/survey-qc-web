@@ -48,7 +48,7 @@ const Filter = ({onApplyFilter, preFilters, fields}: any) => {
                 labelKey={field.labelKey || 'name'}
                 label={field.topLabel}
                 placeholder={field.placeholder}
-                valueKey='id'
+                valueKey={field.id || 'id'}
                 value={filters[field.label] ? filters[field.label] : ''}
                 onChange={handleChange}
                 name={field.label}

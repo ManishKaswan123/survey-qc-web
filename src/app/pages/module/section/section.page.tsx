@@ -115,8 +115,8 @@ const Custom: React.FC = () => {
   }, [programReduxStore, fetchProgramAction])
 
   const {data: staticQuestionData} = useQuery({
-    queryKey: ['staticQuestions', {programId, getAll: true}],
-    queryFn: async () => fetchStaticQuestions({programId, getAll: true}),
+    queryKey: ['staticQuestions', {getAll: true}],
+    queryFn: async () => fetchStaticQuestions({getAll: true}),
     staleTime: Infinity,
   })
   const {data: answers} = useQuery({
@@ -127,6 +127,7 @@ const Custom: React.FC = () => {
 
   // Fetch static questions and build the totalQuestionsMap
   useEffect(() => {
+    console.log('static questions data  is ', staticQuestionData)
     if (programId === '') return
     const buildTotalQuestionsMap = () => {
       const map =
@@ -141,6 +142,7 @@ const Custom: React.FC = () => {
   }, [programId, staticQuestionData])
 
   // Fetch survey questions and build the totalAttemptedQuestionsMap
+  console.log('total questions map is ', totalQuestionsMap)
 
   useEffect(() => {
     if (surveyId === '') return

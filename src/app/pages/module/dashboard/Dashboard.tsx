@@ -66,7 +66,7 @@ const Custom: React.FC = () => {
       </div>
 
       <h1 className='text-xl font-semibold mb-2'>Total</h1>
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
         {isLoading || isFetching
           ? Array.from({length: 4}).map((_, index) => <SkeletonCard key={index} />)
           : totalCards.map((card, index) => (
