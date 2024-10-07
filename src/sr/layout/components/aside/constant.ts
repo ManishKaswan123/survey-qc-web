@@ -68,12 +68,12 @@ export const normalMenuItems = [
     path: '/user',
     iconPath: 'M9 12h6m2 4H7m12-8H5m16 8a9 9 0 11-18 0 9 9 0 0118 0z',
   },
-  {
-    label: 'Complaints',
-    path: '/contact-us',
-    iconPath:
-      'M3 10l1.5 1.5L5 11l1 1 1.5-1.5L8 9l1-1h3l2 1 1 1 1.5 1.5L17 11h1l1 1v2l-1 1-1.5 1.5L16 18l-1 1h-2l-1.5-1.5L10 17l-1-1H7l-1 1-1.5 1.5L3 19l-1-1v-5l1-1 1-1V9l1-1 1-1L7 6h1l1-1V4l1-1h3l1 1v1l1 1h1l1 1 1 1v1h-1l-1-1h-1l-1 1h-1l-1 1h-1l-1-1H8L6 9H5l-1 1-1-1z',
-  },
+  // {
+  //   label: 'Complaints',
+  //   path: '/contact-us',
+  //   iconPath:
+  //     'M3 10l1.5 1.5L5 11l1 1 1.5-1.5L8 9l1-1h3l2 1 1 1 1.5 1.5L17 11h1l1 1v2l-1 1-1.5 1.5L16 18l-1 1h-2l-1.5-1.5L10 17l-1-1H7l-1 1-1.5 1.5L3 19l-1-1v-5l1-1 1-1V9l1-1 1-1L7 6h1l1-1V4l1-1h3l1 1v1l1 1h1l1 1 1 1v1h-1l-1-1h-1l-1 1h-1l-1 1h-1l-1-1H8L6 9H5l-1 1-1-1z',
+  // },
 
   // Add other menu items here
 ]

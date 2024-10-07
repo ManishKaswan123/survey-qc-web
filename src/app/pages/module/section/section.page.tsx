@@ -20,6 +20,7 @@ import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 import BackButton from 'sr/helpers/ui-components/BackButton'
+import {getSurveySectionMapping} from '../survey/survey.helper'
 
 const Custom: React.FC = () => {
   const location = useLocation()
@@ -206,7 +207,11 @@ const Custom: React.FC = () => {
         ...filters,
       }),
   })
-
+  //   Query to fetch survey section mapping data
+  const {data: surveySectionMapping} = useQuery({
+    queryKey: ['survey-section-mapping', {surveyId: surveyId}],
+    queryFn: () => getSurveySectionMapping({surveyId: surveyId || ''}),
+  })
   const handlePageChange = (page: number) => setCurrentPage(page)
   const handleLimitChange = (limit: number) => {
     setItemsPerPage(limit)
@@ -279,6 +284,7 @@ const Custom: React.FC = () => {
         ) : (
           data && (
             <SectionTable
+              surveySectionMapping={surveySectionMapping?.results.results}
               sectionData={data.results.results}
               receivedData={mappedReceivedData}
               surveyId={surveyId || ''}

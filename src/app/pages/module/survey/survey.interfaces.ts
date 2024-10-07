@@ -50,6 +50,20 @@ export interface SurveyApiResponse {
     totalResults: number
   }
 }
+export interface SurveySectionMapping {
+  surveyId: string
+  sectionId: string
+  status: statusType
+  createdBy: string
+  createdAt: string
+  id: string
+}
+export interface SurveySectionMappingApiResponse {
+  status: string
+  results: {
+    results: SurveySectionMapping[]
+  }
+}
 export interface SurveyTableProps {
   surveyData: Survey[]
 }

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {FaRocket} from 'react-icons/fa'
 import {SectionTableProps} from '../section.interfaces'
 import {statusColors, statusMap, statusType} from 'sr/constants/status'
 
 const SectionTable: React.FC<SectionTableProps> = ({
+  surveySectionMapping,
   sectionData,
   receivedData,
   surveyId,
@@ -13,6 +14,14 @@ const SectionTable: React.FC<SectionTableProps> = ({
   totalQuestionsMap,
 }) => {
   const navigate = useNavigate()
+
+  const sectionStatusMap = useMemo(() => {
+    if (!surveySectionMapping) return {}
+    return surveySectionMapping.reduce((map, item) => {
+      map[item.sectionId] = item.status
+      return map
+    }, {} as Record<string, string>)
+  }, [surveySectionMapping])
 
   return (
     <div className='overflow-x-auto my-5 bg-white'>
@@ -47,8 +56,7 @@ const SectionTable: React.FC<SectionTableProps> = ({
               // Get the total questions and attempted questions for the section
               const totalQuestions = totalQuestionsMap[section._id] || 0
               const attemptedQuestions = totalAttemptedQuestionsMap?.[section._id]?.count || 0
-              const sectionStatus: statusType =
-                (totalAttemptedQuestionsMap?.[section._id]?.status as statusType) || 'yetToStart'
+              const sectionStatus: string = sectionStatusMap[section._id] || 'yetToStart'
 
               return (
                 <tr key={section._id} className='odd:bg-white even:bg-blue-50'>
