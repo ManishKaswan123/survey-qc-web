@@ -12,6 +12,7 @@ import {fetchAnswers, fetchQuestions} from './question.helper'
 import QuestionSkeleton from './question.component/question.skeleton'
 import QuestionCard from './question.component/question.card'
 import {set} from 'react-hook-form'
+import BackButton from 'sr/helpers/ui-components/BackButton'
 
 const Custom: React.FC = () => {
   const status = useMemo(
@@ -206,7 +207,15 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <h2 className='text-lg font-bold text-gray-700 mb-4'>QUESTION</h2>
+        <div className='flex items-center mb-4'>
+        <div className='flex space-x-4'>
+          <BackButton />
+          <h2 className='text-lg font-bold text-gray-700'>QUESTION</h2>
+        </div>
+
+        </div>
+        
+
         <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
 
         {isExpanded && (

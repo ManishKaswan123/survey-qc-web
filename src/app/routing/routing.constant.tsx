@@ -67,7 +67,7 @@ export const privateRoutes: RouteConfig[] = [
   {path: '/district', element: <District />},
   {path: '/village', element: <Village />},
   {path: '/mobile-app-config-history', element: <AppConfigHistory />},
-  {path: '/contact-us', element: <ContactUs />},
+  // {path: '/contact-us', element: <ContactUs />},
 ]
 
 export const publicRoutes: RouteConfig[] = [

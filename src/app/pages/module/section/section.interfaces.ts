@@ -1,3 +1,5 @@
+import {SurveySectionMapping} from '../survey/survey.interfaces'
+
 export interface FilterProps {
   programId?: string
   limit?: number
@@ -28,6 +30,7 @@ export interface SectionApiResponse {
   }
 }
 export interface SectionTableProps {
+  surveySectionMapping?: SurveySectionMapping[]
   sectionData: Section[]
   receivedData: Record<string, any>
   surveyId: string

@@ -19,6 +19,8 @@ import {useSelector} from 'react-redux'
 import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
+import BackButton from 'sr/helpers/ui-components/BackButton'
+import {getSurveySectionMapping} from '../survey/survey.helper'
 
 const Custom: React.FC = () => {
   const location = useLocation()
@@ -115,8 +117,8 @@ const Custom: React.FC = () => {
   }, [programReduxStore, fetchProgramAction])
 
   const {data: staticQuestionData} = useQuery({
-    queryKey: ['staticQuestions', {programId, getAll: true}],
-    queryFn: async () => fetchStaticQuestions({programId, getAll: true}),
+    queryKey: ['staticQuestions', {getAll: true}],
+    queryFn: async () => fetchStaticQuestions({getAll: true}),
     staleTime: Infinity,
   })
   const {data: answers} = useQuery({
@@ -127,6 +129,7 @@ const Custom: React.FC = () => {
 
   // Fetch static questions and build the totalQuestionsMap
   useEffect(() => {
+    console.log('static questions data  is ', staticQuestionData)
     if (programId === '') return
     const buildTotalQuestionsMap = () => {
       const map =
@@ -141,6 +144,7 @@ const Custom: React.FC = () => {
   }, [programId, staticQuestionData])
 
   // Fetch survey questions and build the totalAttemptedQuestionsMap
+  console.log('total questions map is ', totalQuestionsMap)
 
   useEffect(() => {
     if (surveyId === '') return
@@ -203,7 +207,11 @@ const Custom: React.FC = () => {
         ...filters,
       }),
   })
-
+  //   Query to fetch survey section mapping data
+  const {data: surveySectionMapping} = useQuery({
+    queryKey: ['survey-section-mapping', {surveyId: surveyId}],
+    queryFn: () => getSurveySectionMapping({surveyId: surveyId || ''}),
+  })
   const handlePageChange = (page: number) => setCurrentPage(page)
   const handleLimitChange = (limit: number) => {
     setItemsPerPage(limit)
@@ -243,8 +251,13 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
-        <div className='flex flex-row justify-between mb-4'>
-          <h2 className='text-lg font-bold text-gray-700 mb-4'>SECTIONS</h2>
+        <div className='flex flex-row justify-between mb-4 items-center'>
+          <div className='flex space-x-4'>
+            {programId && <BackButton />}
+
+            <h2 className='text-lg font-bold text-gray-700 '>SECTIONS</h2>
+          </div>
+
           {!surveyId && (
             <Button
               label='Create new'
@@ -271,6 +284,7 @@ const Custom: React.FC = () => {
         ) : (
           data && (
             <SectionTable
+              surveySectionMapping={surveySectionMapping?.results.results}
               sectionData={data.results.results}
               receivedData={mappedReceivedData}
               surveyId={surveyId || ''}
