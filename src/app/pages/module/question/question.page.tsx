@@ -13,6 +13,7 @@ import QuestionSkeleton from './question.component/question.skeleton'
 import QuestionCard from './question.component/question.card'
 import {set} from 'react-hook-form'
 import BackButton from 'sr/helpers/ui-components/BackButton'
+import {statusKeys, statusObject} from 'sr/constants/status'
 
 const Custom: React.FC = () => {
   const status = useMemo(
@@ -32,9 +33,10 @@ const Custom: React.FC = () => {
       {
         type: 'dropdown',
         label: 'status',
-        name: status,
+        name: statusObject,
         topLabel: 'Status',
-        placeholder: 'SelectStatus',
+        placeholder: 'Select Status',
+        labelKey: 'value',
       },
     ],
     []
@@ -64,17 +66,6 @@ const Custom: React.FC = () => {
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
-
-  // console.log('filtes:', filters)
-  // const {data, error, isLoading, isError, refetch} = useQuery({
-  //   queryKey: ['question', {getAll: true, ...filters}],
-  //   queryFn: async () =>
-  //     fetchQuestions({
-  //       getAll: true,
-  //       ...filters,
-  //     }),
-  //   // placeholderData: keepPreviousData,
-  // })
 
   useEffect(() => {
     const handleQuestion = async () => {
@@ -112,40 +103,13 @@ const Custom: React.FC = () => {
 
   useEffect(() => {
     if (questionData && answerData) {
-      console.log('checking')
-      console.log('questionData:', questionData)
-      console.log('answerData:', answerData)
       let mappedData = mapQuestionsAndAnswers()
       if (filters && filters?.status && filters?.status !== 'yetToStart') {
-        console.log('filtered data:', filters)
         mappedData = mappedData.filter((data) => data?.status === filters?.status)
       }
       setMappedData(mappedData)
     }
   }, [filters, answerData, questionData])
-  // useEffect(() => {
-  //   if (
-  //     !check &&
-  //     data &&
-  //     data?.results?.results.length > 0 &&
-  //     answerData?.data &&
-  //     answerData?.data?.results?.results.length > 0
-  //   ) {
-  //     console.log('ans d')
-  //     const mappedData = mapQuestionsAndAnswers()
-  //     setMappedData(mappedData)
-  //   }
-  // }, [filters])
-
-  // const answers = useQuery({
-  //   queryKey: ['answer', {getAll: true, ...filters}],
-  //   queryFn: async () =>
-  //     fetchAnswers({
-  //       getAll: true,
-  //       ...filters,
-  //     }),
-  //   // placeholderData: keepPreviousData,
-  // })
 
   const mapQuestionsAndAnswers = (): QuestionAnswer[] => {
     return (
@@ -176,20 +140,6 @@ const Custom: React.FC = () => {
     )
   }
 
-  // useEffect(() => {
-  //   if (
-  //     !check &&
-  //     data &&
-  //     data?.results?.results.length > 0 &&
-  //     answers?.data &&
-  //     answers?.data?.results?.results.length > 0
-  //   ) {
-  //     console.log('ans d')
-  //     const mappedData = mapQuestionsAndAnswers()
-  //     setMappedData(mappedData)
-  //   }
-  // }, [answers])
-
   const onPageChange = (page: number) => {
     setCurrentPage(page)
   }
@@ -208,13 +158,11 @@ const Custom: React.FC = () => {
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
         <div className='flex items-center mb-4'>
-        <div className='flex space-x-4'>
-          <BackButton />
-          <h2 className='text-lg font-bold text-gray-700'>QUESTION</h2>
+          <div className='flex space-x-4'>
+            <BackButton />
+            <h2 className='text-lg font-bold text-gray-700'>QUESTION</h2>
+          </div>
         </div>
-
-        </div>
-        
 
         <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />
 

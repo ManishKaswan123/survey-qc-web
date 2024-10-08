@@ -78,7 +78,7 @@ const Custom: React.FC = () => {
       },
     ],
     [userRoleMap, statusObject, programReduxStore]
-)
+  )
 
   // // Conditionally include 'createdBy' field if the user is not QA
   // if (userRole !== 'QA') {
