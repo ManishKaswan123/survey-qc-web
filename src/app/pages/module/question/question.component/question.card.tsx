@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {QuestionTableProps} from '../question.interface'
 import {RiArrowDownSLine, RiArrowUpSLine} from 'react-icons/ri'
 import {getPreSignedURL} from 'sr/utils/api/media'
@@ -13,6 +13,18 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   data,
   setIsUpdateModalOpen,
 }) => {
+  const status = useMemo(
+    () => [
+      {name: 'Submitted', id: 'submitted'},
+      {name: 'Approved', id: 'approved'},
+      {name: 'Flagged', id: 'flagged'},
+      {name: 'Re Submitted', id: 'resubmitted'},
+      {name: 'Not Started', id: 'yetToStart'},
+      {name: 'Rejected', id: 'rejected'},
+      {name: 'In Progress', id: 'inProgress'},
+    ],
+    []
+  )
   const [isExpanded, setIsExpanded] = useState(false)
   const [remark, setRemark] = useState('')
   const [isRejected, setIsRejected] = useState(false)
@@ -24,6 +36,12 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   //   setRemark('')
   //   // Handle approve logic here
   // }
+
+  const getStatusName = (id: string) => {
+    const foundStatus = status.find((item) => item.id.toLowerCase() === id.toLowerCase());
+    return foundStatus ? foundStatus.name : id; // Return the name if found, otherwise return the id as a fallback
+  };
+
   const handleSaveRemark = async (status: string) => {
     let payload = {
       ...(data?.textResponse && {textResponse: data?.textResponse}),
@@ -31,7 +49,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       ...(data?.toDateResponse && {toDateResponse: data?.toDateResponse}),
       ...(data?.multipleChoiceResponse && {multipleChoiceResponse: data?.multipleChoiceResponse}),
       ...(data?.numberResponse && {numberResponse: data?.numberResponse}),
-      remarks: remark,
+      ...(remark && remark.trim() !== '' && { remarks: remark }),
       status: status,
       questionId: data?.questionId,
       faId: data?.faId,
@@ -43,7 +61,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
     if (data?.answerId) {
       const res = await UpdateAnswers(data?.answerId, payload)
       if (res.status === 'success') {
-        setReRender(true)
+        setReRender((prev) => !prev)
         toast.success('Remark saved successfully')
       } else {
         toast.error('Failed to save remark')
@@ -55,6 +73,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
 
   // Determine the response to display
   useEffect(() => {
+    setRemark(data?.remarks || '');
     const handleFiles = async () => {
       if (data.questionType === 'FILE_UPLOAD') {
         let allUrls = new Set<string>() // Use Set to store unique URLs
@@ -153,10 +172,10 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
               ? 'bg-red-400'
               : data?.status?.toLowerCase() === 'inProgress'
               ? 'bg-lime-300'
-              : 'bg-red-400'
+              : ''
           }`}
         >
-          {data?.status}
+          {getStatusName(data?.status || '')}
         </div>
 
         <span className='text-lg text-gray-500 ml-4'>
@@ -168,7 +187,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
         </span>
       </div>
 
-      {isExpanded && (
+      {isExpanded && data?.status?.toLowerCase() !== 'yettostart' && (
         <div className='mt-4'>
           <span className='font-bold text-xl'>Ans.</span>
           {isFiles?.length > 0 ? (
@@ -207,7 +226,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
               className='px-4 py-2 bg-red-500 text-gray-50 rounded-md hover:bg-red-600'
               onClick={() => handleSaveRemark('rejected')}
             >
-              Reject
+              Flag
             </button>
           </div>
         </div>
