@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {FaSync, FaEdit, FaTrash} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import {UserInterface, UserTableProps} from '../user.interfaces'
@@ -12,6 +12,17 @@ const UserTable: React.FC<UserTableProps> = ({
   setIsAllocateModalOpen,
   onDelete,
 }) => {
+  const role = useMemo(
+    () => [
+      {name: 'Super Admin', id: 'SuperAdmin'},
+      {name: 'Quality Analyst', id: 'QA'},
+      {name: 'Field Agent', id: 'FA'},
+      {name: 'Project Admin', id: 'ProjectAdmin'},
+      {name: 'State Manager', id: 'StateManager'},
+    ],
+    []
+  )
+
   const navigate = useNavigate()
 
   const handleChangePassword = (user: UserInterface) => {
@@ -91,7 +102,9 @@ const UserTable: React.FC<UserTableProps> = ({
                   </p>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
-                  <p>{user.role}</p>
+                  <p>
+                    {role.find((r) => r.id === user.role)?.name || 'Unknown Role'}
+                  </p>
                 </td>
                 <td className='py-3 text-center border-b border-gray-200 text-sm border-r'>
                   <div className='flex items-center space-x-2 justify-center'>

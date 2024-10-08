@@ -216,6 +216,7 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
                       // },
                     })}
                     error={errors[field.label]}
+                    disabled={field.disabled}
                     errorText={`Please Select ${field.placeholder}`}
                   />
                 )

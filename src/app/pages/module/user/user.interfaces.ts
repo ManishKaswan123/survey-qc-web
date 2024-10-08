@@ -28,6 +28,7 @@ export interface PayloadType {
   sortBy?: string
   projectBy?: string
   getAll?: boolean
+  isActive?: boolean
 }
 
 export interface fetchUserResponse {

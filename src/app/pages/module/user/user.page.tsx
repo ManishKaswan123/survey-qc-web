@@ -55,15 +55,16 @@ const Custom: React.FC = () => {
   const stateData = useSelector((state: RootState) => state.state.data)
   const {fetchStateData} = useActions()
   const stateStatus = useSelector((state: RootState) => state.state.status)
+  const programReduxStore = useSelector((state: RootState) => state.program)
+  const {fetchProgramAction} = useActions()
 
-  console.log('stateData', stateData)
   // Step 2: Access companyId and programId from the user object
   const companyId = user?.companyId
   const programId = user?.programId
 
   const role = useMemo(
     () => [
-      {name: 'Super Admin', id: 'SuperAdmin'},
+      // {name: 'Super Admin', id: 'SuperAdmin'},
       {name: 'Quality Analyst', id: 'QA'},
       {name: 'Field Agent', id: 'FA'},
       {name: 'Project Admin', id: 'ProjectAdmin'},
@@ -72,13 +73,32 @@ const Custom: React.FC = () => {
     []
   )
 
-  const language = useMemo(
-    () => [
-      {name: 'English', id: 'en'},
-      {name: 'Hindi', id: 'hi'},
-    ],
-    []
-  )
+  let loginUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const createRoles = useMemo(() => {
+  if (!loginUser) return []; // Return empty if user is not found
+
+  switch (loginUser?.role) {
+    case 'ProjectAdmin':
+      return [
+        { name: 'Quality Analyst', id: 'QA' },
+        { name: 'Field Agent', id: 'FA' },
+        { name: 'State Manager', id: 'StateManager' },
+      ];
+    case 'StateManager':
+      return [
+        { name: 'Quality Analyst', id: 'QA' },
+        { name: 'Field Agent', id: 'FA' },
+      ];
+    case 'QA':
+      return [
+        { name: 'Field Agent', id: 'FA' },
+      ];
+    default:
+      return []; // Return empty array for unknown roles
+  }
+  }, [loginUser]); // Depend on user
+
 
   const isEmailVerified = useMemo(
     () => [
@@ -142,12 +162,31 @@ const Custom: React.FC = () => {
     const fields: FieldsArray = [
       {
         type: 'dropdown',
-        label: 'languagePreference',
-        name: language,
-        topLabel: 'Language',
-        placeholder: 'Select Language',
+        label: 'programId',
+        name: programReduxStore.totalPrograms,
+        topLabel: 'Program',
+        placeholder: 'Select Program',
+        labelKey: 'name',
+        id: '_id',
+        required: true
+      },
+      {
+        type: 'dropdown',
+        label: 'role',
+        name: createRoles,
+        onChange: (e) => setIsRoleFA(e.target.value === 'FA'),
+        topLabel: 'Role',
+        placeholder: 'Select Role',
+        required: true,
         labelKey: 'name',
         id: 'id',
+      },
+      {
+        type: 'text',
+        label: 'Email',
+        name: 'email',
+        placeholder: 'Email',
+        required: !isRoleFA
       },
       {
         type: 'number',
@@ -155,17 +194,6 @@ const Custom: React.FC = () => {
         name: 'mobile',
         placeholder: 'Mobile',
         required: true,
-      },
-      {
-        type: 'dropdown',
-        label: 'role',
-        name: role,
-        onChange: (e) => setIsRoleFA(e.target.value === 'FA'),
-        topLabel: 'Role',
-        placeholder: 'Select Role',
-        required: true,
-        labelKey: 'name',
-        id: 'id',
       },
       {
         type: 'text',
@@ -188,7 +216,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select State',
         labelKey: 'stateName',
         id: 'stateCode',
-        required: isRoleFA,
+        // required: isRoleFA,
       },
       {
         type: 'dropdown',
@@ -198,7 +226,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select District',
         labelKey: 'districtName',
         id: 'districtCode',
-        required: isRoleFA,
+        // required: isRoleFA,
       },
       {
         type: 'dropdown',
@@ -208,7 +236,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select Sub District',
         labelKey: 'subDistrictName',
         id: 'subDistrictCode',
-        required: isRoleFA,
+        // required: isRoleFA,
       },
       {
         type: 'dropdown',
@@ -218,20 +246,12 @@ const Custom: React.FC = () => {
         placeholder: 'Select Village',
         labelKey: 'villageName',
         id: 'villageCode',
-        required: isRoleFA,
+        // required: isRoleFA,
       }
     ];
-  
-    // Conditionally add email and password at the start if isRoleFA is false
+
     if (!isRoleFA) {
-      fields.unshift(
-        {
-          type: 'text',
-          label: 'Email',
-          name: 'email',
-          placeholder: 'Email',
-          required: true,
-        },
+      fields.splice(3, 0,  
         {
           type: 'text',
           label: 'Password',
@@ -243,30 +263,19 @@ const Custom: React.FC = () => {
     }
   
     return fields;
-  }, [isRoleFA, language, role, stateData, district, subDistrict, village]);
-  
-
-  console.log('isRoleFA', isRoleFA)
-  
+  }, [isRoleFA, role, stateData, district, subDistrict, village, programReduxStore]);
   
   const updateFields: FieldsArray = useMemo(() => {
     const fields: FieldsArray = [
       {
         type: 'dropdown',
-        label: 'languagePreference',
-        name: language,
-        topLabel: 'Language',
-        placeholder: 'Select Language',
+        label: 'programId',
+        name: programReduxStore.totalPrograms,
+        topLabel: 'Program',
+        placeholder: 'Select Program',
         labelKey: 'name',
-        id: 'id',
-        required: true,
-      },
-      {
-        type: 'number',
-        label: 'Mobile',
-        name: 'mobile',
-        placeholder: 'Mobile',
-        required: true,
+        id: '_id',
+        required: true
       },
       {
         type: 'dropdown',
@@ -277,6 +286,21 @@ const Custom: React.FC = () => {
         required: true,
         labelKey: 'name',
         id: 'id',
+        disabled: true
+      },
+      {
+        type: 'text',
+        label: 'Email',
+        name: 'email',
+        placeholder: 'Email',
+        required: selectedUser ? selectedUser.role !== 'FA' : false
+      },
+      {
+        type: 'number',
+        label: 'Mobile',
+        name: 'mobile',
+        placeholder: 'Mobile',
+        required: true,
       },
       {
         type: 'text',
@@ -299,7 +323,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select State',
         labelKey: 'stateName',
         id: 'stateCode',
-        required: selectedUser ? selectedUser.role === 'FA' : false,
+        // required: selectedUser ? selectedUser.role === 'FA' : false,
       },
       {
         type: 'dropdown',
@@ -309,7 +333,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select District',
         labelKey: 'districtName',
         id: 'districtCode',
-        required: selectedUser ? selectedUser.role === 'FA' : false
+        // required: selectedUser ? selectedUser.role === 'FA' : false
       },
       {
         type: 'dropdown',
@@ -319,7 +343,7 @@ const Custom: React.FC = () => {
         placeholder: 'Select Sub District',
         labelKey: 'subDistrictName',
         id: 'subDistrictCode',
-        required: selectedUser ? selectedUser.role === 'FA' : false
+        // required: selectedUser ? selectedUser.role === 'FA' : false
       },
       {
         type: 'dropdown',
@@ -329,37 +353,39 @@ const Custom: React.FC = () => {
         placeholder: 'Select Village',
         labelKey: 'villageName',
         id: 'villageCode',
-        required: selectedUser ? selectedUser.role === 'FA' : false
+        // required: selectedUser ? selectedUser.role === 'FA' : false
       }
     ];
   
-    // Conditionally add email and password fields only if isRoleFA is false
-    if (!selectedUser || selectedUser.role !== 'FA') {
-      fields.unshift(
-        {
-          type: 'text',
-          label: 'Email',
-          name: 'email',
-          placeholder: 'Email',
-          required: true,
-        }
-      );
-    }
+    // if (!selectedUser || selectedUser.role !== 'FA') {
+    //   fields.splice(3, 0,  
+    //     {
+    //       type: 'text',
+    //       label: 'Password',
+    //       name: 'password',
+    //       placeholder: 'Password',
+    //       required: true,
+    //     }
+    //   );
+    // }
   
     return fields;
-  }, [isRoleFA, language, role, stateData, district, subDistrict, village]);
+  }, [selectedUser, role, stateData, district, subDistrict, village, programReduxStore]);
   
   const fetchDataIfNeeded = useCallback(() => {
     if (stateStatus != 'succeeded') fetchStateData()
-  }, [stateStatus])
+    if (programReduxStore.status !== 'succeeded')
+      fetchProgramAction({})
+
+  }, [stateStatus , programReduxStore , fetchProgramAction])
 
   useEffect(() => {
     fetchDataIfNeeded()
   }, [])
 
   const {data, error, isLoading, isError, refetch} = useQuery({
-    queryKey: ['users', {limit: itemsPerPage, page: currentPage, ...filters}],
-    queryFn: async () => fetchUser({limit: itemsPerPage, page: currentPage, ...filters}),
+    queryKey: ['users', {limit: itemsPerPage, page: currentPage, ...filters , isActive: true }],
+    queryFn: async () => fetchUser({limit: itemsPerPage, page: currentPage, ...filters , isActive: true}),
     retry: false,
   })
 
@@ -388,7 +414,6 @@ const Custom: React.FC = () => {
 
   const handleCreateUser = async (payload: any) => {
     try {
-      console.log('Create User Payload', payload)
       const UserData: {[key: string]: any} = {
         role: payload.role,
         email: payload.email,
@@ -401,7 +426,6 @@ const Custom: React.FC = () => {
   
       // Dynamically add optional fields if they have a value
       const optionalFields = [
-        'languagePreference',
         'stateCode',
         'districtCode',
         'subDistrictCode',
@@ -411,10 +435,7 @@ const Custom: React.FC = () => {
   
       optionalFields.forEach((field) => {
         if (payload[field]) {
-          UserData[field] =
-            field === 'languagePreference'
-              ? [payload[field]]  // Wrap languagePreference in an array
-              : ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
+          UserData[field] = ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
               ? parseInt(payload[field])  // Parse state and district codes as integers
               : payload[field].toString()  // Convert other fields to string if needed
         }
@@ -437,14 +458,14 @@ const Custom: React.FC = () => {
   const handleUpdateUser = async (payload: any) => {
     // console.log('Update User Payload', payload)
     try {
+      console.log('payload for update ', payload)
       if (!selectedUser) return
       const UserData: {[key: string]: any} = {
         role: payload.role,
         mobile: payload.mobile,
         firstName: payload.firstName,
         email: payload.email,
-        // password: payload.password,
-        programId,
+        programId: payload.programId,
         companyId,
       }
 
@@ -453,7 +474,6 @@ const Custom: React.FC = () => {
         'dob',
         'lastName',
         'pinCode',
-        'languagePreference',
         'stateCode',
         'districtCode',
         'subDistrictCode',
@@ -462,10 +482,7 @@ const Custom: React.FC = () => {
 
       optionalFields.forEach((field) => {
         if (payload[field]) {
-          UserData[field] =
-            field === 'languagePreference'
-              ? [payload[field]]  // Wrap languagePreference in an array
-              : ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
+          UserData[field] = ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
               ? parseInt(payload[field])  // Parse state and district codes as integers
               : payload[field];  // Direct assignment for other fields
         }
