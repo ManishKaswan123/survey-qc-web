@@ -115,7 +115,7 @@ export interface QuestionAnswer {
 }
 
 export interface QuestionTableProps {
-  setReRender: (reRender: boolean) => void
+  setReRender: React.Dispatch<React.SetStateAction<boolean>>;
   key: string
   data: QuestionAnswer
   setIsUpdateModalOpen?: (isOpen: boolean) => void
