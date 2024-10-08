@@ -5,6 +5,7 @@ import {getPreSignedURL} from 'sr/utils/api/media'
 import {UpdateAnswers} from '../question.helper'
 import {d} from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z'
 import {toast} from 'react-toastify'
+import {statusColors, statusMap} from 'sr/constants/status'
 
 // QuestionCard component
 const QuestionCard: React.FC<QuestionTableProps> = ({
@@ -13,18 +14,6 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   data,
   setIsUpdateModalOpen,
 }) => {
-  const status = useMemo(
-    () => [
-      {name: 'Submitted', id: 'submitted'},
-      {name: 'Approved', id: 'approved'},
-      {name: 'Flagged', id: 'flagged'},
-      {name: 'Re Submitted', id: 'resubmitted'},
-      {name: 'Not Started', id: 'yetToStart'},
-      {name: 'Rejected', id: 'rejected'},
-      {name: 'In Progress', id: 'inProgress'},
-    ],
-    []
-  )
   const [isExpanded, setIsExpanded] = useState(false)
   const [remark, setRemark] = useState('')
   const [isRejected, setIsRejected] = useState(false)
@@ -36,12 +25,6 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
   //   setRemark('')
   //   // Handle approve logic here
   // }
-
-  const getStatusName = (id: string) => {
-    const foundStatus = status.find((item) => item.id.toLowerCase() === id.toLowerCase());
-    return foundStatus ? foundStatus.name : id; // Return the name if found, otherwise return the id as a fallback
-  };
-
   const handleSaveRemark = async (status: string) => {
     let payload = {
       ...(data?.textResponse && {textResponse: data?.textResponse}),
@@ -49,7 +32,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       ...(data?.toDateResponse && {toDateResponse: data?.toDateResponse}),
       ...(data?.multipleChoiceResponse && {multipleChoiceResponse: data?.multipleChoiceResponse}),
       ...(data?.numberResponse && {numberResponse: data?.numberResponse}),
-      ...(remark && remark.trim() !== '' && { remarks: remark }),
+      ...(remark && remark.trim() !== '' && {remarks: remark}),
       status: status,
       questionId: data?.questionId,
       faId: data?.faId,
@@ -73,7 +56,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
 
   // Determine the response to display
   useEffect(() => {
-    setRemark(data?.remarks || '');
+    setRemark(data?.remarks || '')
     const handleFiles = async () => {
       if (data.questionType === 'FILE_UPLOAD') {
         let allUrls = new Set<string>() // Use Set to store unique URLs
@@ -156,26 +139,8 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       <div className='flex justify-between items-center cursor-pointer' onClick={handleExpand}>
         <span className='font-bold text-xl'>{data?.questionCode}.</span>
         <span className='text-md ml-5'>{data?.fieldName}</span>
-        <div
-          className={`px-2 py-1 text-md text-gray-50 ml-auto rounded ${
-            data?.status?.toLowerCase() === 'submitted'
-              ? 'bg-blue-400'
-              : data?.status?.toLowerCase() === 'approved'
-              ? 'bg-green-400'
-              : data?.status?.toLowerCase() === 'flagged'
-              ? 'bg-yellow-400'
-              : data?.status?.toLowerCase() === 'resubmitted'
-              ? 'bg-purple-400'
-              : data?.status?.toLowerCase() === 'yettostart'
-              ? 'bg-gray-400'
-              : data?.status?.toLowerCase() === 'rejected'
-              ? 'bg-red-400'
-              : data?.status?.toLowerCase() === 'inProgress'
-              ? 'bg-lime-300'
-              : ''
-          }`}
-        >
-          {getStatusName(data?.status || '')}
+        <div className={`px-2 py-1 ml-auto rounded font-bold text-md ${statusColors[data.status]}`}>
+          {statusMap.get(data.status)}
         </div>
 
         <span className='text-lg text-gray-500 ml-4'>
@@ -224,7 +189,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
             </button>
             <button
               className='px-4 py-2 bg-red-500 text-gray-50 rounded-md hover:bg-red-600'
-              onClick={() => handleSaveRemark('rejected')}
+              onClick={() => handleSaveRemark('flagged')}
             >
               Flag
             </button>
