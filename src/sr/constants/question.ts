@@ -9,4 +9,6 @@ export const questionTypeEnum = [
   'CHECKBOX',
   'DATE_PICKER',
   'DATERANGE_PICKER',
+  'PIN_LOCATION',
+  'POLYGON',
 ]

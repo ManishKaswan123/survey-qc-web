@@ -83,6 +83,14 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
     {id: 'true', name: 'Yes'},
     {id: 'false', name: 'No'},
   ]
+  const fieldValidationOptions = [
+    {id: 'camera', name: 'Camera'},
+    {id: 'gallery', name: 'Gallery'},
+    {
+      id: 'gallery,camera',
+      name: 'Camera and Gallery',
+    },
+  ]
 
   useEffect(() => {
     fetchUserDataIfNeeded()
@@ -406,18 +414,18 @@ const CreateQuestionPopup: React.FC<CreateQuestionPopupProps> = ({
                 {/* Field Regex and Display Order */}
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <TextField
+                    <DropdownField
                       key={7}
-                      type='text'
+                      data={fieldValidationOptions}
+                      labelKey='name'
                       label='Field Validation'
-                      className='custom-input form-input p-2 border rounded mb-2'
-                      id='fieldRegex'
-                      required={false}
+                      placeholder='Select Field Validation'
+                      valueKey='id'
                       name='fieldRegex'
-                      placeholder='Enter Field Validation'
+                      required={false}
                       register={register('fieldRegex', {required: false})}
-                      // error={errors.fieldRegex && !watch('fieldRegex')}
-                      // errorText='Please enter Field Regex'
+                      // error={errors.isMandatory && !watch('isMandatory')}
+                      // errorText='Please select if mandatory'
                     />
                   </div>
                   <div>
