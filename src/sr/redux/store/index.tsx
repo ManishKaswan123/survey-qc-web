@@ -17,6 +17,7 @@ import sectionTypeReducer from '../slice/sectionSlice'
 import stateTypeReducer from '../slice/stateSlice'
 import districtTypeReducer from '../slice/districtSlice'
 import appConfigTypeReducer from '../slice/appConfigSlice'
+import breadcrumpTypeReducer from '../slice/breadcrumpSlice'
 
 const rootReducer = combineReducers({
   sendOtp: sendOtpReducer,
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   state: stateTypeReducer,
   district: districtTypeReducer,
   appConfig: appConfigTypeReducer,
+  breadcrump: breadcrumpTypeReducer,
 })
 
 export const store = configureStore({

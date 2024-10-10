@@ -1,10 +1,8 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
-import SectionSkeleton from './components/survey.skeleton'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {useLocation, useNavigate} from 'react-router-dom'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useQuery} from '@tanstack/react-query'
 import {fetchSurveys} from './survey.helper'
@@ -15,12 +13,11 @@ import {FilterProps} from './survey.interfaces'
 import {useSelector} from 'react-redux'
 import {RootState} from 'sr/redux/store'
 import {useActions} from 'sr/utils/helpers/useActions'
-import {statusKeys, statusObject} from 'sr/constants/status'
+import {statusObject} from 'sr/constants/status'
+import {Breadcrumb} from 'sr/helpers/ui-components/Breadcrumb'
 
 const Custom: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
-  const [totalResults, setTotalResults] = useState<number>(0)
   const [itemsPerPage, setItemsPerPage] = useState<number>(10)
   const [filters, setFilters] = useState<FilterProps>()
   // const navigate = useNavigate()
@@ -30,6 +27,7 @@ const Custom: React.FC = () => {
   const userRoleMap = useSelector((state: RootState) => state.user.userRoleMap)
   const userStatus = useSelector((state: RootState) => state.user.status)
   const programReduxStore = useSelector((state: RootState) => state.program)
+  // const breadcrumpReduxStore = useSelector((state: RootState) => state.breadcrump)
   const {fetchUserData, fetchProgramAction} = useActions()
 
   // Retrieve the user data from local storage
@@ -138,6 +136,10 @@ const Custom: React.FC = () => {
     setCurrentPage(1)
   }
 
+  // useEffect(() => {
+  //   setBreadcrumpItems([...breadcrumpReduxStore.breadCrumps, {label: 'Survey', link: '/survey'}])
+  // }, [])
+
   // const handleEdit = (section: Section) => {
   //   console.log('Edit section:', section)
   // }
@@ -156,6 +158,10 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
+        {/* <Breadcrumb
+          breadcrumbItems={[{label: 'Survey', link: '/survey'}]}
+          wrapperClassName={'mb-8'}
+        /> */}
         <div className='flex justify-between items-center flex-wrap mb-4'>
           <h2 className='text-lg font-bold text-gray-700'>FIELD ASSESMENT</h2>
         </div>
@@ -174,8 +180,8 @@ const Custom: React.FC = () => {
         ) : (
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
-            totalResults={totalResults}
+            totalPages={data?.results.totalPages || 1}
+            totalResults={data?.results.totalResults || 0}
             onPageChange={onPageChange}
             itemsPerPage={itemsPerPage}
             name='Survey'

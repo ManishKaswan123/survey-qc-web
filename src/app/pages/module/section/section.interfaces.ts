@@ -32,7 +32,7 @@ export interface SectionApiResponse {
 export interface SectionTableProps {
   surveySectionMapping?: SurveySectionMapping[]
   sectionData: Section[]
-  receivedData: Record<string, any>
+  receivedData?: Record<string, any>
   surveyId: string
   programId: string
   totalAttemptedQuestionsMap: Record<
