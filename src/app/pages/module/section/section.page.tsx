@@ -211,6 +211,10 @@ const Custom: React.FC = () => {
         ...filters,
       }),
   })
+
+  const filteredData =
+    data?.results?.results?.filter((item: any) => item.programId === programId) || []
+
   //   Query to fetch survey section mapping data
   const {data: surveySectionMapping} = useQuery({
     queryKey: ['survey-section-mapping', {surveyId: surveyId}],
@@ -314,8 +318,7 @@ const Custom: React.FC = () => {
           data && (
             <SectionTable
               surveySectionMapping={surveySectionMapping?.results.results}
-              sectionData={data.results.results}
-              // receivedData={mappedReceivedData}
+              sectionData={filteredData}
               surveyId={surveyId || ''}
               programId={programId || ''}
               totalQuestionsMap={totalQuestionsMap}
