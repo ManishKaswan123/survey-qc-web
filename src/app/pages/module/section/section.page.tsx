@@ -212,8 +212,10 @@ const Custom: React.FC = () => {
       }),
   })
 
-  const filteredData =
-    data?.results?.results?.filter((item: any) => item.programId === programId) || []
+  const filteredData = useMemo(
+    () => data?.results?.results?.filter((item: any) => item.programId === programId) || [],
+    [data, programId]
+  )
 
   //   Query to fetch survey section mapping data
   const {data: surveySectionMapping} = useQuery({
@@ -318,7 +320,7 @@ const Custom: React.FC = () => {
           data && (
             <SectionTable
               surveySectionMapping={surveySectionMapping?.results.results}
-              sectionData={filteredData}
+              sectionData={programId ? filteredData : data.results.results}
               surveyId={surveyId || ''}
               programId={programId || ''}
               totalQuestionsMap={totalQuestionsMap}
