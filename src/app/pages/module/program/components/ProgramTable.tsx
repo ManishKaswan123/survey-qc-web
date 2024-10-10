@@ -59,7 +59,7 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                 </td>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
                   <p>
-                    {expandedPrograms.has(program._id)
+                    {/* {expandedPrograms.has(program._id)
                       ? program.description
                       : `${program.description.substring(0, 50)}...`}
                     <button
@@ -67,7 +67,8 @@ const ProgramTable: React.FC<ProgramTableProps> = ({programData, onEdit, onDelet
                       onClick={() => toggleDetails(program._id)}
                     >
                       {expandedPrograms.has(program._id) ? 'less' : 'more'}
-                    </button>
+                    </button> */}
+                    {program.description}
                   </p>
                 </td>
                 <td className='px-5 py-5 text-left border-b border-gray-200 text-sm'>
