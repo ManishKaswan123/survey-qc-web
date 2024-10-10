@@ -28,6 +28,7 @@ import CreateQuestionPopup from './question.component/question.create'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import {useLocation} from 'react-router-dom'
 import BackButton from 'sr/helpers/ui-components/BackButton'
+import {Breadcrumb} from 'sr/helpers/ui-components/Breadcrumb'
 
 const Custom: React.FC = () => {
   const [selectedData, setSelectedData] = useState<Question>()
@@ -214,11 +215,30 @@ const Custom: React.FC = () => {
     <>
       <div className='container mx-auto px-4 sm:px-8'>
         <div className='py-6'>
+          {programId && sectionId && (
+            <Breadcrumb
+              breadcrumbItems={[
+                {
+                  label: 'Program',
+                  link: '/program',
+                },
+                {
+                  label: 'Section',
+                  link: `/section?programId=${programId}`,
+                },
+                {
+                  label: 'Questions',
+                  // link: `/all-questions?programId=${programId}&sectionId=${sectionId}`,
+                },
+              ]}
+              wrapperClassName={'mb-8'}
+            />
+          )}
           <div className='flex flex-row justify-between mb-4 items-center'>
-            <div className='flex space-x-4'>
-              {programId && sectionId && <BackButton />}
-              <h2 className='text-lg font-bold text-gray-700'>QUESTIONS</h2>
-            </div>
+            {/* <div className='flex space-x-4'> */}
+
+            <h2 className='text-lg font-bold text-gray-700'>QUESTIONS</h2>
+            {/* </div> */}
 
             <Button
               label='Create new'

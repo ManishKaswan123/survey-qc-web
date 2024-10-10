@@ -11,9 +11,8 @@ import {AnswerInterface, FilterProps, QuestionAnswer, QuestionInterface} from '.
 import {fetchAnswers, fetchQuestions} from './question.helper'
 import QuestionSkeleton from './question.component/question.skeleton'
 import QuestionCard from './question.component/question.card'
-import {set} from 'react-hook-form'
-import BackButton from 'sr/helpers/ui-components/BackButton'
-import {statusKeys, statusObject} from 'sr/constants/status'
+import {statusObject} from 'sr/constants/status'
+import {Breadcrumb} from 'sr/helpers/ui-components/Breadcrumb'
 
 const Custom: React.FC = () => {
   const status = useMemo(
@@ -157,11 +156,25 @@ const Custom: React.FC = () => {
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
+        <Breadcrumb
+          breadcrumbItems={[
+            {
+              label: 'Field Assesment',
+              link: '/survey',
+            },
+            {
+              label: 'Section',
+              link: `/section?programId=${programId}&&surveyId=${surveyId}`,
+            },
+            {
+              label: 'Questions',
+              // link: `/all-questions?programId=${programId}&sectionId=${sectionId}`,
+            },
+          ]}
+          wrapperClassName={'mb-8'}
+        />
         <div className='flex items-center mb-4'>
-          <div className='flex space-x-4'>
-            <BackButton />
-            <h2 className='text-lg font-bold text-gray-700'>QUESTION</h2>
-          </div>
+          <h2 className='text-lg font-bold text-gray-700'>QUESTION</h2>
         </div>
 
         <FilterHeader onToggle={toggleExpand} isExpanded={isExpanded} />

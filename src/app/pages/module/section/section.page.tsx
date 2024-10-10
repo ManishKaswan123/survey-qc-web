@@ -5,7 +5,6 @@ import Filter from 'sr/helpers/ui-components/Filter'
 import {FieldsArray} from 'sr/constants/fields'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
-import SurveySkeleton from '../survey/components/survey.skeleton'
 import SectionTable from './section.component/section.table'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
 import SkeletonSectionTable from './section.component/section.skeletonTable'
@@ -21,13 +20,19 @@ import {useActions} from 'sr/utils/helpers/useActions'
 import {DEFAULT_LANG_NAME} from 'sr/constants/common'
 import BackButton from 'sr/helpers/ui-components/BackButton'
 import {getSurveySectionMapping} from '../survey/survey.helper'
+import {Breadcrumb} from 'sr/helpers/ui-components/Breadcrumb'
+import {BreadcrumpItemsType} from 'sr/constants/breadcrumpInterface'
 
 const Custom: React.FC = () => {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
+  // Get the path and split by '/'
+  const pathSegments = location.pathname.split('/')
+  const lastSegment = pathSegments[pathSegments.length - 1] // Last element of the path
+
   const programId = queryParams.get('programId') || undefined
   const surveyId = queryParams.get('surveyId') || undefined
-  const receivedData = location.state || []
+  // const receivedData = location.state.sections || []
 
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -37,6 +42,7 @@ const Custom: React.FC = () => {
   const [totalAttemptedQuestionsMap, setTotalAttemptedQuestionsMap] = useState({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const programReduxStore = useSelector((state: RootState) => state.program)
+  // const breadcrumpReduxStore = useSelector((state: RootState) => state.breadcrump)
   const {fetchProgramAction, fetchSectionAction} = useActions()
   const queryClient = useQueryClient()
   // useEffect(() => {
@@ -143,7 +149,6 @@ const Custom: React.FC = () => {
   }, [programId, staticQuestionData])
 
   // Fetch survey questions and build the totalAttemptedQuestionsMap
-  console.log('total questions map is ', totalQuestionsMap)
 
   useEffect(() => {
     if (surveyId === '') return
@@ -189,12 +194,12 @@ const Custom: React.FC = () => {
   }, [surveyId, answers])
 
   // Memoized data to avoid re-computation on every render
-  const mappedReceivedData = useMemo(() => {
-    return receivedData.reduce((acc: Record<string, string>, item: Record<string, string>) => {
-      acc[item.sectionId] = item.status
-      return acc
-    }, {})
-  }, [receivedData])
+  // const mappedReceivedData = useMemo(() => {
+  //   return receivedData.reduce((acc: Record<string, string>, item: Record<string, string>) => {
+  //     acc[item.sectionId] = item.status
+  //     return acc
+  //   }, {})
+  // }, [receivedData])
 
   // Query to fetch sections with filters
   const {data, error, isLoading, refetch} = useQuery({
@@ -250,16 +255,41 @@ const Custom: React.FC = () => {
     fetchSectionAction({})
     setIsCreateModalOpen(false)
   }
+  // console.log("breadcum items", breadcrumbItems)
 
   return (
     <div className='container mx-auto px-4 sm:px-8'>
       <div className='py-6'>
+        {programId && (
+          <Breadcrumb
+            breadcrumbItems={
+              surveyId
+                ? [
+                    {label: 'Field Assesment', link: '/survey'},
+                    {
+                      label: 'Section',
+                      // link: `/section?programId=${programId}&surveyId=${surveyId}`,
+                    },
+                  ]
+                : [
+                    {
+                      label: 'Program',
+                      link: '/program',
+                    },
+                    {
+                      label: 'Section',
+                      // link: `/section?programId=${programId}`,
+                    },
+                  ]
+            }
+            wrapperClassName={'mb-8'}
+          />
+        )}
         <div className='flex flex-row justify-between mb-4 items-center'>
-          <div className='flex space-x-4'>
-            {programId && <BackButton />}
+          {/* <div className='flex space-x-4 bg-red-500'> */}
 
-            <h2 className='text-lg font-bold text-gray-700 '>SECTIONS</h2>
-          </div>
+          <h2 className='text-lg font-bold text-gray-700 '>SECTIONS</h2>
+          {/* </div> */}
 
           {!surveyId && (
             <Button
@@ -289,7 +319,6 @@ const Custom: React.FC = () => {
             <SectionTable
               surveySectionMapping={surveySectionMapping?.results.results}
               sectionData={filteredData}
-              receivedData={mappedReceivedData}
               surveyId={surveyId || ''}
               programId={programId || ''}
               totalQuestionsMap={totalQuestionsMap}

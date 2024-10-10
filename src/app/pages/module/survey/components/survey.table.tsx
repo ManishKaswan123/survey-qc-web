@@ -61,9 +61,7 @@ const SurveyTable: React.FC<SurveyTableProps> = ({surveyData}) => {
                       className='text-[#265B91] hover:cursor-pointer'
                       size={20}
                       onClick={() => {
-                        navigate(`/section?programId=${survey.programId}&surveyId=${survey.id}`, {
-                          state: survey.sections,
-                        })
+                        navigate(`/section?programId=${survey.programId}&surveyId=${survey.id}`)
                       }}
                     />
                   </div>
