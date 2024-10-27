@@ -38,23 +38,7 @@ const SectionTable: React.FC<SectionTableProps> = ({
   return (
     <div className='overflow-x-auto my-5 bg-white'>
       <div className='shadow overflow-hidden bg-slate-100'>
-        {/* Approve Survey Button */}
-        {programId !== '' && surveyId !== '' && (
-          <div className='flex justify-start pb-4'>
-            <Button
-              label='Approve Survey'
-              // Icon={AiOutlinePlus}
-              disabled={!areAllApproved}
-              onClick={() => {
-                updateSurveyStatus(surveyId)
-                // Handle survey approval logic here
-              }}
-              className={`bg-blue-500 text-white py-2 px-4 rounded ${
-                !areAllApproved ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            ></Button>
-          </div>
-        )}
+        {/* Approve Survey Button */}       
 
         <table className='min-w-full leading-normal'>
           <thead>
@@ -134,6 +118,23 @@ const SectionTable: React.FC<SectionTableProps> = ({
             })}
           </tbody>
         </table>
+
+        {programId !== '' && surveyId !== '' && (
+          <div className='flex justify-center mt-4 text-center'>
+            <Button
+              label='Approve Survey'
+              // Icon={AiOutlinePlus}
+              disabled={!areAllApproved}
+              onClick={() => {
+                updateSurveyStatus(surveyId)
+                // Handle survey approval logic here
+              }}
+              className={`bg-blue-500 text-white py-2 px-4 rounded ${
+                !areAllApproved ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            ></Button>
+          </div>
+        )}
       </div>
     </div>
   )

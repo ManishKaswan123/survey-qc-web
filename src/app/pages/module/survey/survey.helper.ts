@@ -49,7 +49,10 @@ export const getSurveySectionMapping = async ({
 }
 export const updateSurveyStatus = async (id: string) => {
   try {
-    const res = await post<any>(`/survey/updateStatus`, {id})
+    const res = await post<any>(`/survey/updateStatus`, {
+      id,
+      status: 'approved'
+    })
     if (res) {
       toast.success('Survey Approved')
       return true
