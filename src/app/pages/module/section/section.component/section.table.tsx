@@ -30,6 +30,9 @@ const SectionTable: React.FC<SectionTableProps> = ({
         allApproved = false // Found a section that is not approved
       }
     })
+    if(sectionData?.length != surveySectionMapping?.length){
+      allApproved = false
+    }
 
     setAreAllApproved(allApproved)
     return map
