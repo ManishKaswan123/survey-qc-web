@@ -107,8 +107,8 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       if (data?.pinLocationResponse?.coordinates?.length > 1) {
         return <ViewFarmLocation
           pinFarmLocation={{
-            lng: data?.pinLocationResponse?.coordinates[1],
-            lat: data?.pinLocationResponse?.coordinates[0],
+            lng: data?.pinLocationResponse?.coordinates[0],
+            lat: data?.pinLocationResponse?.coordinates[1],
           }}
           currentModel={''}
       />

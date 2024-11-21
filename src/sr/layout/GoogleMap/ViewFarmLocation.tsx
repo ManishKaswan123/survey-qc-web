@@ -41,6 +41,7 @@ const GoogleMapComponent = ({ pinFarmLocation, farmLandPlotting, currentModel }:
         setPolylineCoordinates(ploy)
       }
     } else {
+      console.log('pinFarmLocation', pinFarmLocation)
       setLatitude(pinFarmLocation?.lat)
       setLongitude(pinFarmLocation?.lng)
     }
@@ -67,7 +68,7 @@ const GoogleMapComponent = ({ pinFarmLocation, farmLandPlotting, currentModel }:
         let points = path.getArray()
         for (let p in points) bounds.extend(points[p])
       })
-      map.setZoom(15)
+      map.setZoom(1)
       map.setCenter(bounds.getCenter())
     } else {
       map.setCenter({ lat: latitude, lng: longitude })
