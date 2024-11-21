@@ -1,5 +1,7 @@
 import {FC, createContext, useContext, useState, useEffect} from 'react'
+import {useLoadScript} from '@react-google-maps/api'
 import {DefaultLayoutConfig} from './DefaultLayoutConfig'
+import {useActions} from 'sr/utils/helpers/useActions'
 import {
   getEmptyCssClasses,
   getEmptyCSSVariables,
@@ -71,6 +73,19 @@ const LayoutProvider: FC<WithChildren> = ({children}) => {
     setLayout,
   }
 
+  const {isLoaded} = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY || '',
+    libraries: ['drawing'],
+  })
+  
+  const {setGoogleMapData} = useActions()
+
+  useEffect(() => {
+    if(isLoaded){
+      setGoogleMapData(isLoaded)
+    }
+  }, [isLoaded])
+  
   useEffect(() => {
     disableSplashScreen()
   }, [])

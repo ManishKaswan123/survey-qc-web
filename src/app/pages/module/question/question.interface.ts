@@ -24,6 +24,8 @@ export interface AnswerInterface {
   toDateResponse?: string
   multipleChoiceResponse?: string[]
   numberResponse?: number
+  pinLocationResponse?: any
+  polygonResponse?: any
   remarks?: string
   qaRemarks?: string
   status?: string
@@ -110,6 +112,8 @@ export interface QuestionAnswer {
   toDateResponse?: string
   multipleChoiceResponse?: string[]
   numberResponse?: number
+  pinLocationResponse?: any
+  polygonResponse?: any
   faId?: string
   surveyId?: string
 }
@@ -225,6 +229,8 @@ export interface FilterAnswerProps {
   toDateResponse?: string
   multipleChoiceResponse?: string[]
   numberResponse?: number
+  pinLocationResponse?: any
+  polygonResponse?: any
   remarks: string
   status: string
   questionId: string

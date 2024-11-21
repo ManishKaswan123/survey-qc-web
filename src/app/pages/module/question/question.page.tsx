@@ -130,6 +130,8 @@ const Custom: React.FC = () => {
           textResponse: answer?.textResponse,
           dateResponse: answer?.dateResponse,
           toDateResponse: answer?.toDateResponse,
+          pinLocationResponse: answer?.pinLocationResponse,
+          polygonResponse: answer?.polygonResponse,
           multipleChoiceResponse: answer?.multipleChoiceResponse,
           numberResponse: answer?.numberResponse,
           faId: answer?.faId,

@@ -6,6 +6,7 @@ import {UpdateAnswers} from '../question.helper'
 import {d} from '@tanstack/react-query-devtools/build/legacy/devtools-PtxSnd7z'
 import {toast} from 'react-toastify'
 import {statusColors, statusMap} from 'sr/constants/status'
+import ViewFarmLocation from 'sr/layout/GoogleMap/ViewFarmLocation'
 
 // QuestionCard component
 const QuestionCard: React.FC<QuestionTableProps> = ({
@@ -92,7 +93,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
       const parsedDate = new Date(date)
       return parsedDate.toLocaleDateString('en-GB') // dd/mm/yyyy format
     }
-
+    
     if (data?.multipleChoiceResponse && data?.multipleChoiceResponse?.length > 0) {
       const responseValues = data?.multipleChoiceResponse.map((responseValue) => {
         const matchedOption = data?.options?.find((option) => option?.fieldValue === responseValue)
@@ -101,6 +102,28 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
 
       return responseValues.join(', ')
     }
+
+    if (data?.questionType == 'PIN_LOCATION') {
+      if (data?.pinLocationResponse?.coordinates?.length > 1) {
+        return <ViewFarmLocation
+          pinFarmLocation={{
+            lng: data?.pinLocationResponse?.coordinates[1],
+            lat: data?.pinLocationResponse?.coordinates[0],
+          }}
+          currentModel={''}
+      />
+      }      
+    }
+
+    if (data?.questionType == 'POLYGON') {      
+      if (data?.polygonResponse?.coordinates?.length > 0) {
+        return <ViewFarmLocation
+        farmLandPlotting={data?.polygonResponse?.coordinates}
+        currentModel={'FarmLandPlotting'}
+      />
+      }      
+    }
+
 
     if (data?.questionType !== 'FILE_UPLOAD') {
       if (data?.options?.length > 0) {
@@ -170,7 +193,7 @@ const QuestionCard: React.FC<QuestionTableProps> = ({
               )
             )
           ) : (
-            <div className='text-gray-700 italic'>{getResponseDisplay()}</div>
+            <div className='text-gray-700 italic inline-flex w-full'>{getResponseDisplay()}</div>
           )}
           <div className='mt-4'>
             <textarea

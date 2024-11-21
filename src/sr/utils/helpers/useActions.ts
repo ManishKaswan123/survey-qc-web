@@ -16,6 +16,7 @@ import {fetchDistrictData} from 'sr/redux/action/districtActions'
 import {fetchStateData} from 'sr/redux/action/stateActions'
 import {fetchAppConfigData} from 'sr/redux/action/appConfigActions'
 import {setBreadcrumpItems} from 'sr/redux/action/breadCrumpAction'
+import {setGoogleMapData} from 'sr/redux/slice/googleMapSlice'
 
 export const useActions = () => {
   const dispatch = useDispatch()
@@ -35,6 +36,7 @@ export const useActions = () => {
       fetch86Action,
       fetchProgramAction,
       fetchSectionAction,
+      setGoogleMapData,
     },
     dispatch
   )
