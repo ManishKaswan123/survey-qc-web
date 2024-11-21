@@ -1,26 +1,26 @@
-import React, {useState, useMemo, useEffect, useCallback} from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
-import {fetchUser} from 'app/pages/module/user/user.helpers/fetchUser'
-import {AiOutlineUserAdd} from 'react-icons/ai'
-import {Button} from 'sr/helpers'
+import { fetchUser } from 'app/pages/module/user/user.helpers/fetchUser'
+import { AiOutlineUserAdd } from 'react-icons/ai'
+import { Button } from 'sr/helpers'
 import Filter from 'sr/helpers/ui-components/Filter'
-import {FieldsArray} from 'sr/constants/fields'
-import {useQuery} from '@tanstack/react-query'
+import { FieldsArray } from 'sr/constants/fields'
+import { useQuery } from '@tanstack/react-query'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
-import {UserInterface, userFilters} from './user.interfaces'
+import { UserInterface, userFilters } from './user.interfaces'
 import UserTableSkeleton from './user.component/UserTableSkeleton'
 import UserTable from './user.component/UserTable'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
-import {fetchSurveys} from '../survey/survey.helper'
+import { fetchSurveys } from '../survey/survey.helper'
 import UserAllocationModal from './user.component/UserAllocationModel'
-import {createUser} from './user.helpers/createUser'
-import {toast} from 'react-toastify'
-import {updateUser} from './user.helpers/updateUser'
-import {deleteUser} from './user.helpers/deleteUser'
-import {set} from 'react-hook-form'
-import {allocateUser} from './user.helpers/userAllocate'
+import { createUser } from './user.helpers/createUser'
+import { toast } from 'react-toastify'
+import { updateUser } from './user.helpers/updateUser'
+import { deleteUser } from './user.helpers/deleteUser'
+import { set } from 'react-hook-form'
+import { allocateUser } from './user.helpers/userAllocate'
 import { useSelector } from 'react-redux'
 import { RootState } from 'sr/redux/store'
 import { fetchDistrict } from 'sr/utils/api/fetchDistrict'
@@ -44,7 +44,7 @@ const Custom: React.FC = () => {
   // Step 1: Retrieve and parse the user object from localStorage
   const userString = localStorage.getItem('user')
   const user = userString ? JSON.parse(userString) : null
-  const [isRoleFA , setIsRoleFA] = useState<boolean>(false)
+  const [isRoleFA, setIsRoleFA] = useState<boolean>(false)
 
   const [district, setDistrict] = useState<any>([])
   const [subDistrict, setSubDistrict] = useState<any>([])
@@ -53,10 +53,10 @@ const Custom: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<any>(null)
   const [selectedSubDistrict, setSelectedSubDistrict] = useState<any>(null)
   const stateData = useSelector((state: RootState) => state.state.data)
-  const {fetchStateData} = useActions()
+  const { fetchStateData } = useActions()
   const stateStatus = useSelector((state: RootState) => state.state.status)
   const programReduxStore = useSelector((state: RootState) => state.program)
-  const {fetchProgramAction} = useActions()
+  const { fetchProgramAction } = useActions()
 
   // Step 2: Access companyId and programId from the user object
   const companyId = user?.companyId
@@ -65,10 +65,10 @@ const Custom: React.FC = () => {
   const role = useMemo(
     () => [
       // {name: 'Super Admin', id: 'SuperAdmin'},
-      {name: 'Quality Analyst', id: 'QA'},
-      {name: 'Field Agent', id: 'FA'},
-      {name: 'Project Admin', id: 'ProjectAdmin'},
-      {name: 'State Manager', id: 'StateManager'},
+      { name: 'Quality Analyst', id: 'QA' },
+      { name: 'Field Agent', id: 'FA' },
+      { name: 'Project Admin', id: 'ProjectAdmin' },
+      { name: 'State Manager', id: 'StateManager' },
     ],
     []
   )
@@ -76,57 +76,57 @@ const Custom: React.FC = () => {
   let loginUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const createRoles = useMemo(() => {
-  if (!loginUser) return []; // Return empty if user is not found
+    if (!loginUser) return []; // Return empty if user is not found
 
-  switch (loginUser?.role) {
-    case 'ProjectAdmin':
-      return [
-        { name: 'Quality Analyst', id: 'QA' },
-        { name: 'Field Agent', id: 'FA' },
-        { name: 'State Manager', id: 'StateManager' },
-      ];
-    case 'StateManager':
-      return [
-        { name: 'Quality Analyst', id: 'QA' },
-        { name: 'Field Agent', id: 'FA' },
-      ];
-    case 'QA':
-      return [
-        { name: 'Field Agent', id: 'FA' },
-      ];
-    default:
-      return []; // Return empty array for unknown roles
-  }
+    switch (loginUser?.role) {
+      case 'ProjectAdmin':
+        return [
+          { name: 'Quality Analyst', id: 'QA' },
+          { name: 'Field Agent', id: 'FA' },
+          { name: 'State Manager', id: 'StateManager' },
+        ];
+      case 'StateManager':
+        return [
+          { name: 'Quality Analyst', id: 'QA' },
+          { name: 'Field Agent', id: 'FA' },
+        ];
+      case 'QA':
+        return [
+          { name: 'Field Agent', id: 'FA' },
+        ];
+      default:
+        return []; // Return empty array for unknown roles
+    }
   }, [loginUser]); // Depend on user
 
 
   const isEmailVerified = useMemo(
     () => [
-      {id: true, name: 'Yes'},
-      {id: false, name: 'No'},
+      { id: true, name: 'Yes' },
+      { id: false, name: 'No' },
     ],
     []
   )
 
   const isMobileVerified = useMemo(
     () => [
-      {id: true, name: 'Yes'},
-      {id: false, name: 'No'},
+      { id: true, name: 'Yes' },
+      { id: false, name: 'No' },
     ],
     []
   )
 
   const status = useMemo(
     () => [
-      {name: 'Active', id: 'true'},
-      {name: 'Inactive', id: 'false'},
+      { name: 'Active', id: 'true' },
+      { name: 'Inactive', id: 'false' },
     ],
     []
   )
 
   const fields: FieldsArray = useMemo(
     () => [
-      {type: 'dropdown', label: 'role', name: role, topLabel: 'Role', placeholder: 'Select Role'},
+      { type: 'dropdown', label: 'role', name: role, topLabel: 'Role', placeholder: 'Select Role' },
       {
         type: 'dropdown',
         label: 'isActive',
@@ -251,7 +251,7 @@ const Custom: React.FC = () => {
     ];
 
     if (!isRoleFA) {
-      fields.splice(3, 0,  
+      fields.splice(3, 0,
         {
           type: 'text',
           label: 'Password',
@@ -261,10 +261,10 @@ const Custom: React.FC = () => {
         }
       );
     }
-  
+
     return fields;
   }, [isRoleFA, role, stateData, district, subDistrict, village, programReduxStore]);
-  
+
   const updateFields: FieldsArray = useMemo(() => {
     const fields: FieldsArray = [
       {
@@ -356,7 +356,7 @@ const Custom: React.FC = () => {
         // required: selectedUser ? selectedUser.role === 'FA' : false
       }
     ];
-  
+
     // if (!selectedUser || selectedUser.role !== 'FA') {
     //   fields.splice(3, 0,  
     //     {
@@ -368,24 +368,24 @@ const Custom: React.FC = () => {
     //     }
     //   );
     // }
-  
+
     return fields;
   }, [selectedUser, role, stateData, district, subDistrict, village, programReduxStore]);
-  
+
   const fetchDataIfNeeded = useCallback(() => {
     if (stateStatus != 'succeeded') fetchStateData()
     if (programReduxStore.status !== 'succeeded')
       fetchProgramAction({})
 
-  }, [stateStatus , programReduxStore , fetchProgramAction])
+  }, [stateStatus, programReduxStore, fetchProgramAction])
 
   useEffect(() => {
     fetchDataIfNeeded()
   }, [])
 
-  const {data, error, isLoading, isError, refetch} = useQuery({
-    queryKey: ['users', {limit: itemsPerPage, page: currentPage, ...filters , isActive: true }],
-    queryFn: async () => fetchUser({limit: itemsPerPage, page: currentPage, ...filters , isActive: true}),
+  const { data, error, isLoading, isError, refetch } = useQuery({
+    queryKey: ['users', { limit: itemsPerPage, page: currentPage, ...filters, isActive: true }],
+    queryFn: async () => fetchUser({ limit: itemsPerPage, page: currentPage, ...filters, isActive: true }),
     retry: false,
   })
 
@@ -414,16 +414,15 @@ const Custom: React.FC = () => {
 
   const handleCreateUser = async (payload: any) => {
     try {
-      const UserData: {[key: string]: any} = {
+      const UserData: { [key: string]: any } = {
         role: payload.role,
-        email: payload.email,
         mobile: payload.mobile,
         password: payload.password,
         firstName: payload.firstName,
-        programId,
+        programId: payload.programId,
         companyId,
       }
-  
+
       // Dynamically add optional fields if they have a value
       const optionalFields = [
         'stateCode',
@@ -431,40 +430,39 @@ const Custom: React.FC = () => {
         'subDistrictCode',
         'villageCode',
         'lastName',
+        'email',
       ]
-  
+
       optionalFields.forEach((field) => {
         if (payload[field]) {
           UserData[field] = ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
-              ? parseInt(payload[field])  // Parse state and district codes as integers
-              : payload[field].toString()  // Convert other fields to string if needed
+            ? parseInt(payload[field])  // Parse state and district codes as integers
+            : payload[field].toString()  // Convert other fields to string if needed
         }
       })
-  
+
       // console.log('Create User Data:', UserData)
       let res = await createUser(UserData)
       if (res.status === 'success') {
         toast.success('User created successfully')
+        setIsCreateModalOpen(false)
         refetch()
       }
     } catch (e) {
       console.error('Failed to create User', e)
-    } finally {
-      setIsCreateModalOpen(false)
     }
   }
-  
+
 
   const handleUpdateUser = async (payload: any) => {
     // console.log('Update User Payload', payload)
     try {
       console.log('payload for update ', payload)
       if (!selectedUser) return
-      const UserData: {[key: string]: any} = {
+      const UserData: { [key: string]: any } = {
         role: payload.role,
         mobile: payload.mobile,
         firstName: payload.firstName,
-        email: payload.email,
         programId: payload.programId,
         companyId,
       }
@@ -478,32 +476,33 @@ const Custom: React.FC = () => {
         'districtCode',
         'subDistrictCode',
         'villageCode',
+        'email',
       ]
 
       optionalFields.forEach((field) => {
         if (payload[field]) {
           UserData[field] = ['stateCode', 'districtCode', 'subDistrictCode', 'villageCode'].includes(field)
-              ? parseInt(payload[field])  // Parse state and district codes as integers
-              : payload[field];  // Direct assignment for other fields
+            ? parseInt(payload[field])  // Parse state and district codes as integers
+            : payload[field];  // Direct assignment for other fields
         }
       });
 
       let res = await updateUser(UserData, selectedUser.id)
       // setRerender((prev) => !prev)
-      if(res.status === 'success')
+      if (res.status === 'success'){
         toast.success('User updated successfully')
-      refetch()
+        setIsUpdateModalOpen(false)
+        refetch()
+      }        
     } catch (e) {
       console.error('Failed to update User', e)
-    } finally {
-      setIsUpdateModalOpen(false)
     }
   }
 
   const handleDelete = async (id: string) => {
     try {
       let res = await deleteUser(id)
-      if(res.status === 'success')
+      if (res.status === 'success')
         toast.success(`User deleted successfully`)
       refetch();
     } catch (e) {

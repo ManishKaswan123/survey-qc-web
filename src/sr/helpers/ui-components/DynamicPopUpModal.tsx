@@ -177,8 +177,6 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
     // console.log(getValues('images'), getValues('imagePath'))
     // console.log('Submitting form data: ', data)
     onSubmit(data)
-    reset()
-    onClose()
   }
   // useEffect(() => {
   //   console.log(defaultValues)
