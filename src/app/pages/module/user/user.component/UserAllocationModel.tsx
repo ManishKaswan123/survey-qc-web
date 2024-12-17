@@ -12,9 +12,10 @@ import DropdownField from 'sr/partials/widgets/widgets-components/form/DropdownF
 interface UserAllocationModalProps {
   onAllocate: (selectedUserIds: string[]) => void
   onClose: () => void
+  selectedUser: any
 }
 
-const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, onClose}) => {
+const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, onClose, selectedUser}) => {
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [leftUsers, setLeftUsers] = useState<Survey[]>([])
   const [rightUsers, setRightUsers] = useState<Survey[]>([])
@@ -112,6 +113,7 @@ const UserAllocationModal: React.FC<UserAllocationModalProps> = ({onAllocate, on
       const query = {
         getAll: true,
         projectBy: 'firstName lastName id',
+        programId: selectedUser?.programId,
         ...(selectedState && {stateCode: selectedState}),
         ...(selectedDistrict && {districtCode: selectedDistrict}),
         ...(selectedSubdistrict && {subDistrictCode: selectedSubdistrict}),

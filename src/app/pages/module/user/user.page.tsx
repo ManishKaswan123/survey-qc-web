@@ -677,6 +677,7 @@ const Custom: React.FC = () => {
       )}
       {isAllocateModalOpen && (
         <UserAllocationModal
+          selectedUser={selectedUser}
           onAllocate={handleAllocate}
           onClose={() => setIsAllocateModalOpen(false)}
         />
