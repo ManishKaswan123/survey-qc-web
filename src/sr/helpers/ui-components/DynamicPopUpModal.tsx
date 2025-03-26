@@ -186,14 +186,14 @@ const DynamicModal: React.FC<DynamicModalProps> = ({
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
       <div className='bg-white px-6 pb-6 rounded-lg w-full max-w-2xl max-h-[95vh] overflow-y-auto'>
-        <div className='sticky top-0 z-10 py-2 bg-white flex justify-between items-center mx-4 '>
-          <h2 className='text-xl   text-gray-900 font-bold'>{label}</h2>
-          <Button
-            onClick={onClose}
-            label='Close X'
-            className='bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded  inline-flex items-center ml-2'
-          />
-        </div>
+          <div className='sticky top-0 z-10 py-2 bg-white flex justify-between items-center mx-4 '>
+            <h2 className='text-xl   text-gray-900 font-bold'>{label}</h2>
+            <Button
+              onClick={onClose}
+              label='Close X'
+              className='bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded  inline-flex items-center ml-2'
+            />
+          </div>
         <form onSubmit={handleSubmit(onSubmitForm)}>
           {fields.map((field, index) => {
             switch (field.type) {
