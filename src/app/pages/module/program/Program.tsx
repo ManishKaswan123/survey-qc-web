@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react'
 import ProgramCard from './components/ProgramCard'
 import {CreatePrograms, DeletePrograms, fetchPrograms} from './api'
 import {AiOutlinePlus, AiOutlineFilter} from 'react-icons/ai'
-import {CreatePayloadType, Program, ProgramFilters} from './programInterfaces'
+import {ProgramCreatePayloadType, Program, ProgramFilters} from './programInterfaces'
 import {Button, Spinner} from 'sr/helpers'
 import PaginationSkeleton from 'sr/helpers/ui-components/dashboardComponents/PaginationSkeleton'
 import Pagination from 'sr/helpers/ui-components/dashboardComponents/Pagination'
@@ -12,13 +12,14 @@ import ProgramCardSkeleton from './components/ProgramCardSkeleton'
 import {FaArrowLeft} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import ProgramTable from './components/ProgramTable'
-import ProgramTableSkeleton from './components/ProgramTableSkeleton'
 import FilterHeader from 'sr/helpers/ui-components/filterHeader'
 import DynamicModal from 'sr/helpers/ui-components/DynamicPopUpModal'
 import {toast} from 'react-toastify'
 import {useQuery, useQueryClient} from '@tanstack/react-query'
 import {useActions} from 'sr/utils/helpers/useActions'
 import DashboardWrapper from 'app/pages/dashboard/DashboardWrapper'
+import SkeletonTable from 'sr/helpers/ui-components/SkeletonTable'
+import {programColumns, programCreateUpdateFields} from './components/ProgramConstants'
 
 const Custom: React.FC = () => {
   const filterFields: FieldsArray = useMemo(
@@ -37,33 +38,7 @@ const Custom: React.FC = () => {
 
   const handleToggleExpand = () => setIsExpanded(!isExpanded)
 
-  const createUpdateFields: FieldsArray = useMemo(
-    () => [
-      {
-        type: 'text',
-        label: 'Name',
-        name: 'name',
-        placeholder: 'Program Name',
-        required: true,
-      },
-      {
-        type: 'text',
-        label: 'Description',
-        name: 'description',
-        placeholder: 'Description',
-      },
-      {
-        type: 'datetime-local',
-        label: 'Start Date',
-        name: 'startDate',
-        placeholder: 'Start Date',
-        required: true,
-      },
-    ],
-    []
-  )
-
-  const handleCreateProgram = async (payload: CreatePayloadType) => {
+  const handleCreateProgram = async (payload: ProgramCreatePayloadType) => {
     try {
       let response = await CreatePrograms(payload)
       if (response?.status === 'success') {
@@ -110,9 +85,10 @@ const Custom: React.FC = () => {
     setCurrentPage(1) // Reset to first page when items per page changes
   }
 
-  const handleApplyFilter = () => {
-    // Implement filter logic
-    console.log('Filter applied')
+  const handleApplyFilter = (newFilters: ProgramFilters) => {
+    setFilters(newFilters)
+    setCurrentPage(1)
+    setIsFilterVisible(false) // Hide filter after applying
   }
 
   const handleEdit = (program: Program) => {
@@ -150,9 +126,7 @@ const Custom: React.FC = () => {
           </div>
         )}
         {isLoading ? (
-          <ProgramTableSkeleton />
-        ) : error ? (
-          <p className='text-red-500'>{error.message}</p>
+          <SkeletonTable columns={programColumns} />
         ) : (
           <ProgramTable
             programData={data?.results.results || []}
@@ -182,7 +156,7 @@ const Custom: React.FC = () => {
           label='Create Program'
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
-          fields={createUpdateFields}
+          fields={programCreateUpdateFields}
           onSubmit={handleCreateProgram}
         />
       )}

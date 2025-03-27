@@ -1,3 +1,5 @@
+import {GlobalPayloadType, SuveryGlobalResponse} from 'sr/constants/globalInterfaces'
+
 export interface Program {
   _id: string
   name: string
@@ -6,34 +8,20 @@ export interface Program {
   companyId: string
   createdBy: string
   isActive: boolean
+  __v: number
 }
 
-export interface ProgramApiResponse {
-  status: string
-  results: {
-    results: Program[]
-    page: number
-    limit: number
-    totalPages: number
-    totalResults: number
-  }
+export type ProgramApiResponse = SuveryGlobalResponse<Program>
+
+export interface ProgramFilters extends GlobalPayloadType {
+  isActive?: boolean
+  programName?: string
 }
 
-export interface ProgramFilters {
-  name?: string
-}
-
-export interface PayloadType {
-  limit?: number
-  page?: number
-  sortBy?: string
-  getAll?: boolean
-}
-
-export interface CreatePayloadType {
+export interface ProgramCreatePayloadType {
   name: string
-  description?: string
+  description: string
   startDate: string
-  companyId: string
-  createdBy: string
+  endDate?: string
+  isActive?: boolean
 }

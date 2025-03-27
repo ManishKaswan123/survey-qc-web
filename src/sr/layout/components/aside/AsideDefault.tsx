@@ -162,9 +162,9 @@ export default function AsideMenuMain({getScenarios, AdjustWidth}: Props) {
               <div className='flex justify-between flex-col h-full'>
                 {/* Navigation */}
                 <div>
-                  <h6
+                  {/* <h6
                     className={` pl-[0.2rem] md:min-w-full text-rose-800 text-sm uppercase font-bold block pt-4 pb-2 no-underline`}
-                  ></h6>
+                  ></h6> */}
                   <ul className='md:flex-col md:min-w-full flex flex-col list-none'>
                     <li
                       onClick={() => setShow(!show)}
